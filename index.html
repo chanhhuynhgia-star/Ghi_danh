@@ -494,6 +494,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
         <div class="row"><label>Xếp hết người chưa có số</label><button class="btn" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
         <div class="row"><label>Bỏ số của mọi người</label><button class="btn" id="bMapClear" style="flex:0 0 auto">Bỏ hết</button></div>
         <div class="row"><label>In kèm 佛台 và 講台</label><input type="checkbox" id="printStage" checked></div>
+        <div class="row" id="rowStageCompact"><label><span>Thu gọn khoảng sân khấu khi in</span><br><span style="font-size:12px;color:#8a8a8e">Tắt thì in đúng vị trí, kích thước đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
+        <div class="row"><label>In khung viền phòng</label><input type="checkbox" id="printRoom" checked></div>
       </div>
       <div class="grp">
         <h2>Ghế theo ngôn ngữ</h2>
@@ -822,7 +824,7 @@ function subText(p){                              // nội dung dòng phụ theo
 }
 S.nameAuto=true; S.regSort=null;
 S.colW={idx:34,seat:82,name:280,sex:112,gvcn:140,interp:120,doc:120,ph:112,del:34};
-S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.regQuick=[];
+S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.printStageCompact=false; S.printRoom=true; S.regQuick=[];
 S.people=[];
 S.qian=[]; S.kun=[];
 const PH=["時間","地點"];
@@ -834,7 +836,7 @@ const I18N={
  'Tiêu đề · Danh sách nam nữ · Thống kê':'表頭 · 乾坤名冊 · 共計',
  'Trang':'頁面','Tiêu đề':'表頭','Chữ':'字體','Phòng':'場地',
  'Ghi danh':'報名','Sơ đồ':'座位圖','Danh sách':'名冊','Nạp vào danh sách':'匯入名單',
- 'Xếp chỗ':'排位','Ghế theo ngôn ngữ':'翻譯語言座位','In kèm 佛台 và 講台':'列印時含佛台與講台','Toàn cảnh':'全場','Vùng ghế':'座位區','Xếp hết người chưa có số':'替未掛號者排位','Xếp tự động':'自動排位','Bỏ số của mọi người':'清除全部座號','Bỏ hết':'全部清除',
+ 'Xếp chỗ':'排位','Ghế theo ngôn ngữ':'翻譯語言座位','In kèm 佛台 và 講台':'列印時含佛台與講台','Thu gọn khoảng sân khấu khi in':'列印時壓縮舞台區','Tắt thì in đúng vị trí, kích thước đã chỉnh':'關閉則依調整後的位置與大小列印','In khung viền phòng':'列印場地外框','Toàn cảnh':'全場','Vùng ghế':'座位區','Xếp hết người chưa có số':'替未掛號者排位','Xếp tự động':'自動排位','Bỏ số của mọi người':'清除全部座號','Bỏ hết':'全部清除',
  'Dán từ Excel':'從 Excel 貼上','Thêm một dòng trống':'新增空白列','Xuất ra Excel':'匯出 Excel','Xuất Excel':'匯出 Excel','Xoá toàn bộ':'清空名單','Thống kê số lớp học viên':'班員統計表','Xem bảng':'檢視','Xoá hết':'清空',
  'Lọc':'篩選','Hiện':'顯示','Tất cả':'全部','Chưa có số':'未掛號','Đã có số':'已掛號','Tìm tên':'搜尋姓名',
  'Dán danh sách':'貼上名單','Thêm dòng':'新增一列',
@@ -1793,9 +1795,9 @@ $('#headerCols').addEventListener('change',()=>{
 $('#nhAuto').onclick=()=>{S.autoNameH=true;$('#nhAuto').classList.add('on');$('#nhMan').classList.remove('on');$('#nameH').disabled=true;render();};
 $('#nhMan').onclick=()=>{S.autoNameH=false;$('#nhMan').classList.add('on');$('#nhAuto').classList.remove('on');$('#nameH').disabled=false;render();};
 $('#nameH').addEventListener('input',()=>{S.nameH=+$('#nameH').value||3.6;render();});
-['fills','showEmpty','balance','printStage'].forEach(k=>{
+['fills','showEmpty','balance','printStage','printStageCompact','printRoom'].forEach(k=>{
   const el=$('#'+k); if(!el) return; el.checked=S[k];
-  el.addEventListener('change',()=>{S[k]=el.checked;render();});
+  el.addEventListener('change',()=>{S[k]=el.checked; if(k==='printStage'){ const r=$('#rowStageCompact'); if(r) r.style.display=S.printStage?'':'none'; } render();});
 });
 function showPane(id){
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.p===id));
@@ -2060,23 +2062,38 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
     const c=svg.cloneNode(true); c.removeAttribute('id');
     c.querySelectorAll('.grey').forEach(e=>e.remove());   // bỏ mảng xám sân khấu, lối đi, tường
     c.querySelectorAll('.seat.off,.seat.sel').forEach(e=>e.classList.remove('off','sel'));
-    c.querySelectorAll('.glines').forEach(e=>e.remove());
+    c.querySelectorAll('.glines,.stagehandles,.roomframe').forEach(e=>e.remove());
     const G=JSON.parse(svg.dataset.geo||'{}');
-    const pad=12;
-    let vb;
-    if(S.printStage){                                     // thu gọn dải sân khấu cho ghế to hơn
-      const band=Math.max(80, G.stage*0.3);
-      const shift=G.stage-band;
-      const sg=c.querySelector('.stagegrp');
-      if(sg) sg.innerHTML=stageSVG(G.w, band, true);
-      const ar=c.querySelector('.seatarea');
-      if(ar) ar.setAttribute('transform',`translate(0, ${-shift})`);
-      vb=[-pad, -pad, G.w+2*pad, G.seatBot-shift+2*pad];
+    const pad=12, W=G.w, svgNS='http://www.w3.org/2000/svg';
+    const roomL=+S.room.roomLength||G.seatBot;
+    let top, bottom, shift=0;
+    const sg=c.querySelector('.stagegrp');
+    if(S.printStage){
+      top=0;
+      if(S.printStageCompact){                          // thu gọn dải sân khấu cho ghế to hơn
+        const band=Math.max(80, G.stage*0.3);
+        shift=G.stage-band;
+        if(sg) sg.innerHTML=stageSVG(W, band, true);
+        const ar=c.querySelector('.seatarea');
+        if(ar) ar.setAttribute('transform',`translate(0, ${-shift})`);
+      } else if(sg){                                    // đúng vị trí và kích thước đã chỉnh
+        sg.innerHTML=stageSVG(W, G.stage, false);
+      }
     } else {
-      const sg=c.querySelector('.stagegrp'); if(sg) sg.remove();
-      const top0=G.startY-30;
-      vb=[-pad, top0-pad, G.w+2*pad, G.seatBot-top0+2*pad];
+      if(sg) sg.remove();
+      top=G.startY-(S.printRoom!==false?50:30);   // chừa chỗ cho chữ 坤 乾 nằm trong khung
     }
+    bottom=G.seatBot-shift;
+    if(S.printRoom!==false){                            // khung tường phòng
+      const fTop = S.printStage ? 0 : top;
+      const fBot = Math.max(bottom, roomL-shift);
+      const fr=document.createElementNS(svgNS,'rect');
+      fr.setAttribute('x',0); fr.setAttribute('y',fTop); fr.setAttribute('width',W); fr.setAttribute('height',fBot-fTop);
+      fr.setAttribute('fill','none'); fr.setAttribute('stroke','#111'); fr.setAttribute('stroke-width','2.5');
+      c.insertBefore(fr,c.firstChild);
+      bottom=fBot;
+    }
+    const vb=[-pad, top-pad, W+2*pad, bottom-top+2*pad];
     c.setAttribute('viewBox',vb.join(' '));
     const r=(vb[2]/vb[3])||1;
     const aw=197, ah=284;
@@ -2166,7 +2183,8 @@ function refreshControls(){
   $('#headerCols').value=S.headerCols; $('#indentFrom').value=S.indentFrom; $('#viPct').value=S.viPct;
   $('#gapIn').value=S.gapIn; $('#gapOut').value=S.gapOut;
   $('#colGapPct').value=S.colGapPct;
-  $('#printStage').checked=S.printStage; $('#sheetSize').value=`${S.sheetW}x${S.sheetH}`;
+  $('#printStage').checked=S.printStage; $('#printStageCompact').checked=!!S.printStageCompact; $('#printRoom').checked=S.printRoom!==false;
+  $('#rowStageCompact').style.display=S.printStage?'':'none'; $('#sheetSize').value=`${S.sheetW}x${S.sheetH}`;
   syncTg(); $('#fills').checked=S.fills;
   $('#showEmpty').checked=S.showEmpty;
   $('#balance').checked=S.balance;
@@ -2924,7 +2942,7 @@ function renderMap(){
 
   const add=(html)=>{ const g=document.createElementNS(svgNS,'g'); g.innerHTML=html; svg.appendChild(g); return g; };
   if(S.mapFull)                               // viền phòng chỉ hiện khi xem toàn cảnh
-    add(`<rect width="${R.roomWidth}" height="${R.roomLength}" fill="none" stroke="#111" stroke-width="2.5"/>`);
+    add(`<rect class="roomframe" width="${R.roomWidth}" height="${R.roomLength}" fill="none" stroke="#111" stroke-width="2.5"/>`);
 
   const stg=document.createElementNS(svgNS,'g'); stg.setAttribute('class','stagegrp');
   stg.innerHTML=stageSVG(R.roomWidth, R.stageLength, false);

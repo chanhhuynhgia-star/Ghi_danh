@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>清書表格</title>
+<style>
+:root{
+  --bg:#e9edf0; --panel:#fff; --line:#d3dae1; --line2:#e7ecf0;
+  --ink:#1b2c3c; --muted:#63768a; --accent:#b5322a; --accent-soft:#f6e7e5;
+  --paper:#fff;
+  --c-num:#eed7ed; --c-name:#c9edc9; --c-head:#fae0d1; --c-mark:#cdeecd; --c-stat:#e8241b;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column}
+#topbar{display:flex;align-items:stretch;gap:16px;padding:0 16px;background:#fff;
+  border-bottom:.5px solid #d3d3d9;flex:0 0 auto}
+#topbar .spacer{flex:1}
+#topbar>#bPanel,#topbar>#lang{align-self:center}
+#bPanel{padding:10px 15px;font-size:18px;line-height:1}
+#viewseg{flex:0 0 auto;padding:0;background:none;border-radius:0;gap:0;align-items:stretch}
+#viewseg button{flex:0 0 auto;background:none;border-radius:0;box-shadow:none;
+  font-size:17px;font-weight:600;letter-spacing:-.01em;color:#9aa1aa;
+  padding:15px 6px;margin:0 16px;border-bottom:3px solid transparent}
+#viewseg button:hover{color:#5c6470}
+#viewseg button.on{background:none;box-shadow:none;color:#111;border-bottom-color:var(--accent)}
+#app{display:flex;flex:1;min-height:0;overflow:hidden}
+
+body.nopanel #side{display:none}
+#bPanel{padding:7px 11px;font-size:15px;line-height:1}
+#side{width:338px;flex:0 0 338px;background:#f2f2f7;border-right:.5px solid #d3d3d9;display:flex;flex-direction:column}
+#brand{display:none}
+#brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#lang{width:auto;font-size:12.5px;padding:4px;background:#e8e8ee}
+#brand p{margin:2px 0 0;font-size:13px;color:#8a8a8e}
+#tabs{display:flex;gap:2px;margin:14px 16px 0;padding:2px;background:#e4e4ea;border-radius:9px}
+#tabs button{flex:1;padding:8px 1px;border:0;background:none;font:inherit;font-size:14px;color:#5c6470;cursor:pointer;border-radius:8px;letter-spacing:-.01em;white-space:nowrap}
+#tabs button.on{background:#fff;color:#000;font-weight:650;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+#panels{flex:1;overflow-y:auto;padding:18px 16px 46px}
+.pane{display:none}
+.pane.on{display:block}
+.grp{margin-bottom:22px}
+.grp>h2{margin:0 0 7px 4px;font-size:12px;font-weight:650;color:#8a8a8e;letter-spacing:.05em;text-transform:uppercase}
+.card,#headlist{background:#fff;border-radius:12px;overflow:hidden}
+.card .row,#headlist .row{margin:0;padding:10px 14px;border-bottom:.5px solid #e4e4ea}
+.card .row:last-child,#headlist .row:last-child{border-bottom:none}
+.row{display:flex;align-items:center;gap:10px}
+.row label{flex:1;font-size:14.5px;letter-spacing:-.012em;line-height:1.3}
+input[type=number],input[type=text],select,textarea{
+  font:inherit;font-size:14px;color:#000;background:#f2f2f7;border:0;border-radius:8px;padding:6px 9px}
+input[type=number]{width:66px;text-align:right}
+.unit{flex:0 0 28px;font-size:12.5px;color:#8a8a8e;margin-left:-2px}
+select{width:126px;padding:5px 6px}
+textarea{width:100%;min-height:200px;resize:vertical;background:#fff;font-size:13.5px;line-height:22px;padding:11px 13px}
+.bulkwrap{display:flex;background:#fff;border-radius:12px;overflow:hidden}
+#bulkno{flex:0 0 38px;padding:11px 7px 11px 0;font-size:12px;line-height:22px;color:#b0b0b8;
+  text-align:right;background:#f7f7f9;overflow:hidden;white-space:pre;user-select:none}
+.bulkwrap textarea{border-radius:0;padding-left:10px;white-space:pre;overflow-x:auto}
+input:focus,select:focus,textarea:focus{outline:2px solid #0a84ff;outline-offset:1px}
+.row input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;flex:0 0 auto;width:44px;height:26px;border-radius:13px;
+  background:#e4e4ea;position:relative;cursor:pointer;transition:background .18s;margin:0}
+.row input[type=checkbox]::after{
+  content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .18s}
+.row input[type=checkbox]:checked{background:#34c759}
+.row input[type=checkbox]:checked::after{transform:translateX(18px)}
+.btn{font:inherit;font-size:13.5px;letter-spacing:-.01em;padding:7px 14px;border:0;background:#fff;
+  border-radius:9px;cursor:pointer;color:#000;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.btn:hover{background:#f7f7f9}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{background:#9d2b24}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:flex;padding:2px;background:#e4e4ea;border-radius:9px;gap:2px}
+.seg button{flex:1;border:0;background:none;font:inherit;font-size:13px;padding:5px 12px;cursor:pointer;color:#3c3c43;border-radius:7px;white-space:nowrap}
+.seg button.on{background:#fff;color:#000;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.13)}
+#tabQ{color:#5b87c9}
+#tabK{color:#c47a9c}
+#tabQ.on{background:#d9e8ff;color:#0a58d0}
+#tabK.on{background:#ffdeeb;color:#bf2f6e}
+.note{font-size:12.5px;color:#8a8a8e;line-height:1.45;margin:8px 4px 0}
+.warn{background:#fff0ee;color:#8c241d;padding:10px 13px;font-size:13px;border-radius:11px;margin-bottom:16px;line-height:1.4}
+.kbd{display:inline-block;background:#f2f2f7;border-radius:5px;padding:1px 6px;font-size:11.5px;font-family:ui-monospace,Menlo,monospace}
+dl.keys{margin:0;font-size:13.5px;background:#fff;border-radius:12px;overflow:hidden}
+dl.keys div{display:flex;gap:10px;padding:9px 14px;border-bottom:.5px solid #e4e4ea;align-items:center}
+dl.keys div:last-child{border-bottom:none}
+dl.keys dt{flex:0 0 120px}
+dl.keys dd{margin:0;color:#8a8a8e}
+#fontlist{font-size:12.5px;color:#8a8a8e;margin-top:10px;line-height:1.9}
+#fontlist span{display:inline-block;background:#fff;border-radius:7px;padding:3px 9px;margin:0 5px 4px 0;color:#000}
+
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#toolbar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#f7f7f9;border-bottom:.5px solid #d3d3d9;flex-wrap:wrap}
+#toolbar .sep{width:1px;height:20px;background:var(--line);margin:0 3px}
+#toolbar .spacer{flex:1}
+#zoomval{font-size:12.5px;color:var(--muted);width:42px;text-align:center}
+#pagewarn{display:none;padding:9px 16px;background:#fff0ee;color:#8c241d;font-size:13px;line-height:1.4;border-bottom:.5px solid #f0d3cf}
+#pagewarn.on{display:block}
+.view{display:none}
+#regview,#mapview{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,
+  'Kaiti TC','Kaiti SC','KaiTi','BiauKai','標楷體','Noto Serif TC',serif}
+#regview input,#regview select,#mapview input,#mapview button{font-family:inherit}
+body.v-reg #regview{display:flex}
+body.v-map #mapview{display:flex}
+body.v-print #stage{display:flex}
+body:not(.v-print) #stage{display:none}
+.onlyreg,.onlymap,.onlyprint{display:none}
+body.v-map #maptools{display:flex;align-items:center;gap:7px;margin-left:10px}
+body.v-print #printtools{display:flex;align-items:center;gap:7px;margin-left:10px}
+.tg.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-block}
+#regview,#mapview{flex:1;overflow:hidden;flex-direction:column;padding:16px 20px 20px;gap:12px}
+
+/* bảng ghi danh */
+#regtable{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;
+  background:#fff;border-radius:12px;font-size:13.5px}
+#regtable th{position:relative}
+#regtable td,#regtable th{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.rz{position:absolute;top:0;right:-4px;width:9px;height:100%;cursor:col-resize;z-index:3}
+.rz:hover{background:rgba(10,132,255,.35)}
+#regtable th{background:#f2f2f7;color:#6b7280;font-weight:600;font-size:12px;text-transform:uppercase;
+  letter-spacing:.04em;padding:9px 8px;text-align:left;position:sticky;top:0;z-index:2}
+#reghead{flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
+#regscroll{flex:1;min-height:0;overflow:auto}
+#regtable td{padding:4px 6px;border-top:.5px solid #ecedf1;vertical-align:middle}
+#regtable tr.seated td{background:#f6fbf7}
+#regtable input[type=text],#regtable input[type=number],#regtable select{
+  width:100%;background:transparent;border:0;border-radius:6px;padding:5px 6px;font-size:13.5px}
+#regtable input:hover,#regtable select:hover{background:#f2f2f7}
+#regtable .idx{color:#a8b0ba;font-size:12px;text-align:right;width:34px}
+#regtable .seatcell input{text-align:center;font-weight:650;color:#0a58d0;background:#eef4ff}
+#regtable .phcell{display:flex;align-items:center;gap:6px}
+#regtable .phcell input[type=number]{width:56px;text-align:center;background:#f2f2f7}
+#regtable .seatcell input[type=number]{-moz-appearance:textfield;appearance:textfield}
+#regtable .seatcell input[type=number]::-webkit-outer-spin-button,
+#regtable .seatcell input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#regtable .del{border:0;background:none;color:#c0c6cd;cursor:pointer;font-size:16px;line-height:1;padding:2px 6px}
+#regtable .del:hover{color:var(--accent)}
+.regbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.regbar .count{font-size:13px;color:#8a8a8e}
+.quickbar{gap:6px;align-items:center}
+.fchip{border:0;background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;
+  color:#4b5563;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.fchip:hover{background:#f2f2f7}
+.fchip.on{background:var(--accent);color:#fff}
+.fchip.clear{background:#e9e9ee;color:#6b7280;margin-left:8px}
+.fsep{font-size:11.5px;color:#a8b0ba;text-transform:uppercase;letter-spacing:.04em;margin-left:8px}
+#regpaste{width:100%;min-height:132px;font-size:12.5px;line-height:1.55}
+
+/* sơ đồ chỗ ngồi */
+#mapwrap{display:flex;gap:18px;align-items:stretch;width:100%;flex:1;min-height:0}
+#maplist{flex:0 0 250px;background:#fff;border-radius:12px;padding:12px;overflow:auto;min-height:0}
+#maplist h4{margin:2px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#8a8a8e}
+.chip{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:7px 9px;margin-bottom:5px;
+  font:inherit;font-size:13px;cursor:grab;background:#f2f2f7}
+.chip.m{background:#e9f1ff;color:#0a4aa8}
+.chip.f{background:#ffeaf2;color:#a8265c}
+.chip.on{outline:2px solid var(--accent)}
+.chip.done{opacity:.5}
+.dragghost{position:fixed;left:-9999px;top:0;padding-top:20px;background:transparent;pointer-events:none}
+.dragghost span{display:inline-block;background:#1b2c3c;color:#fff;border-radius:8px;
+  padding:5px 12px;font-size:13.5px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.chip b{display:inline-block;min-width:20px;font-weight:700}
+#maplist{flex:0 0 250px}
+#mapsvgbox{flex:1;background:#fff;border-radius:12px;padding:14px;min-width:0}
+#seatsvg{flex:0 0 auto}
+#mapsvgbox{overflow:auto;min-height:0;display:flex;flex-direction:column}
+#seatsvg{display:block;margin:0 auto;width:auto}
+#seatsvg .seat{cursor:pointer}
+#seatsvg .seat.off{opacity:.3;cursor:not-allowed}
+#seatsvg .seat.drop rect{stroke-width:3}
+#seatsvg .gline:hover .hit{stroke:rgba(10,132,255,.2)}
+#seatsvg .gline:active .hit{stroke:rgba(10,132,255,.34)}
+#seatsvg .gline:hover line:not(.hit){stroke:#0a84ff}
+.mapnote{font-size:12.5px;color:#8a8a8e}
+#stage{flex:1;overflow:auto;padding:26px;display:flex;flex-direction:column;align-items:center;gap:22px}
+#sheetswrap{transform-origin:top center;display:none}
+body.split #sheetswrap{display:block}
+#sheets{display:flex;flex-direction:column;gap:22px;align-items:center}
+.sheet{position:relative;background:#fff;box-shadow:0 1px 3px rgba(20,40,60,.16),0 12px 32px rgba(20,40,60,.13)}
+.sheetinner{position:absolute;overflow:hidden}
+.sheetframe{position:absolute;left:0;top:0;right:0;bottom:0;border:.25mm dashed #b3bfc9;pointer-events:none}
+.sheettag{position:absolute;left:0;right:0;text-align:center;font-size:3.2mm;color:#9aa6b0}
+#pagewrap{transform-origin:top center}
+#page{position:relative;background:var(--paper);box-shadow:0 1px 3px rgba(20,40,60,.16),0 12px 32px rgba(20,40,60,.13);outline:none}
+
+.frame{position:absolute;border:.3mm solid #c9762a}
+.secline{position:absolute;width:0;border-left:.3mm solid #c9762a}
+.mline{position:absolute;border-top:.22mm dashed #8fa6ba;left:0;right:0}
+.vline{position:absolute;border-left:.22mm dashed #8fa6ba;top:0;bottom:0}
+
+.cell{position:absolute;overflow:hidden}
+.cell .ch{position:absolute;left:0;width:100%;text-align:center;line-height:1;transform:translateY(-50%);white-space:pre}
+.cell .ch.rot{transform:translateY(-50%) rotate(90deg)}
+.cell .line{position:absolute;left:50%;top:50%;white-space:nowrap;line-height:1}
+.cell.slot{cursor:cell}
+body.guides .cell.slot{outline:.12mm dashed #c6d1da;outline-offset:-.12mm}
+.cell.slot:hover{background:rgba(27,44,60,.05)}
+.cell.sel{box-shadow:inset 0 0 0 .4mm var(--accent)}
+.cell.cur{box-shadow:inset 0 0 0 .5mm #1b2c3c}
+body.fills .cell.hdr{background:var(--c-head)}
+body.fills .cell.num{background:var(--c-num)}
+body.fills .cell.name{background:var(--c-name)}
+body.fills .cell.mark{background:var(--c-mark)}
+body.fills .cell.stat{background:var(--c-stat);color:#fff}
+.cell.empty{background:repeating-linear-gradient(45deg,#f5f8fa 0 3px,#eaeff3 3px 6px)}
+
+.inline-edit{position:absolute;z-index:6;border:0;padding:0;margin:0;background:transparent;
+  color:transparent;caret-color:transparent;font-size:3mm;outline:none;cursor:text}
+.inline-edit::selection{background:transparent}
+.cell.editing{box-shadow:inset 0 0 0 .4mm #0a84ff}
+.cell.ph{opacity:.3}
+.cell .ch,.cell .line{z-index:1}
+.selrange{position:absolute;left:0;width:100%;background:rgba(10,132,255,.22);z-index:0}
+.caret{position:absolute;left:-.5mm;right:-.5mm;height:.4mm;background:#0a84ff;z-index:2;
+  animation:blink 1.05s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.gapline{position:absolute;left:0;right:0;height:3mm;margin-top:-1.5mm;cursor:row-resize;z-index:4}
+.gapline::before{content:'';position:absolute;left:0;right:0;top:1.5mm;border-top:.22mm dashed #8fa6ba}
+.gapline:hover{background:rgba(10,132,255,.2)}
+.gapline:active{background:rgba(10,132,255,.32)}
+.gapline:hover::before{border-top-color:#0a84ff}
+.mhandle{position:absolute;z-index:4}
+.mhandle.v{width:3.4mm;top:0;bottom:0;margin-left:-1.7mm;cursor:col-resize}
+.mhandle.h{height:3.4mm;left:0;right:0;margin-top:-1.7mm;cursor:row-resize}
+.mhandle:hover{background:rgba(10,132,255,.2)}
+.mhandle:active{background:rgba(10,132,255,.32)}
+#printarea{display:none;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,
+  'Kaiti TC','Kaiti SC','KaiTi','BiauKai','標楷體','Noto Serif TC',serif}
+.ptitle{font-size:14px;font-weight:700;margin:0 0 6px}
+.ptable{width:100%;border-collapse:collapse;font-size:10.5px}
+.ptable th,.ptable td{border:.3mm solid #aab2ba;padding:2.5px 5px;text-align:left}
+.ptable th{background:#eef0f3;font-weight:700}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);z-index:90;
+  background:var(--accent);color:#fff;padding:11px 20px;border-radius:12px;font-size:14px;font-weight:600;
+  box-shadow:0 8px 24px rgba(20,40,60,.28);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#marquee{position:absolute;border:1px solid var(--accent);background:rgba(181,50,42,.09);pointer-events:none;display:none}
+
+#pdfmask{position:fixed;inset:0;z-index:60;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
+#pdfmask.on{display:flex}
+#pdfbox{background:#fff;border-radius:16px;padding:22px 24px 18px;width:400px;box-shadow:0 20px 60px rgba(20,40,60,.3)}
+#pdfbox h3{margin:0 0 12px;font-size:19px;font-weight:650;letter-spacing:-.02em}
+#pdfbox ol{margin:0 0 14px;padding-left:20px;font-size:14px;line-height:1.65;color:#3c3c43}
+#pdfbox b{font-weight:600;color:#000}
+#pdfguides{display:flex;align-items:center;gap:10px;font-size:14px;background:#f2f2f7;border-radius:10px;padding:10px 13px;margin-bottom:16px;cursor:pointer}
+#pdfguides input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:44px;height:26px;border-radius:13px;background:#e4e4ea;position:relative;cursor:pointer;transition:background .18s;margin:0}
+#pdfguides input[type=checkbox]::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .18s}
+#pdfguides input[type=checkbox]:checked{background:#34c759}
+#pdfguides input[type=checkbox]:checked::after{transform:translateX(18px)}
+#pdfbox .btnrow{justify-content:flex-end}
+
+
+@media print{
+  #side,#toolbar,#topbar,#marquee,#pagewarn,#toast{display:none!important}
+  html body.pmode #regview,html body.pmode #mapview,html body.pmode #stage{display:none!important}
+  html body.pmode #printarea{display:block!important}
+  body.nopanel #side{display:none!important}
+  body.v-reg #stage,body.v-map #stage{display:none!important}
+  body.v-reg #regview{display:block!important;padding:0;overflow:visible}
+  #regscroll{overflow:visible!important;height:auto!important}
+  body.v-map #mapview{display:block!important;padding:0;overflow:visible}
+  #regpaste,#regpastebar,#maplist,.mapnote,.regbar .btn{display:none!important}
+  body.v-map #mapview{display:block!important;padding:0!important;overflow:visible!important;height:auto!important}
+  body.v-map #mapwrap{display:block!important;height:auto!important;min-height:0!important}
+  body.v-map #mapsvgbox{display:block!important;overflow:visible!important;padding:0!important;
+    background:none!important;border-radius:0;height:auto!important;max-height:none!important;flex:none!important}
+  body.v-map #seatsvg{margin:0 auto!important;max-width:none!important}
+  #regtable input,#regtable select{background:none!important}
+  #stage{gap:0!important}
+  body.split #pagewrap{display:none!important}
+  body.split #sheetswrap{display:block!important;transform:none!important}
+  body.split #sheets{gap:0}
+  .sheet{box-shadow:none;break-after:page;page-break-after:always}
+  .sheet:last-child{break-after:auto;page-break-after:auto}
+  .sheettag{display:none}
+  .inline-edit,.mhandle{display:none!important}
+  html,body{height:auto!important;overflow:visible!important;background:#fff}
+  #app{display:block!important;height:auto!important;overflow:visible!important}
+  #main{display:block!important;height:auto!important;overflow:visible!important}
+  #stage{padding:0!important;margin:0!important;overflow:visible!important;display:block!important;height:auto!important}
+  #pagewrap{transform:none!important;height:auto!important;width:auto!important;margin:0!important}
+  #page{box-shadow:none;margin:0;break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid}
+  .cell.sel,.cell.cur{box-shadow:none}
+  .cell.slot{outline:none!important;background:none!important}
+  .cell.empty{background:none}
+  .cell.ph{display:none}
+  .frame,.secline,.mline,.vline,.gapline{display:none}
+  body.printguides .frame,body.printguides .secline,
+  body.printguides .mline,body.printguides .vline{display:block}
+  #pdfmask{display:none!important}
+}
+</style>
+</head>
+<body class="guides v-reg">
+
+<div id="topbar">
+  <button class="btn" id="bPanel" title="Ẩn hoặc hiện panel">☰</button>
+  <div class="seg" id="viewseg">
+    <button data-view="reg" class="on">Ghi danh</button>
+    <button data-view="map">Sơ đồ</button>
+    <button data-view="print">清書表格</button>
+  </div>
+  <span class="spacer"></span>
+  <select id="lang"><option value="vi">Tiếng Việt</option><option value="zh">繁體中文</option></select>
+</div>
+
+<div id="app">
+
+<aside id="side">
+  <div id="tabs">
+    <button data-p="p-reg" data-view="reg" class="on">Danh sách</button>
+    <button data-p="p-room" data-view="map">Phòng</button>
+    <button data-p="p-page" data-view="print">Trang</button>
+    <button data-p="p-head" data-view="print">Tiêu đề</button>
+    <button data-p="p-font" data-view="print">Chữ</button>
+  </div>
+  <div id="panels">
+
+    <section class="pane on" id="p-page">
+      <div id="warnbox"></div>
+      <div class="grp">
+        <h2>Khổ giấy</h2>
+        <div class="row"><label>Kích thước</label>
+          <select id="paper">
+            <option value="353x250">B4 ngang</option>
+            <option value="250x176">B5 ngang</option>
+            <option value="297x210">A4 ngang</option>
+            <option value="420x297">A3 ngang</option>
+            <option value="custom">Tự nhập</option>
+          </select></div>
+        <div class="row" id="customsize" style="display:none">
+          <label>Rộng × cao (mm)</label>
+          <input type="number" id="pw" min="80" max="900" step="1">
+          <input type="number" id="ph" min="80" max="900" step="1"><span class="unit">mm</span>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>Lề</h2>
+        <div class="row"><label>Lề trên</label>
+          <input type="number" id="marginTop" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Lề dưới</label>
+          <input type="number" id="marginBottom" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Lề trái</label>
+          <input type="number" id="marginLeft" min="0" max="12" step="2"><span class="unit">cột</span></div>
+        <div class="row"><label>Lề phải</label>
+          <input type="number" id="marginRight" min="0" max="12" step="2"><span class="unit">cột</span></div>
+      </div>
+
+      <div class="grp">
+        <h2>Khoảng chừa</h2>
+        <div class="row"><label>Giữa các cột</label>
+          <input type="number" id="colGapPct" min="0" max="40" step="1"><span class="unit">%</span></div>
+        <div class="row"><label>Thêm ở nếp gấp</label>
+          <input type="number" id="foldPad" min="0" max="10" step=".1"><span class="unit">mm</span></div>
+      </div>
+
+      <div class="grp">
+        <h2>Khoảng cách hàng</h2>
+        <div class="row"><label>Giữa các hàng cùng nhóm</label><input type="number" id="gapIn" min="0" max="6" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Giữa nhóm nam và nhóm nữ</label><input type="number" id="gapOut" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
+      </div>
+
+      <div class="grp">
+        <h2>Ô tên</h2>
+        <div class="row"><label>Chiều cao ô tên</label>
+          <div class="seg" style="flex:0 0 140px"><button id="nhAuto">Tự động</button><button id="nhMan" class="on">Tự đặt</button></div></div>
+        <div class="row"><label>Chiều cao ô tên</label><input type="number" id="nameH" min="2" max="9" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Chỗ trống thừa dồn về</label>
+          <div class="seg" style="flex:0 0 174px">
+            <button data-va="top" class="on">Dưới</button><button data-va="spread">Giữa hàng</button>
+          </div></div>
+        <div class="row"><label>Cân đối số người mỗi hàng</label><input type="checkbox" id="balance" checked></div>
+      </div>
+
+      <div class="grp">
+        <h2>Hiển thị khi soạn</h2>
+        <div class="row"><label>Tô màu ô theo loại</label><input type="checkbox" id="fills"></div>
+        <div class="row"><label>Hiện ô trống còn thừa</label><input type="checkbox" id="showEmpty"></div>
+      </div>
+    </section>
+
+    <section class="pane on" id="p-reg">
+      <div class="grp">
+        <h2>Nhập dữ liệu</h2>
+        <textarea id="regpaste" spellcheck="false" wrap="off"></textarea>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" id="bRegImport">Nạp vào danh sách</button>
+          <button class="btn" id="bRegReplace">Thay mới</button>
+        </div>
+        <p class="note" id="regpastenote"></p>
+      </div>
+      <div class="grp">
+        <h2>Danh sách</h2>
+        <div class="row"><label>Thêm một dòng trống</label><button class="btn" id="bRegAdd" style="flex:0 0 auto">Thêm dòng</button></div>
+        <div class="row"><label>Xuất ra Excel</label><button class="btn" id="bRegXls" style="flex:0 0 auto">Xuất Excel</button></div>
+        <div class="row"><label>Xoá toàn bộ</label><button class="btn" id="bRegClear" style="flex:0 0 auto">Xoá hết</button></div>
+      </div>
+    </section>
+
+    <section class="pane" id="p-room">
+      <div class="grp">
+        <h2>Xếp chỗ</h2>
+        <div class="row"><label>Xếp hết người chưa có số</label><button class="btn" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
+        <div class="row"><label>Bỏ số của mọi người</label><button class="btn" id="bMapClear" style="flex:0 0 auto">Bỏ hết</button></div>
+        <div class="row"><label>In kèm 佛台 và 講台</label><input type="checkbox" id="printStage" checked></div>
+      </div>
+      <div class="grp">
+        <h2>Nhập tay</h2>
+        <div class="row"><label>Nam · số cột</label><input type="number" id="mCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nam · số hàng</label><input type="number" id="mRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+        <div class="row"><label>Nữ · số cột</label><input type="number" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nữ · số hàng</label><input type="number" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+      </div>
+
+      <div class="grp">
+        <h2>Số ghế</h2>
+        <div class="row"><label>Ghế nam</label><input type="number" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Ghế nữ</label><input type="number" id="seatF" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Lấy theo danh sách ghi danh</label><button class="btn" id="bSeatAuto" style="flex:0 0 auto">Áp dụng</button></div>
+      </div>
+      <div class="grp">
+        <h2>Kích thước phòng</h2>
+        <div class="row"><label>Chiều ngang phòng</label><input type="number" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Chiều dài phòng</label><input type="number" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Chiều dài sân khấu</label><input type="number" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường trái</label><input type="number" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường phải</label><input type="number" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường sau</label><input type="number" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
+      </div>
+      <div class="grp">
+        <h2>Ghế và lối đi</h2>
+        <div class="row"><label>Ngang ghế</label><input type="number" id="chairWidth" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Sâu ghế</label><input type="number" id="chairLength" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách ngang</label><input type="number" id="gapHorizontal" min="0" max="60" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách dọc</label><input type="number" id="gapVertical" min="0" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi giữa</label><input type="number" id="centralAisle" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi phụ</label><input type="number" id="subAisle" min="0" max="200" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Số ghế rồi mới chia lối phụ</label><input type="number" id="maxSeatsBeforeSubAisle" min="2" max="30" step="1"><span class="unit">ghế</span></div>
+      </div>
+    </section>
+
+    <section class="pane" id="p-font">
+      <div class="grp">
+        <h2>Font</h2>
+        <div class="row"><label>Chữ Hán</label><select id="fontZh"></select></div>
+        <div class="row"><label>Chữ Việt</label><select id="fontVi"></select></div>
+        <div class="row"><label>Chiều cao chữ Việt</label>
+          <input type="number" id="viPct" min="20" max="100" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="grp">
+        <h2>Nạp font riêng</h2>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" id="bFont">Chọn tệp font</button>
+          <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" multiple hidden>
+        </div>
+        <div id="fontlist"></div>
+      </div>
+    </section>
+
+    <section class="pane" id="p-head">
+      <div class="grp">
+        <h2>Số cột từng khoảng</h2>
+        <div class="row"><label>Số cột khoảng 1</label>
+          <select id="cps1" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+        <div class="row"><label>Số cột khoảng 2</label>
+          <select id="cps2" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+        <div class="row"><label>Số cột khoảng 3, 4, 5</label>
+          <select id="cps" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+      </div>
+
+      <div class="grp">
+        <h2>Cột tiêu đề</h2>
+        <div class="row"><label>Tổng số cột tiêu đề</label>
+          <input type="number" id="headerCols" min="2" max="42" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Thụt nửa chữ từ cột<br><span style="font-size:12px;color:#8a8a8e">0 là không cột nào thụt</span></label>
+          <input type="number" id="indentFrom" min="0" max="42" step="1"></div>
+      </div>
+      <div class="grp">
+        <h2>Nội dung từng cột</h2>
+        <div id="headlist"></div>
+      </div>
+    </section>
+
+
+
+  </div>
+</aside>
+
+<main id="main">
+  <div id="toolbar">
+    <div id="maptools" class="onlymap"></div>
+    <div id="printtools" class="onlyprint">
+      <button class="btn tg" id="tgGuides">Lề viền</button>
+      <button class="btn tg" id="tgFold">Khung vạch</button>
+      <button class="btn tg" id="tgSplit">Chia đôi trang</button>
+      <select id="sheetSize">
+        <option value="210x297">A4 dọc</option>
+        <option value="297x210">A4 ngang</option>
+        <option value="176x250">B5 dọc</option>
+        <option value="250x176">B5 ngang</option>
+      </select>
+    </div>
+    <span class="spacer"></span>
+    <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
+    <button class="btn onlyprint" id="bFit">Vừa khung</button>
+    <span class="sep"></span>
+    <button class="btn" id="bSave">Lưu .json</button>
+    <button class="btn" id="bOpen">Mở .json</button>
+    <button class="btn" id="bPrint">In</button>
+    <button class="btn primary" id="bPdf">Lưu PDF</button>
+    <input type="file" id="fileIn" accept=".json" hidden>
+  </div>
+
+  <div id="pagewarn"></div>
+
+  <div id="printarea"></div>
+  <div id="regview" class="view"></div>
+  <div id="mapview" class="view"></div>
+
+  <div id="stage" class="view">
+    <div id="pagewrap"><div id="page" tabindex="0"></div></div>
+    <div id="sheetswrap"><div id="sheets"></div></div>
+  </div>
+
+</main>
+</div>
+
+<div id="pdfmask"><div id="pdfbox">
+  <h3>Lưu thành PDF</h3>
+  <ol>
+    <li>Ở mục Máy in, chọn Save as PDF hoặc Microsoft Print to PDF.</li>
+    <li id="pdfsizeline">Khổ giấy để <b id="pdfsize"></b></li>
+    <li>Tỉ lệ đặt 100%, bỏ chọn Headers and footers.</li>
+    <li>Đừng bật tuỳ chọn in dưới dạng hình ảnh, để chữ giữ nguyên dạng vector.</li>
+  </ol>
+  <label id="pdfguides"><input type="checkbox" id="printGuides"><span>In kèm đường dựng hình</span></label>
+  <div class="btnrow">
+    <button class="btn" id="pdfCancel">Bỏ</button>
+    <button class="btn primary" id="pdfGo">Mở hộp thoại in</button>
+  </div>
+</div></div>
+
+
+<script>
+"use strict";
+const MM = 96/25.4;
+const mc = document.createElement('canvas').getContext('2d');
+const $ = s => document.querySelector(s);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+
+const BUILTIN_ZH = [
+  ["明體","'Noto Serif TC','Noto Serif SC','Songti TC','Songti SC','SimSun','MS Mincho',serif"],
+  ["楷體","'Kaiti TC','Kaiti SC','KaiTi','BiauKai','標楷體','Noto Serif TC',serif"],
+  ["黑體","'PingFang TC','Microsoft JhengHei','Noto Sans TC','Noto Sans SC',sans-serif"]
+];
+const BUILTIN_VI = [
+  ["Arial","Arial, Helvetica, sans-serif"],
+  ["Times New Roman","'Times New Roman', Times, serif"],
+  ["Tahoma","Tahoma, Verdana, sans-serif"]
+];
+const userFonts = [];
+
+const S = {
+  pw:353, ph:250, framePad:0,
+  cps:7, cps1:7, cps2:7, foldPad:0.8, marginRight:2, marginLeft:2, marginTop:2.2, marginBottom:1.1,
+  headerCols:8, indentFrom:5,
+  numH:1, autoNameH:false, nameH:3.6,
+  fontZh:BUILTIN_ZH[1][1], fontVi:BUILTIN_VI[0][1], viPct:50,
+  balance:true, vAlign:'top', gapIn:0.6, gapOut:1.8, colGapPct:12,
+  lang:'vi',
+  splitPrint:false, sheetW:210, sheetH:297,
+  guides:true, foldLines:true, printGuides:false, fills:false, showEmpty:false,
+  header:[], qian:[], kun:[]
+};
+
+const parsePeople = t => {                 // mỗi dòng là một người, kể cả dòng để trắng
+  if(t==='') return [];
+  return t.split(/\r?\n/).map(l=>({n:l.trim()}));
+};
+S.seats={m:20,f:40};
+S.room={roomWidth:600,roomLength:1200,stageLength:300,wallMarginLeft:50,
+        chairWidth:50,chairLength:50,gapHorizontal:5,gapVertical:40,
+        wallMarginRight:0,wallMarginBottom:100,centralAisle:80,subAisle:20,maxSeatsBeforeSubAisle:5};
+S.grid={mRows:0,mCols:0,fRows:0,fCols:0};
+S.mapGuides=true;
+S.nameAuto=true; S.regSort=null;
+S.colW={idx:34,seat:82,name:280,sex:112,gvcn:140,interp:120,doc:120,ph:112,del:34};
+S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.regQuick=[];
+S.people=[];
+S.qian=[]; S.kun=[];
+const PH=["時間","地點"];
+S.header = ["",""];
+while(S.header.length<S.headerCols) S.header.push("");
+
+/* --------------------------------------------------------- ngôn ngữ */
+const I18N={
+ 'Tiêu đề · Danh sách nam nữ · Thống kê':'表頭 · 乾坤名冊 · 共計',
+ 'Trang':'頁面','Tiêu đề':'表頭','Chữ':'字體','Phòng':'場地',
+ 'Ghi danh':'報名','Sơ đồ':'座位圖',
+ 'Xếp chỗ':'排位','In kèm 佛台 và 講台':'列印時含佛台與講台','Toàn cảnh':'全場','Vùng ghế':'座位區','Xếp hết người chưa có số':'替未掛號者排位','Xếp tự động':'自動排位','Bỏ số của mọi người':'清除全部座號','Bỏ hết':'全部清除',
+ 'Dán từ Excel':'從 Excel 貼上','Thêm một dòng trống':'新增空白列','Xuất ra Excel':'匯出 Excel','Xuất Excel':'匯出 Excel','Xoá toàn bộ':'清空名單','Xoá hết':'清空',
+ 'Lọc':'篩選','Hiện':'顯示','Tất cả':'全部','Chưa có số':'未掛號','Đã có số':'已掛號','Tìm tên':'搜尋姓名',
+ 'Dán danh sách':'貼上名單','Thêm dòng':'新增一列',
+ 'Xếp tự động':'自動排位','Bỏ hết số ghế':'清除座號',
+ 'Số ghế':'座位數','Ghế nam':'乾位','Ghế nữ':'坤位','Lấy theo danh sách ghi danh':'依名單設定','Áp dụng':'套用',
+ 'Kích thước phòng':'場地尺寸','Nhập tay':'手動設定','Nam · số cột':'乾 · 欄數','Nam · số hàng':'乾 · 排數','Nữ · số cột':'坤 · 欄數','Nữ · số hàng':'坤 · 排數','Lề tường phải':'右牆留白','Lề tường sau':'後牆留白','hàng':'排','Đường chỉnh':'調整線','Chiều ngang phòng':'場地寬','Chiều dài phòng':'場地長',
+ 'Chiều dài sân khấu':'舞台長','Lề tường trái':'左牆留白',
+ 'Ghế và lối đi':'座椅與走道','Ngang ghế':'椅寬','Sâu ghế':'椅深',
+ 'Cách ngang':'橫向間距','Cách dọc':'縱向間距','Lối đi giữa':'中央走道','Lối đi phụ':'次走道',
+ 'Số ghế rồi mới chia lối phụ':'幾張後設次走道','cm':'公分','ghế':'位',
+ 'Khổ giấy':'紙張','Lề':'邊界','Khoảng chừa':'留白','Khoảng cách hàng':'行距',
+ 'Ô tên':'姓名格','In trên khổ nhỏ':'分張列印','Hiển thị khi soạn':'編輯時顯示',
+ 'Số cột từng khoảng':'各段欄數','Cột tiêu đề':'表頭欄','Nội dung từng cột':'各欄內容',
+ 'Font':'字型','Nạp font riêng':'載入字型','Nhập danh sách':'輸入名冊',
+ 'Sửa nhanh trên trang':'直接在頁面上修改',
+ 'Kích thước':'尺寸','Rộng × cao':'寬 × 高',
+ 'Lề trên':'上邊界','Lề dưới':'下邊界','Lề trái':'左邊界','Lề phải':'右邊界',
+ 'Giữa các cột':'欄與欄之間','Thêm ở nếp gấp':'摺線兩側加留',
+ 'Giữa các hàng cùng nhóm':'同組行間','Giữa nhóm nam và nhóm nữ':'乾組與坤組之間',
+ 'Chiều cao ô tên':'姓名格高','Chỗ trống thừa dồn về':'多餘空間置於',
+ 'Cân đối số người mỗi hàng':'各行人數均衡','Chia đôi trang khi in':'列印時分成兩張',
+ 'Khổ mỗi tờ':'每張紙尺寸','Lề viền':'邊界格線','Khung vạch':'紙框摺線','Chia đôi trang':'分兩張',
+ 'Tô màu ô theo loại':'依類別著色','Hiện ô trống còn thừa':'顯示多餘空格',
+ 'Số cột khoảng 1':'第一段欄數','Số cột khoảng 2':'第二段欄數','Số cột khoảng 3, 4, 5':'第三至五段欄數',
+ 'Tổng số cột tiêu đề':'表頭總欄數','Thụt nửa chữ từ cột':'自第幾欄起降半字',
+ 'Chữ Hán':'漢字','Chữ Việt':'越南文','Chiều cao chữ Việt':'越南文字高',
+ 'chữ':'字','cột':'欄','mm':'公釐',
+ 'Tự động':'自動','Tự đặt':'自訂','Dưới':'下方','Giữa hàng':'行間','NAM':'乾','NỮ':'坤',
+ 'Chép':'複製','Cắt':'剪下','Dán':'貼上','Xóa nội dung':'清除內容',
+ 'Chèn người':'插入一人','Bỏ người':'刪除一人','Hoàn tác':'復原','Vừa khung':'符合視窗',
+ 'Lưu .json':'儲存 .json','Mở .json':'開啟 .json','In':'列印','Lưu PDF':'存成 PDF',
+ 'Chọn tệp font':'選擇字型檔','Bỏ':'取消','Mở hộp thoại in':'開啟列印視窗',
+ 'Lưu thành PDF':'存成 PDF',
+ 'Ở mục Máy in, chọn Save as PDF hoặc Microsoft Print to PDF.':'印表機請選 Save as PDF 或 Microsoft Print to PDF。',
+ 'Tỉ lệ đặt 100%, bỏ chọn Headers and footers.':'縮放設為 100%，取消頁首頁尾。',
+ 'Đừng bật tuỳ chọn in dưới dạng hình ảnh, để chữ giữ nguyên dạng vector.':'請勿選擇以圖片列印，字才會保持向量。',
+ 'In kèm đường dựng hình':'一併列印輔助線',
+ 'B4 ngang':'B4 橫式','A4 ngang':'A4 橫式','A3 ngang':'A3 橫式','B5 ngang':'B5 橫式',
+ 'A4 dọc':'A4 直式','B5 dọc':'B5 直式','Tự nhập':'自訂',
+ 'Chưa nạp font nào.':'尚未載入字型。',
+ 'Mỗi dòng một tên, chữ Hán hoặc tiếng Việt đều được. Dán thẳng từ Excel cũng chạy.':
+   '每行一個姓名，漢字或越南文皆可，可直接從 Excel 貼上。',
+ 'Bấm một ô rồi gõ, hoặc nhấn Enter để mở ô nhập. Kéo chuột chọn nhiều ô rồi cắt, chép, dán như bảng tính.':
+   '點一格即可輸入，或按 Enter 進入編輯。拖曳可選多格，剪下、複製、貼上如同試算表。',
+ 'Click':'點擊','Kéo chuột':'拖曳','Chọn một ô':'選取一格','Chọn vùng':'選取範圍',
+ 'Chọn đến ô này':'選到這一格','Thêm hoặc bỏ một ô':'加選或取消一格',
+ 'Mũi tên':'方向鍵','Di chuyển ô hiện hành':'移動游標格',
+ 'Mở ô nhập':'進入編輯','Gõ chữ':'直接輸入','Nhập đè lên ô đang chọn':'覆寫選取格',
+ 'Chép, cắt, dán':'複製、剪下、貼上','Xóa nội dung ô đã chọn':'清除選取格內容',
+ 'Chọn tất cả ô nhập được':'選取全部可編輯格'
+};
+function L(t){ return (S.lang==='zh' && I18N[t]) ? I18N[t] : t; }
+const TRANS_SEL='#tabs button,.grp>h2,.row>label,.unit,.seg button,#toolbar .btn,'+
+  '#pdfbox h3,#pdfbox li,#pdfbox .btn,#pdfguides span,#paper option,#sheetSize option,dl.keys dt,dl.keys dd,.note';
+function applyLang(){
+  document.querySelectorAll(TRANS_SEL).forEach(el=>{
+    if(el.children.length) return;
+    if(el.closest('#headlist')||el.closest('#lang')) return;
+    if(el.dataset.vi===undefined) el.dataset.vi=el.textContent.trim();
+    el.textContent=L(el.dataset.vi);
+  });
+  $('#lang').value=S.lang;
+  buildHeadList(); syncBulk(); render(); renderMap(); setView(S.view);
+}
+
+/* ------------------------------------------------------------ số 大寫 */
+const DA = ['零','壹','貳','參','肆','伍','陸','柒','捌','玖'];
+function daxie(n){
+  n = Math.max(0, Math.floor(n));
+  if(n===0) return '零';
+  if(n<10) return DA[n];
+  if(n<100){ const t=Math.floor(n/10), u=n%10; return DA[t]+'拾'+(u?DA[u]:''); }
+  if(n<1000){ const h=Math.floor(n/100), r=n%100;
+    return DA[h]+'佰'+(r===0?'':(r<10?'零'+DA[r]:daxie(r))); }
+  if(n<10000){ const k=Math.floor(n/1000), r=n%1000;
+    return DA[k]+'仟'+(r===0?'':(r<100?'零'+daxie(r):daxie(r))); }
+  return String(n);
+}
+
+
+/* ------------------------------------------------------------- hình học */
+function colList(){
+  const Sw=S.pw/5, arr=[];
+  let right=S.pw;
+  for(let sec=0;sec<5;sec++){
+    const nc=Math.max(1, sec===0?(+S.cps1||7) : sec===1?(+S.cps2||7) : (+S.cps||7)), w=Sw/nc;
+    for(let k=0;k<nc;k++) arr.push({x:right-(k+1)*w, w, sec:sec+1});
+    right-=Sw;
+  }
+  return arr;                                   // chỉ số 0 là cột ngoài cùng bên phải
+}
+function geom(){
+  const C=colList(), total=C.length;
+  const hCols=clamp(+S.headerCols||2,2,60);
+  const first=Math.min(S.marginRight,total);    // bỏ qua lề phải
+  const lastUse=Math.max(first,total-S.marginLeft);
+  const hIdx=[];
+  for(let i=0;i<hCols;i++){ const j=first+i; if(j<lastUse) hIdx.push(j); }
+  const rStart = hIdx.length ? hIdx[hIdx.length-1]+1 : first;
+  const rIdx=[];
+  for(let j=rStart;j<lastUse;j++) rIdx.push(j);
+  const U=(C[rIdx[0]]||C[first]||C[0]||{w:S.pw/35}).w;   // đơn vị chữ theo cột danh sách
+  const cTop=S.marginTop*U, cBot=S.ph-S.marginBottom*U;
+  return {C,total,hCols,hIdx,rIdx,rcols:rIdx.length,U,cTop,cBot,cH:cBot-cTop,
+    hRightX:(C[first]?C[first].x+C[first].w:S.pw),
+    rRightX:(C[rStart]?C[rStart].x+C[rStart].w:0),
+    rLeftX:(C[lastUse-1]?C[lastUse-1].x:0),
+    missing:hCols-hIdx.length};
+}
+
+function secHead(C,i){                            // chỉ số cột phải cùng của khoảng chứa cột i
+  const sec=C[i].sec; let k=i;
+  while(k>0 && C[k-1].sec===sec) k--;
+  return k;
+}
+function bandPlan(g){
+  const cap=g.rcols-1;                          // hàng nào cũng bắt đầu từ cột thứ hai
+  const nQ=Math.max(1,Math.ceil(S.qian.length/cap));
+  const nK=Math.max(1,Math.ceil(S.kun.length/cap));
+  const need=Math.min(cap, Math.max(1, Math.ceil(S.qian.length/nQ), Math.ceil(S.kun.length/nK)));
+  let perRow = S.balance ? need : cap;          // bề ngang chung của mọi hàng
+
+  // khoảng trái cùng mà khối tên chạm tới cũng phải dùng số cột lẻ
+  const oddTail=pr=>{
+    const end=g.rIdx[pr]; if(end===undefined) return false;
+    const start=g.rIdx[0];
+    return (end-Math.max(start,secHead(g.C,end))+1)%2===1;
+  };
+  // ưu tiên bề ngang cho phép ba cột thống kê ở lại hàng 坤 cuối, đỡ tốn một hàng
+  const roomForStat=pr=>{
+    const sp=clamp(pr,3,cap);
+    return Math.max(0,S.kun.length-(nK-1)*pr) <= sp-4;
+  };
+  let pick=null;
+  for(let pr=perRow;pr<=cap;pr++) if(oddTail(pr)&&roomForStat(pr)){pick=pr;break;}
+  if(pick===null && !oddTail(perRow)){
+    for(let pr=perRow-1;pr>=need;pr--) if(oddTail(pr)){pick=pr;break;}
+    if(pick===null) for(let pr=perRow+1;pr<=cap;pr++) if(oddTail(pr)){pick=pr;break;}
+  }
+  if(pick!==null) perRow=pick;
+  const statP=clamp(perRow,3,cap);              // 共計 nằm ở mép trái của khối tên
+  const lastFill=Math.max(0,S.kun.length-(nK-1)*perRow);
+  const sameRow=lastFill<=statP-4;              // chừa thêm một cột trắng giữa tên cuối và khối thống kê
+  const endI=g.rIdx[perRow], startI=g.rIdx[0];
+  const tailUsed = endI===undefined ? 0
+    : endI-Math.max(startI,secHead(g.C,endI))+1;
+  return {cap,perRow,statP,sameRow,nQ,nK,tailUsed,n:nQ+nK+(sameRow?0:1)};
+}
+function vmetrics(g,b,minName){
+  const cHu=g.cH/g.U-0.5;                       // danh sách thụt xuống nửa chữ
+  const gaps0=(b.n-1)*S.gapIn+((b.n>1)?(S.gapOut-S.gapIn):0);
+  let nameH=S.autoNameH?clamp(((cHu-gaps0)/b.n)-S.numH,2.2,6):S.nameH;
+  if(minName) nameH=Math.max(nameH,minName);    // đủ chỗ cho số và chữ 眾 ở cỡ chữ chuẩn
+  const need=b.n*(S.numH+nameH)+gaps0;
+  const k=need>cHu?cHu/need:1;                  // ép lại cho nằm gọn trong khung lề
+  const numH=S.numH*k, gapIn=S.gapIn*k, gapOut=S.gapOut*k;
+  nameH*=k;
+  const bandH=numH+nameH, gaps=gaps0*k;
+  const extra=cHu-(b.n*bandH+gaps);
+  const nGaps=b.n-1, ex=Math.max(0,extra);
+  let add=0, offset=0;
+  if(S.vAlign==='spread' && nGaps>0) add=ex/nGaps;
+  return {nameH,numH,bandH,gapIn,gapOut,add,offset,squeezed:k<0.999};
+}
+
+function tooTight(cps){                         // thử một số cột khác xem có vừa khung lề không
+  const old=S.cps; S.cps=cps;
+  let bad=true;
+  try{
+    const g=geom();
+    if(g.rcols>=5){ const b=bandPlan(g); bad = vmetrics(g,b).squeezed || g.missing>0; }
+  }catch(e){}
+  S.cps=old;
+  return bad;
+}
+function buildCells(){
+  const g=geom();
+  if(g.rcols<5) return {g,cells:[],err:'Không đủ chỗ cho danh sách. Giảm số cột tiêu đề hoặc tăng số cột trong các khoảng.'};
+  const b=bandPlan(g);
+  const RAW=[S.qian.length,S.kun.length,S.qian.length+S.kun.length].map(daxie);
+  const nNum=Math.max(...RAW.map(t=>[...t].length));
+  const STAT=RAW.map(t=>{                       // chèn ô trống vào giữa cho ba cột thẳng hàng
+    const c=[...t]; let i=Math.ceil(c.length/2);
+    while(c.length<nNum){ c.splice(i,0,' '); i++; }
+    return c.join('');
+  });
+  const statBand=b.nQ+b.nK-(b.sameRow?1:0);
+  const v=vmetrics(g,b,nNum+1.5);
+  const U=g.U, cells=[];
+
+  for(let i=0;i<g.hIdx.length;i++){
+    const c=g.C[g.hIdx[i]];
+    const top=g.cTop+((S.indentFrom>0 && (i+1)>=S.indentFrom)?0.5*c.w:0);
+    const val=S.header[i]||'';
+    const ph=(!val && i<2);                    // chưa nhập thì hiện chữ gợi ý, xếp sát nhau
+    cells.push({t:'hdr',slot:'h'+i,x:c.x,y:top,w:c.w,h:g.cBot-top,
+                text: ph?PH[i]:val, ph, just: i<2 && !!val});
+  }
+
+  const ys=[]; let y=g.cTop+(0.5+v.offset)*U;
+  for(let i=0;i<b.n;i++){
+    ys.push(y); y+=v.bandH*U;
+    if(i<b.n-1){
+      let gp=(i===b.nQ-1?v.gapOut:v.gapIn)+v.add;
+      if(i+1===statBand) gp=Math.max(gp, v.numH+0.35);   // chỗ cho nhãn nhô lên
+      y+=gp*U;
+    }
+  }
+  const col=p=>g.C[g.rIdx[p]];
+
+  function group(key,label,list,bStart,nB){
+    let idx=0,lastP=0;
+    for(let bi=0;bi<nB;bi++){
+      for(let p=0;p<=b.perRow;p++){
+        const c=col(p), y0=ys[bStart+bi];
+        if(p===0){
+          if(bi===0) cells.push({t:'mark',x:c.x,y:y0,w:c.w,h:v.numH*U,text:label});
+          continue;                             // xuống hàng thì thụt vào một cột
+        }
+        if(idx<list.length){
+          const nn=idx+1;                    // mỗi nhóm đánh số lại từ 1
+          cells.push({t:'num',x:c.x,y:y0,w:c.w,h:v.numH*U,text:String(nn)});
+          cells.push({t:'name',slot:key+idx,x:c.x,y:y0+v.numH*U,w:c.w,h:v.nameH*U,text:list[idx].n||''});
+          lastP=p; idx++;
+        } else if(S.showEmpty && !(key==='k' && bi===nB-1 && b.sameRow && p>b.statP-3)){
+          cells.push({t:'empty',x:c.x,y:y0,w:c.w,h:(v.numH+v.nameH)*U});
+        }
+      }
+    }
+    return lastP;
+  }
+  group('q','乾',S.qian,0,b.nQ);
+  group('k','坤',S.kun,b.nQ,b.nK);
+
+  // thống kê: cột 共計 thẳng mép trái khối tên, nằm luôn hàng 坤 cuối nếu còn chỗ
+  const sp=b.statP;
+  const labs=['乾','坤','共計'];
+  const raw=[S.qian.length,S.kun.length,S.qian.length+S.kun.length];
+  const bi0=b.nQ+b.nK-(b.sameRow?1:0);
+  const y0=ys[bi0];
+  // ba khúc: nhãn kèm dấu ：, số rải đều, chữ 眾. Mỗi ô chữ đúng một đơn vị nên
+  // cỡ chữ thống kê bằng cỡ chữ tiêu đề và danh sách.
+  // nhãn nhô lên trên một ô, dấu ： ngang hàng số thứ tự, 眾 sát đáy ô tên, mọi chữ cùng cỡ
+  const lH=v.numH*U, zH=1*U, mH=(v.nameH-1)*U;
+  for(let i=0;i<3;i++){
+    const c=col(sp-2+i);
+    cells.push({t:'stat',x:c.x,y:y0-lH/2,     w:c.w,h:lH,text:labs[i],squash:[...labs[i]].length>1});
+    cells.push({t:'stat',x:c.x,y:y0+lH/2,     w:c.w,h:c.w,text:'：'});         // ô vuông, hạ nửa ô
+    cells.push({t:'stat',x:c.x,y:y0+lH*1.5,    w:c.w,h:mH-lH/2,text:STAT[i],flow:true,
+                unit:Math.min(U,(mH-lH/2)/nNum)});   // bước chung để ba cột thẳng hàng
+    cells.push({t:'stat',x:c.x,y:y0+lH+mH,    w:c.w,h:zH,text:'眾'});
+  }
+
+  let err='';
+  if(v.squeezed||g.missing>0){
+    const ok=[5,7,9].filter(c=>c!==+S.cps && !tooTight(c));
+    const goi = ok.length ? `Hãy chọn ${ok.join(' hoặc ')} cột mỗi khoảng.`
+                          : 'Hãy bớt người, bớt cột tiêu đề, hoặc đổi khổ giấy lớn hơn.';
+    err = (g.missing>0 ? `Thiếu chỗ cho ${g.missing} cột tiêu đề. ` : 'Chữ không vừa khung lề nên đã bị ép nhỏ lại. ') + goi;
+  }
+  return {g,b,v,ys,cells,err};
+}
+
+/* ------------------------------------------------------------------ vẽ */
+const page=$('#page'), pagewrap=$('#pagewrap');
+let LAST=null, zoom=1;
+
+const isViet = t => /[A-Za-z]/.test(t||'');
+const isLatinCh = c => /[A-Za-z\u00C0-\u1EF9]/.test(c);
+function measureF(t,fsMm,family){ mc.font=(fsMm*MM)+'px '+family; return mc.measureText(t).width/MM; }
+
+/* canh đều hai đầu rồi rải đều */
+/* tách chuỗi thành khúc: mỗi chữ Hán một khúc, mỗi cụm chữ Việt liền nhau một khúc */
+function tokenize(text){
+  const out=[]; let buf='';
+  for(const ch of [...(text||'')]){
+    if(isLatinCh(ch) || (buf && /[\s'’.,\-]/.test(ch))) buf+=ch;
+    else { if(buf){out.push({t:'vi',s:buf}); buf='';} out.push({t:'cjk',s:ch}); }
+  }
+  if(buf) out.push({t:'vi',s:buf});
+  return out;
+}
+
+/* xếp chữ theo chiều dọc: chữ Hán dựng đứng, cụm chữ Việt nằm xoay theo font riêng.
+   mode 'justify' canh đều hai đầu, mode 'flow' chảy từ trên xuống theo bước một ô chữ */
+function putMixed(el,text,w,h,mode,unit,cw,upper){
+  const toks=tokenize(text);
+  if(upper) toks.forEach(t=>{ if(t.t==='vi') t.s=t.s.toUpperCase(); });
+  const n=toks.length;
+  if(!n) return [0];
+  const colW=cw||w;
+  const fsVi0=(S.viPct/100)*colW;
+
+  let cjkLen = mode==='justify' ? Math.min(w*0.98,(h/n)*0.95) : Math.min(unit||colW, h/n);
+  if(mode==='justify' && unit) cjkLen=Math.min(cjkLen, unit);
+  const nat=toks.map(t=> t.t==='cjk' ? cjkLen : measureF(t.s,fsVi0,S.fontVi));
+  let len=nat.slice();
+  let total=len.reduce((a,x)=>a+x,0), viScale=1;
+  // ô chỉ có tên tiếng Việt: giữ nguyên chiều cao chữ, co giãn theo chiều dài cho chạm hai đầu
+  const soloVi = (mode==='justify' && n===1 && toks[0].t==='vi');
+  if(soloVi){ len[0]=h; total=h; }
+  else if(total>h+1e-6){ const k=h/total; cjkLen*=k; viScale=k; len=len.map(x=>x*k); total=h; }
+  const gap=(mode==='justify'&&n>1)?Math.max(0,(h-total)/(n-1)):0;
+  const cjkFs=Math.min(w*0.98, mode==='justify'?cjkLen:cjkLen*0.9);
+  const fsVi=fsVi0*viScale;
+
+  const b=[];
+  let y=(n===1&&mode==='justify'&&toks[0].t==='cjk') ? (h-len[0])/2 : 0;
+  toks.forEach((t,i)=>{
+    if(t.t==='cjk'){
+      const sp=document.createElement('span');
+      sp.className='ch'; sp.textContent=t.s;
+      sp.style.top=(y+len[i]/2)+'mm';
+      sp.style.fontSize=cjkFs+'mm';
+      el.appendChild(sp);
+      b.push(y);
+    } else {
+      const box=document.createElement('div');
+      box.style.cssText=`position:absolute;left:0;top:${y}mm;width:100%;height:${len[i]}mm`;
+      const sp=document.createElement('span');
+      sp.className='line'; sp.textContent=t.s;
+      sp.style.fontSize=fsVi+'mm';
+      sp.style.fontFamily=S.fontVi;
+      const sx=nat[i]>0?(len[i]/(nat[i]*viScale)):1;
+      sp.style.transform=`translate(-50%,-50%) rotate(90deg) scaleX(${sx.toFixed(4)})`;
+      box.appendChild(sp); el.appendChild(box);
+      const cs=[...t.s], ws=cs.map(ch=>measureF(ch,fsVi,S.fontVi));
+      const tot=ws.reduce((a,x)=>a+x,0)||1;
+      let acc=0;
+      for(let q=0;q<cs.length;q++){ b.push(y+acc/tot*len[i]); acc+=ws[q]; }
+    }
+    y+=len[i]+gap;
+  });
+  b.push(y-gap);
+  return b;
+}
+function putJustify(el,text,w,h,maxUnit,cw,upper){ return putMixed(el,text,w,h,'justify',maxUnit,cw,upper); }
+function putFlow(el,text,w,h,unit,cw){ return putMixed(el,text,w,h,'flow',unit,cw); }
+
+function putFlat(el,text,w,h){
+  if(!text) return;
+  let fs=Math.min(h*0.74,w*0.95), guard=0;
+  while(fs>0.7 && measureF(text,fs,S.fontZh)>w*0.98 && guard++<200) fs-=0.05;
+  const sp=document.createElement('span');
+  sp.className='ch'; sp.textContent=text;
+  sp.style.top='50%'; sp.style.fontSize=fs+'mm';
+  el.appendChild(sp);
+}
+/* đầu cột thống kê: nhãn ở nửa trên, dấu ： ở nửa dưới */
+function putStatHead(el,lab,w,h){
+  const half=h/2;
+  const a=document.createElement('div');
+  a.style.cssText=`position:absolute;left:0;top:0;width:100%;height:${half}mm`;
+  const c=document.createElement('div');
+  c.style.cssText=`position:absolute;left:0;top:${half}mm;width:100%;height:${half}mm`;
+  el.append(a,c);
+  if([...lab].length>1) putSquash(a,lab,w,half); else putJustify(a,lab,w,half);
+  putJustify(c,'：',w,half);
+  return [0];
+}
+
+/* 共計: ép dẹp hai chữ trong một ô */
+function putSquash(el,text,w,h){
+  const chars=[...text]; const unit=h/chars.length;
+  const fs=Math.min(w*0.98,h*0.78);
+  chars.forEach((c,i)=>{
+    const sp=document.createElement('span');
+    sp.className='ch'; sp.textContent=c;
+    sp.style.top=((i+0.5)*unit)+'mm';
+    sp.style.fontSize=fs+'mm';
+    sp.style.transform=`translateY(-50%) scale(1,${(unit*0.95/fs).toFixed(3)})`;
+    el.appendChild(sp);
+  });
+}
+function putName(el,text,w,h,cw){ return putJustify(el,text,w,h,null,cw,true); }  // tên trong danh sách luôn in hoa
+
+function render(){
+  syncRoster();
+  const R=buildCells(); LAST=R;
+  const g=R.g;
+  document.body.classList.toggle('guides',S.guides);
+  document.body.classList.toggle('fills',S.fills);
+  document.body.classList.toggle('printguides',S.printGuides);
+  page.style.width=S.pw+'mm'; page.style.height=S.ph+'mm';
+  page.style.fontFamily=S.fontZh;
+  const FOLDS=[1,2,3,4].map(i=>i*S.pw/5);
+  page.innerHTML='';
+
+  if(S.foldLines){                            // khung giấy và bốn nếp gấp đi chung một màu
+    const f=document.createElement('div'); f.className='frame';
+    f.style.cssText=`left:0;top:0;width:${S.pw}mm;height:${S.ph}mm`;
+    page.appendChild(f);
+    for(let i=1;i<5;i++){
+      const ln=document.createElement('div'); ln.className='secline';
+      ln.style.cssText=`left:${i*S.pw/5}mm;top:0;height:${S.ph}mm`;
+      page.appendChild(ln);
+    }
+  }
+  if(S.guides){
+    [g.cTop,g.cBot].forEach(yy=>{
+      const m=document.createElement('div'); m.className='mline'; m.style.top=yy+'mm'; page.appendChild(m);
+    });
+    [g.rLeftX,g.hRightX].forEach(xx=>{
+      const l=document.createElement('div'); l.className='vline'; l.style.left=xx+'mm'; page.appendChild(l);
+    });
+    if(R.ys && R.b && R.v){                     // đường chỉnh khoảng cách hàng
+      for(let i=0;i<R.ys.length-1;i++){
+        const y=(R.ys[i]+R.v.bandH*g.U + R.ys[i+1])/2;
+        const key=(i===R.b.nQ-1)?'gapOut':'gapIn';
+        const ln=document.createElement('div'); ln.className='gapline';
+        ln.style.top=y+'mm';
+        ln.title = key==='gapOut' ? 'Cách giữa nhóm nam và nhóm nữ' : 'Cách giữa các hàng cùng nhóm';
+        ln.addEventListener('mousedown',ev=>dragGap(ev,key,g.U));
+        page.appendChild(ln);
+      }
+    }
+    mkHandle('v','right',g.hRightX);
+    mkHandle('v','left', g.rLeftX);
+    mkHandle('h','top',  g.cTop);
+    mkHandle('h','bottom',g.cBot);
+  }
+
+  const clip=document.createElement('div');
+  clip.style.cssText=`position:absolute;left:0;top:0;width:${S.pw}mm;height:${S.ph}mm;`+
+    `clip-path:inset(${g.cTop}mm ${S.pw-g.hRightX}mm ${S.ph-g.cBot}mm ${g.rLeftX}mm)`;
+  page.appendChild(clip);
+
+  // cột hẹp nhất trên trang quyết định cỡ chữ chung
+  const UW = S.pw/5/Math.max(+S.cps1||7, +S.cps2||7, +S.cps||7);
+  const BOXW = Math.max(0.5, UW-(S.colGapPct/100)*UW-S.foldPad);
+
+  const iy = S.fills ? 0.28 : 0;
+  for(const c of R.cells){
+    const d=document.createElement('div');
+    d.className='cell '+c.t+(c.slot?' slot':'')+(c.ph?' ph':'');
+    if(c.slot) d.dataset.slot=c.slot;
+    // cỡ chữ lấy theo cột hẹp nhất trang; cột rộng hơn thì chừa ra nhiều hơn hai bên
+    let onL=false, onR=false;
+    for(const f of FOLDS){
+      if(Math.abs(c.x-f)<0.05) onL=true;
+      if(Math.abs(c.x+c.w-f)<0.05) onR=true;
+    }
+    const w=BOXW;
+    const avail=c.w-((onL||onR)?S.foldPad:0);
+    const left = (onL ? c.x+S.foldPad : c.x) + Math.max(0,(avail-w)/2);
+    const h=c.h-2*iy;
+    d.style.cssText=`left:${left}mm;top:${c.y+iy}mm;width:${w}mm;height:${h}mm`;
+    d._h=h;
+    d._redraw=(t)=>{
+      const x = t!==undefined ? t : c.text;
+      d.innerHTML='';
+      let b=[0];
+      if(c.head!==undefined) putStatHead(d,c.head,w,h);
+      else if(c.t==='name') b=putName(d,x,w,h,UW);
+      else if(c.t==='hdr'){ b = c.just ? putJustify(d,x,w,h,UW,UW) : putFlow(d,x,w,h,UW,UW); }
+      else if(c.squash) putSquash(d,x,w,h);
+      else if(c.t==='num') putFlat(d,x,w,h);
+      else if(c.flow) b=putFlow(d,x,w,h,c.unit||UW,UW);   // số bắt đầu từ trên, ba cột thẳng hàng
+      else if(x!==undefined) b=putJustify(d,x,w,h,c.just?null:UW,UW);
+      d._bounds = (b&&b.length)?b:[0];
+    };
+    d._redraw();
+    clip.appendChild(d);
+  }
+
+  const mq=document.createElement('div'); mq.id='marquee'; page.appendChild(mq);
+  paintSelection();
+
+  $('#warnbox').innerHTML=R.err?`<div class="warn">${R.err}</div>`:'';
+  $('#pagewarn').textContent=R.err||'';
+  $('#pagewarn').classList.toggle('on',!!R.err);
+  $('#nameH').value = S.autoNameH ? (R.v?R.v.nameH.toFixed(1):'') : S.nameH;
+  document.body.classList.toggle('split',S.splitPrint);
+  buildSheets();
+  if(S.splitPrint){
+    const cut=cutX(), half=Math.max(cut,S.pw-cut);
+    if(half>S.sheetW+0.01 || S.ph>S.sheetH+0.01){
+      const msg=`Nửa trang ${half.toFixed(1)} × ${S.ph} mm không lọt khổ ${S.sheetW} × ${S.sheetH} mm. Hãy chọn khổ mỗi tờ lớn hơn.`;
+      $('#pagewarn').textContent=msg; $('#pagewarn').classList.add('on');
+    }
+  }
+  let pgW=S.splitPrint?S.sheetW:S.pw, pgH=S.splitPrint?S.sheetH:S.ph;
+  if(S.view==='map'){ pgW=210; pgH=297; }
+  else if(S.view==='reg'){ pgW=210; pgH=297; }
+  pstyle.textContent=`@page{size:${pgW}mm ${pgH}mm;margin:${S.view==='print'?0:'6mm'}}`;
+  setZoom(zoom);
+}
+
+/* ------------------------------------- chia đôi trang để in trên khổ nhỏ */
+function cutX(){                                  // chỗ cắt: biên cột gần giữa trang nhất
+  const C=colList(); const xs=[0,S.pw];
+  C.forEach(c=>xs.push(c.x));
+  let best=S.pw/2, d=1e9;
+  xs.forEach(x=>{ const t=Math.abs(x-S.pw/2); if(t<d){d=t;best=x;} });
+  return best;
+}
+function buildSheets(){
+  const box=$('#sheets'); if(!box) return;
+  box.innerHTML='';
+  if(!S.splitPrint) return;
+  const cut=cutX();
+  const zhUI=S.lang==='zh';
+  const parts=[{x:cut,w:S.pw-cut,tag:zhUI?'第一張 · 右半':'Tờ 1 · nửa phải'},
+               {x:0,  w:cut,      tag:zhUI?'第二張 · 左半':'Tờ 2 · nửa trái'}];
+  for(const p of parts){
+    const sh=document.createElement('div'); sh.className='sheet';
+    sh.style.cssText=`width:${S.sheetW}mm;height:${S.sheetH}mm`;
+    const inner=document.createElement('div'); inner.className='sheetinner';
+    const ox=Math.max(0,(S.sheetW-p.w)/2), oy=Math.max(0,(S.sheetH-S.ph)/2);
+    inner.style.cssText=`left:${ox}mm;top:${oy}mm;width:${p.w}mm;height:${S.ph}mm`;
+    const cl=page.cloneNode(true);
+    cl.removeAttribute('id'); cl.removeAttribute('tabindex');
+    cl.querySelectorAll('.mhandle,.inline-edit,#marquee').forEach(e=>e.remove());
+    cl.style.position='absolute'; cl.style.left=(-p.x)+'mm'; cl.style.top='0';
+    cl.style.boxShadow='none';
+    inner.appendChild(cl);
+    const fr=document.createElement('div'); fr.className='sheetframe';
+    inner.appendChild(fr);
+    const tag=document.createElement('div'); tag.className='sheettag';
+    tag.textContent=p.tag; tag.style.top=(oy+S.ph+4)+'mm';
+    sh.append(inner,tag);
+    box.appendChild(sh);
+  }
+}
+function dragGap(e,key,U){                    // kéo để đổi khoảng cách hàng
+  e.preventDefault(); e.stopPropagation();
+  const r=page.getBoundingClientRect();
+  const mmPerPx=S.ph/(r.height||1);
+  const start=S[key], s0=e.clientY;
+  let raf=null;
+  document.body.style.cursor='row-resize';
+  const mv=ev=>{
+    const d=(ev.clientY-s0)*mmPerPx/U;
+    S[key]=clamp(+(start+d).toFixed(2),0,8);
+    if(!raf) raf=requestAnimationFrame(()=>{
+      raf=null; $('#gapIn').value=S.gapIn; $('#gapOut').value=S.gapOut; render();
+    });
+  };
+  const up=()=>{ document.body.style.cursor='';
+    document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
+  document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+}
+function mkHandle(dir,which,pos){
+  const el=document.createElement('div');
+  el.className='mhandle '+dir;
+  el.title = {right:'Lề phải',left:'Lề trái',top:'Lề trên',bottom:'Lề dưới'}[which];
+  if(dir==='v') el.style.left=pos+'mm'; else el.style.top=pos+'mm';
+  el.addEventListener('mousedown',e=>dragMargin(which,e));
+  page.appendChild(el);
+}
+function syncMargins(){
+  $('#marginRight').value=S.marginRight; $('#marginLeft').value=S.marginLeft;
+  $('#marginTop').value=S.marginTop;     $('#marginBottom').value=S.marginBottom;
+}
+function dragMargin(which,e){
+  e.preventDefault(); e.stopPropagation();
+  document.body.style.cursor = (which==='left'||which==='right')?'col-resize':'row-resize';
+  const Wr=S.pw/5/(+S.cps1||7), Wl=S.pw/5/(+S.cps||7), W=Wl;
+  const move=ev=>{
+    const r=page.getBoundingClientRect();
+    const x=(ev.clientX-r.left)/(r.width||1)*S.pw;
+    const y=(ev.clientY-r.top)/(r.height||1)*S.ph;
+    if(which==='right')      S.marginRight =clamp(Math.round((S.pw-x)/Wr/2)*2,0,12);
+    else if(which==='left')  S.marginLeft  =clamp(Math.round(x/Wl/2)*2,0,12);
+    else if(which==='top')   setTop(Math.round(y/W*10)/10);
+    else                     setBottom(Math.round((S.ph-y)/W*10)/10);
+    syncMargins(); render();
+  };
+  const up=()=>{
+    document.body.style.cursor='';
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('mouseup',up);
+  };
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
+}
+
+/* ------------------------------------------------- chọn ô và con trỏ */
+let sel=new Set(), cur=null;
+function orderSlots(){
+  const o=[];
+  for(let i=0;i<Math.max(2,+S.headerCols||2);i++) o.push('h'+i);
+  S.qian.forEach((_,i)=>o.push('q'+i));
+  S.kun.forEach((_,i)=>o.push('k'+i));
+  return o;
+}
+function paintSelection(){
+  page.querySelectorAll('.cell.slot').forEach(d=>{
+    d.classList.toggle('sel', sel.has(d.dataset.slot));
+    d.classList.toggle('cur', cur===d.dataset.slot);
+  });
+}
+function selectOnly(id){ sel=new Set(id?[id]:[]); cur=id; paintSelection(); }
+function selectRange(a,b){
+  const o=orderSlots(), i=o.indexOf(a), j=o.indexOf(b);
+  if(i<0||j<0) return;
+  sel=new Set(o.slice(Math.min(i,j),Math.max(i,j)+1)); paintSelection();
+}
+page.addEventListener('mousedown',e=>{
+  page.focus();
+  const cell=e.target.closest('.cell.slot');
+  const start={x:e.clientX,y:e.clientY};
+  if(cell){
+    const id=cell.dataset.slot;
+    if(e.shiftKey&&cur) selectRange(cur,id);
+    else if(e.ctrlKey||e.metaKey){ sel.has(id)?sel.delete(id):sel.add(id); cur=id; paintSelection(); }
+    else selectOnly(id);
+  } else if(!e.shiftKey&&!e.ctrlKey&&!e.metaKey){ selectOnly(null); }
+
+  const mq=$('#marquee'); let moved=false;
+  const base=(e.ctrlKey||e.metaKey||e.shiftKey)?new Set(sel):new Set();
+  const pr=page.getBoundingClientRect();
+  function mv(ev){
+    if(Math.abs(ev.clientX-start.x)+Math.abs(ev.clientY-start.y)<5) return;
+    moved=true; mq.style.display='block';
+    const x1=Math.min(start.x,ev.clientX),x2=Math.max(start.x,ev.clientX);
+    const y1=Math.min(start.y,ev.clientY),y2=Math.max(start.y,ev.clientY);
+    mq.style.left=((x1-pr.left)/zoom)+'px'; mq.style.top=((y1-pr.top)/zoom)+'px';
+    mq.style.width=((x2-x1)/zoom)+'px'; mq.style.height=((y2-y1)/zoom)+'px';
+    const got=new Set(base);
+    page.querySelectorAll('.cell.slot').forEach(d=>{
+      const r=d.getBoundingClientRect();
+      if(r.right>x1&&r.left<x2&&r.bottom>y1&&r.top<y2) got.add(d.dataset.slot);
+    });
+    sel=got; paintSelection();
+  }
+  function up(){
+    document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up);
+    mq.style.display='none';
+    if(moved&&sel.size){ const o=orderSlots(); cur=o.find(x=>sel.has(x))||cur; paintSelection(); }
+  }
+  document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+});
+page.addEventListener('dblclick',e=>{ const c=e.target.closest('.cell.slot'); if(c) openEditor(c.dataset.slot); });
+
+/* ------------------------------------------------- đọc ghi dữ liệu ô */
+function getSlot(id){
+  const k=id[0], i=+id.slice(1);
+  if(k==='h') return S.header[i]||'';
+  const p=atSeat(k==='q'?'m':'f', i+1);
+  return p?(p.name||''):'';
+}
+function setSlot(id,txt){
+  const k=id[0], i=+id.slice(1);
+  if(k==='h'){ S.header[i]=txt; return; }
+  const sex=k==='q'?'m':'f', seat=i+1;
+  let p=atSeat(sex,seat);
+  if(!p){ if(!(txt||'').trim()) return; p=newPerson({sex,seat}); S.people.push(p); }
+  p.name=(txt||'').trim();
+}
+
+let undo=[];
+function snap(){ undo.push(JSON.stringify({h:S.header,p:S.people,s:S.seats})); if(undo.length>60) undo.shift(); }
+function doUndo(){
+  if(!undo.length) return;
+  const d=JSON.parse(undo.pop());
+  S.header=d.h; S.people=d.p; S.seats=d.s; renderReg(); render(); renderMap();
+}
+
+/* ------------------------------------------------------ chép, cắt, dán */
+let buffer='';
+function selOrdered(){ const o=orderSlots(); return o.filter(x=>sel.has(x)); }
+function copyText(){ return selOrdered().map(getSlot).join('\n'); }
+async function doCopy(){ buffer=copyText(); try{ await navigator.clipboard.writeText(buffer);}catch(e){} }
+async function doCut(){ await doCopy(); snap(); selOrdered().forEach(id=>setSlot(id,'')); render(); }
+function doPaste(text){
+  const raw=(text||buffer||'').replace(/\s+$/,'');
+  if(!raw) return;
+  const lines=raw.split(/\r?\n/).map(l=>l.replace(/\t.*$/,'').trim());
+  const o=orderSlots();
+  let start=cur?o.indexOf(cur):0;
+  if(start<0) start=0;
+  snap();
+  let side=null;
+  lines.forEach((l,i)=>{
+    const id=o[start+i];
+    if(id){ setSlot(id,l); if(id[0]!=='h') side=id[0]; }
+  });
+  syncBulk(); render(); renderMap();
+}
+function doClear(){ if(!sel.size) return; snap(); selOrdered().forEach(id=>setSlot(id,'')); render(); }
+function doDeletePeople(){
+  const ids=selOrdered().filter(x=>x[0]!=='h');
+  if(!ids.length) return;
+  snap();
+  const qi=ids.filter(x=>x[0]==='q').map(x=>+x.slice(1));
+  const ki=ids.filter(x=>x[0]==='k').map(x=>+x.slice(1));
+  S.qian=S.qian.filter((_,i)=>!qi.includes(i));
+  S.kun=S.kun.filter((_,i)=>!ki.includes(i));
+  sel.clear(); cur=null; syncBulk(); render();
+}
+function doInsertPerson(){
+  snap();
+  if(!cur||cur[0]==='h') S.qian.push({n:''});
+  else { const L=cur[0]==='q'?S.qian:S.kun; L.splice(+cur.slice(1),0,{n:''}); }
+  syncBulk(); render();
+}
+function pageActive(){
+  const a=document.activeElement;
+  if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) return false;
+  return sel.size>0;
+}
+document.addEventListener('copy',e=>{ if(!pageActive())return; e.preventDefault(); buffer=copyText(); e.clipboardData.setData('text/plain',buffer); });
+document.addEventListener('cut',e=>{ if(!pageActive())return; e.preventDefault(); buffer=copyText(); e.clipboardData.setData('text/plain',buffer); snap(); selOrdered().forEach(id=>setSlot(id,'')); render(); });
+document.addEventListener('paste',e=>{ if(!pageActive())return; e.preventDefault(); doPaste(e.clipboardData.getData('text/plain')); });
+
+document.addEventListener('keydown',e=>{
+  const a=document.activeElement;
+  if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) return;
+  const mod=e.ctrlKey||e.metaKey;
+  if(mod&&e.key.toLowerCase()==='a'){ e.preventDefault(); const o=orderSlots(); sel=new Set(o); cur=o[0]; paintSelection(); return; }
+  if(mod&&e.key.toLowerCase()==='z'){ e.preventDefault(); doUndo(); return; }
+  if(mod&&e.key.toLowerCase()==='p'){ e.preventDefault(); window.print(); return; }
+  if(mod) return;
+  if(!cur) return;
+  const o=orderSlots(), i=o.indexOf(cur);
+  const step=LAST&&LAST.g?Math.max(1,LAST.g.rcols-1):10;
+  if(e.key==='ArrowLeft'){ e.preventDefault(); jump(o,i+1,e.shiftKey); }
+  else if(e.key==='ArrowRight'){ e.preventDefault(); jump(o,i-1,e.shiftKey); }
+  else if(e.key==='ArrowDown'){ e.preventDefault(); jump(o,i+step,e.shiftKey); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); jump(o,i-step,e.shiftKey); }
+  else if(e.key==='Enter'||e.key==='F2'){ e.preventDefault(); openEditor(cur); }
+  else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); doClear(); }
+  else if(e.key.length===1){ e.preventDefault(); openEditor(cur,e.key); }
+});
+function jump(o,i,ext){
+  i=clamp(i,0,o.length-1);
+  if(ext) selectRange(cur,o[i]); else sel=new Set([o[i]]);
+  cur=o[i]; paintSelection();
+  const d=page.querySelector(`[data-slot="${cur}"]`); if(d) d.scrollIntoView({block:'nearest',inline:'nearest'});
+}
+
+/* --------------------------------------------- sửa thẳng trên trang giấy */
+let edit=null;
+function openEditor(id,seed){
+  if(edit) closeEditor(true);
+  const d=page.querySelector(`[data-slot="${id}"]`);
+  if(!d||!d._redraw) return;
+  const orig=getSlot(id);
+  const inp=document.createElement('input');
+  inp.className='inline-edit';
+  inp.style.cssText=`left:${d.style.left};top:${d.style.top};width:${d.style.width};height:${d.style.height}`;
+  inp.value = seed!==undefined ? seed : orig;
+  inp.spellcheck=false;
+  page.appendChild(inp);
+  d.classList.add('editing'); d.classList.remove('ph');
+
+  let lastA=-1,lastB=-1,lastV=null;
+  const paint=()=>{
+    const a=inp.selectionStart||0, b=inp.selectionEnd||0, v=inp.value;
+    if(a===lastA&&b===lastB&&v===lastV) return;
+    lastA=a; lastB=b; lastV=v;
+    d._redraw(v);
+    const bd=d._bounds, last=bd.length-1;
+    const i=clamp(a,0,last), j=clamp(b,0,last);
+    if(j>i){
+      const sr=document.createElement('div'); sr.className='selrange';
+      sr.style.top=bd[i]+'mm'; sr.style.height=(bd[j]-bd[i])+'mm';
+      d.insertBefore(sr,d.firstChild);
+    }
+    const car=document.createElement('div'); car.className='caret';
+    car.style.top=bd[j]+'mm';
+    d.appendChild(car);
+  };
+  const timer=setInterval(paint,60);
+  paint();
+
+  const idxAt=clientY=>{
+    const r=inp.getBoundingClientRect();
+    const y=(clientY-r.top)/(r.height||1)*d._h;
+    const bd=d._bounds;
+    let best=0,dist=1e9;
+    bd.forEach((v,k)=>{ const t=Math.abs(v-y); if(t<dist){dist=t;best=k;} });
+    return best;
+  };
+  let anchor=null;
+  inp.addEventListener('mousedown',e=>{
+    e.preventDefault(); e.stopPropagation();
+    anchor=idxAt(e.clientY);
+    inp.focus(); inp.setSelectionRange(anchor,anchor); paint();
+  });
+  inp.addEventListener('mousemove',e=>{
+    if(anchor===null||e.buttons!==1) return;
+    const k=idxAt(e.clientY);
+    inp.setSelectionRange(Math.min(anchor,k),Math.max(anchor,k)); paint();
+  });
+  window.addEventListener('mouseup',()=>{anchor=null;});
+  inp.addEventListener('dblclick',e=>{ e.preventDefault(); inp.select(); paint(); });
+
+  inp.addEventListener('input',paint);
+  inp.addEventListener('keyup',paint);
+  inp.addEventListener('keydown',e=>{
+    e.stopPropagation();
+    const a=inp.selectionStart, b=inp.selectionEnd, L=inp.value.length;
+    if(e.key==='Enter'){ e.preventDefault(); closeEditor(true); }
+    else if(e.key==='Escape'){ e.preventDefault(); closeEditor(false); }
+    else if(e.key==='ArrowUp'||e.key==='ArrowDown'){   // chữ xếp dọc nên lên xuống là lùi tiến
+      e.preventDefault();
+      const dir=e.key==='ArrowDown'?1:-1;
+      const head=(a===b) ? clamp(a+dir,0,L) : (dir>0?b:a);
+      if(e.shiftKey){
+        const fix = (inp.selectionDirection==='backward') ? b : a;
+        const h2=clamp((a===b?a:(inp.selectionDirection==='backward'?a:b))+dir,0,L);
+        inp.setSelectionRange(Math.min(fix,h2),Math.max(fix,h2),h2<fix?'backward':'forward');
+      } else inp.setSelectionRange(head,head);
+      paint();
+    }
+    else if(e.key==='Home'){ e.preventDefault(); inp.setSelectionRange(0,0); paint(); }
+    else if(e.key==='End'){ e.preventDefault(); inp.setSelectionRange(L,L); paint(); }
+  });
+  inp.addEventListener('blur',()=>{ if(edit) closeEditor(true); });
+
+  edit={id,inp,d,orig,timer};
+  inp.focus(); inp.setSelectionRange(inp.value.length,inp.value.length); paint();
+}
+function closeEditor(save){
+  if(!edit) return;
+  const {id,inp,d,orig,timer}=edit; edit=null;
+  clearInterval(timer);
+  const val=inp.value;
+  inp.remove(); d.classList.remove('editing');
+  if(save && val!==orig){ snap(); setSlot(id,val); syncBulk(); render(); }
+  else if(d._redraw) d._redraw();
+  page.focus();
+}
+function closeEditor(save){
+  if(!edit) return;
+  const {id,inp,d,orig}=edit; edit=null;
+  const val=inp.value;
+  inp.remove(); d.classList.remove('editing');
+  if(save && val!==orig){ snap(); setSlot(id,val); syncBulk(); render(); }
+  else if(d._redraw) d._redraw();
+  page.focus();
+}
+
+/* ------------------------------------------------------------ font */
+function fontOptions(sel,builtin,current){
+  sel.innerHTML='';
+  const add=(label,val)=>{
+    const o=document.createElement('option'); o.textContent=label; o.value=val;
+    o.style.fontFamily=val;                    // xem trước ngay kiểu chữ
+    sel.appendChild(o);
+  };
+  builtin.forEach(([l,v])=>add(l,v));
+  userFonts.forEach(n=>add(n+(S.lang==='zh'?'（已載入）':' (đã nạp)'),JSON.stringify(n)));
+  sel.value=current;
+  if(sel.value!==current) sel.value=builtin[0][1];
+  sel.style.fontFamily=sel.value;
+}
+function refreshFonts(){
+  fontOptions($('#fontZh'),BUILTIN_ZH,S.fontZh);
+  fontOptions($('#fontVi'),BUILTIN_VI,S.fontVi);
+  $('#fontlist').innerHTML = userFonts.length
+    ? userFonts.map(n=>`<span>${n}</span>`).join('')
+    : 'Chưa nạp font nào.';
+}
+$('#bFont').onclick=()=>$('#fontFile').click();
+$('#fontFile').onchange=async e=>{
+  for(const f of e.target.files){
+    try{
+      const buf=await f.arrayBuffer();
+      let base=f.name.replace(/\.[^.]+$/,''), name=base, i=1;
+      while(userFonts.includes(name)) name=base+'-'+(++i);
+      const ff=new FontFace(name,buf);
+      await ff.load(); document.fonts.add(ff);
+      userFonts.push(name);
+    }catch(err){ alert('Không đọc được font '+f.name); }
+  }
+  e.target.value='';
+  refreshFonts(); render();
+};
+document.querySelectorAll('[data-va]').forEach(btn=>btn.onclick=()=>{
+  S.vAlign=btn.dataset.va;
+  document.querySelectorAll('[data-va]').forEach(x=>x.classList.toggle('on',x===btn));
+  render();
+});
+$('#fontZh').onchange=()=>{S.fontZh=$('#fontZh').value;$('#fontZh').style.fontFamily=S.fontZh;render();};
+$('#fontVi').onchange=()=>{S.fontVi=$('#fontVi').value;$('#fontVi').style.fontFamily=S.fontVi;render();};
+
+/* ---------------------------------------------------- bảng điều khiển */
+function bindEven(id,key){                      // lề đi theo bước 2 để mỗi khoảng còn số cột lẻ
+  const el=$('#'+id); el.value=S[key];
+  el.addEventListener('input',()=>{ S[key]=clamp(Math.round(Number(el.value)/2)*2,0,12); render(); });
+  el.addEventListener('change',()=>{ el.value=S[key]; });
+}
+function bindNum(id,key){
+  const el=$('#'+id); el.value=S[key];
+  el.addEventListener('input',()=>{ S[key]=Number(el.value); render(); });
+}
+$('#paper').addEventListener('change',()=>{
+  const v=$('#paper').value;
+  $('#customsize').style.display=v==='custom'?'flex':'none';
+  if(v!=='custom'){ const [a,b]=v.split('x').map(Number); S.pw=a;S.ph=b; $('#pw').value=a;$('#ph').value=b; }
+  render(); fit();
+});
+$('#pw').value=S.pw; $('#ph').value=S.ph;
+$('#pw').addEventListener('input',()=>{S.pw=+$('#pw').value||297;render();});
+$('#ph').addEventListener('input',()=>{S.ph=+$('#ph').value||210;render();});
+bindEven('marginRight','marginRight'); bindEven('marginLeft','marginLeft');
+const MTB=2;                                     // lề trên gấp đôi lề dưới
+function setTop(v){ S.marginTop=clamp(v,0,8); S.marginBottom=+(S.marginTop/MTB).toFixed(2); }
+function setBottom(v){ S.marginBottom=clamp(v,0,8/MTB); S.marginTop=+(S.marginBottom*MTB).toFixed(2); }
+$('#marginTop').addEventListener('input',()=>{ setTop(Number($('#marginTop').value)); syncMargins(); render(); });
+$('#marginBottom').addEventListener('input',()=>{ setBottom(Number($('#marginBottom').value)); syncMargins(); render(); });
+bindNum('viPct','viPct');
+bindNum('gapIn','gapIn'); bindNum('gapOut','gapOut'); bindNum('colGapPct','colGapPct');
+bindNum('foldPad','foldPad'); bindNum('indentFrom','indentFrom');
+$('#cps').addEventListener('change',()=>{S.cps=+$('#cps').value;render();});
+function syncTg(){
+  const set=(id,on)=>{ const b=$('#'+id); if(b) b.classList.toggle('on',!!on); };
+  set('tgGuides',S.guides); set('tgFold',S.foldLines); set('tgSplit',S.splitPrint);
+  const sz=$('#sheetSize'); if(sz) sz.style.display=S.splitPrint?'':'none';
+}
+$('#tgGuides').onclick=()=>{ S.guides=!S.guides; syncTg(); render(); };
+$('#tgFold').onclick=()=>{ S.foldLines=!S.foldLines; syncTg(); render(); };
+$('#tgSplit').onclick=()=>{ S.splitPrint=!S.splitPrint; syncTg(); render(); };
+$('#sheetSize').addEventListener('change',()=>{
+  const [a,b]=$('#sheetSize').value.split('x').map(Number);
+  S.sheetW=a; S.sheetH=b; render();
+});
+$('#cps1').addEventListener('change',()=>{S.cps1=+$('#cps1').value;render();});
+$('#cps2').addEventListener('change',()=>{S.cps2=+$('#cps2').value;render();});
+$('#headerCols').value=S.headerCols;
+$('#headerCols').addEventListener('input',()=>{
+  S.headerCols=clamp(+$('#headerCols').value||2,2,42);
+  while(S.header.length<S.headerCols) S.header.push('');
+  S.header.length=S.headerCols;
+  buildHeadList(); render();
+});
+$('#nhAuto').onclick=()=>{S.autoNameH=true;$('#nhAuto').classList.add('on');$('#nhMan').classList.remove('on');$('#nameH').disabled=true;render();};
+$('#nhMan').onclick=()=>{S.autoNameH=false;$('#nhMan').classList.add('on');$('#nhAuto').classList.remove('on');$('#nameH').disabled=false;render();};
+$('#nameH').addEventListener('input',()=>{S.nameH=+$('#nameH').value||3.6;render();});
+['fills','showEmpty','balance','printStage'].forEach(k=>{
+  const el=$('#'+k); if(!el) return; el.checked=S[k];
+  el.addEventListener('change',()=>{S[k]=el.checked;render();});
+});
+function showPane(id){
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.p===id));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===id));
+}
+function paneOf(v){ return {reg:'p-reg',map:'p-room',print:'p-page'}[v]; }
+$('#lang').addEventListener('change',()=>{ S.lang=$('#lang').value; applyLang(); });
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
+});
+
+function buildHeadList(){
+  const box=$('#headlist'); box.innerHTML='';
+  for(let i=0;i<Math.max(2,+S.headerCols||2);i++){
+    const wrap=document.createElement('div'); wrap.className='row';
+    const lb=document.createElement('label');
+    lb.textContent = S.lang==='zh'
+      ? (i===0?'第一欄 · 時間':(i===1?'第二欄 · 地點':'第 '+(i+1)+' 欄'))
+      : (i===0?'Cột 1 · thời gian':(i===1?'Cột 2 · địa điểm':'Cột '+(i+1)));
+    lb.style.flex='0 0 96px'; lb.style.fontSize='12px';
+    const inp=document.createElement('input'); inp.type='text'; inp.style.flex='1'; inp.style.minWidth='0';
+    inp.value=S.header[i]||''; inp.spellcheck=false;
+    if(i<2) inp.placeholder=PH[i];
+    inp.addEventListener('input',()=>{S.header[i]=inp.value;render();});
+    inp.addEventListener('focus',()=>selectOnly('h'+i));
+    wrap.append(lb,inp); box.appendChild(wrap);
+  }
+}
+
+function syncBulk(){ renderReg(); }
+
+function fitForPrint(){                       // dựng riêng một vùng in cho sơ đồ và danh sách
+  const pa=$('#printarea'); if(!pa) return;
+  pa.innerHTML=''; document.body.classList.remove('pmode');
+  const zh=S.lang==='zh';
+  if(S.view==='map'){
+    const svg=$('#seatsvg'); if(!svg) return;
+    const c=svg.cloneNode(true); c.removeAttribute('id');
+    c.querySelectorAll('.grey').forEach(e=>e.remove());   // bỏ mảng xám sân khấu, lối đi, tường
+    c.querySelectorAll('.seat.off').forEach(e=>e.classList.remove('off'));
+    c.querySelectorAll('.glines').forEach(e=>e.remove());
+    const G=JSON.parse(svg.dataset.geo||'{}');
+    const pad=12;
+    let vb;
+    if(S.printStage){                                     // thu gọn dải sân khấu cho ghế to hơn
+      const band=Math.max(60, G.stage*0.25);
+      const shift=G.stage-band;
+      const sg=c.querySelector('.stagegrp');
+      if(sg) sg.innerHTML=stageSVG(G.w, band, true);
+      const ar=c.querySelector('.seatarea');
+      if(ar) ar.setAttribute('transform',`translate(0, ${-shift})`);
+      vb=[-pad, -pad, G.w+2*pad, G.seatBot-shift+2*pad];
+    } else {
+      const sg=c.querySelector('.stagegrp'); if(sg) sg.remove();
+      const top0=G.startY-30;
+      vb=[-pad, top0-pad, G.w+2*pad, G.seatBot-top0+2*pad];
+    }
+    c.setAttribute('viewBox',vb.join(' '));
+    const r=(vb[2]/vb[3])||1;
+    const aw=197, ah=284;
+    let w=aw, h=aw/r;
+    if(h>ah){ h=ah; w=ah*r; }
+    c.setAttribute('style',`display:block;margin:0 auto;width:${w}mm;height:${h}mm;max-width:none`);
+    pa.appendChild(c);
+    document.body.classList.add('pmode');
+  } else if(S.view==='reg'){
+    const t=document.createElement('table'); t.className='ptable';
+    const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
+                 : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
+    t.innerHTML='<thead><tr>'+H.map(x=>`<th>${x}</th>`).join('')+'</tr></thead>';
+    const tb=document.createElement('tbody');
+    S.people.forEach(q=>{
+      const tr=document.createElement('tr');
+      [q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
+       q.gvcn||'', q.interp||'', q.doc||'', q.ph?String(q.ph):''
+      ].forEach(v=>{ const td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); pa.appendChild(t);
+    document.body.classList.add('pmode');
+  }
+}
+window.addEventListener('beforeprint',fitForPrint);
+window.addEventListener('afterprint',()=>{
+  document.body.classList.remove('pmode');
+  const pa=$('#printarea'); if(pa) pa.innerHTML='';
+});
+$('#bPrint').onclick=()=>{ fitForPrint(); window.print(); };
+const pdfmask=$('#pdfmask');
+function openPdf(){
+  $('#printGuides').checked=S.printGuides;
+  $('#pdfguides').style.display = S.view==='print' ? 'flex' : 'none';
+  $('#pdfsizeline').innerHTML =
+    (S.lang==='zh'?'紙張尺寸請選 ':'Khổ giấy để ')+'<b id="pdfsize"></b>';
+  if(S.view!=='print'){ $('#pdfsize').textContent = S.lang==='zh'?'A4 直式':'A4 dọc'; }
+  else $('#pdfsize').textContent =
+    ({'353x250':'B4 ngang','250x176':'B5 ngang','297x210':'A4 ngang','420x297':'A3 ngang'})[`${S.pw}x${S.ph}`]
+    || `${S.pw} × ${S.ph} mm`;
+  pdfmask.classList.add('on');
+}
+$('#bPdf').onclick=openPdf;
+$('#pdfCancel').onclick=()=>pdfmask.classList.remove('on');
+pdfmask.onclick=e=>{ if(e.target===pdfmask) pdfmask.classList.remove('on'); };
+$('#printGuides').onchange=()=>{ S.printGuides=$('#printGuides').checked; render(); };
+$('#pdfGo').onclick=()=>{
+  pdfmask.classList.remove('on');
+  fitForPrint();
+  const t=document.title;
+  document.title='danh-sach-can-khon';
+  setTimeout(()=>{ window.print(); document.title=t; },60);
+};
+$('#bSave').onclick=()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='khung-luoi.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+$('#bOpen').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      Object.assign(S,d);
+      S.people=(d.people||[]).map(x=>newPerson(x));
+      S.seats=d.seats||S.seats; S.room=Object.assign({},S.room,d.room||{});
+      if(Array.isArray(S.cps)) S.cps=+S.cps[0]||7;
+      if(S.cpsHead){ S.cps1=S.cps1||S.cpsHead; S.cps2=S.cps2||S.cpsHead; }
+      if(!S.cps1) S.cps1=S.cps; if(!S.cps2) S.cps2=S.cps;
+      if(d.headerExtra!==undefined && d.headerCols===undefined) S.headerCols=2+d.headerExtra;
+      setTop(S.marginTop);
+      if(d.marginCols!==undefined && d.marginRight===undefined){ S.marginRight=d.marginCols; S.marginLeft=d.marginCols; }
+      S.marginRight=clamp(Math.round(S.marginRight/2)*2,0,12); S.marginLeft=clamp(Math.round(S.marginLeft/2)*2,0,12);
+      refreshControls(); refreshRoom(); buildHeadList(); renderReg(); setView(S.view||'reg'); render(); renderMap(); fit();
+    }catch(err){ alert('Tệp không đọc được.'); }
+  };
+  r.readAsText(f); e.target.value='';
+};
+function refreshControls(){
+  $('#pw').value=S.pw; $('#ph').value=S.ph;
+  $('#cps').value=S.cps; $('#cps1').value=S.cps1; $('#cps2').value=S.cps2; $('#foldPad').value=S.foldPad;
+  $('#marginRight').value=S.marginRight; $('#marginLeft').value=S.marginLeft;
+  $('#marginTop').value=S.marginTop; $('#marginBottom').value=S.marginBottom;
+  $('#headerCols').value=S.headerCols; $('#indentFrom').value=S.indentFrom; $('#viPct').value=S.viPct;
+  $('#gapIn').value=S.gapIn; $('#gapOut').value=S.gapOut;
+  $('#colGapPct').value=S.colGapPct;
+  $('#printStage').checked=S.printStage; $('#sheetSize').value=`${S.sheetW}x${S.sheetH}`;
+  syncTg(); $('#fills').checked=S.fills;
+  $('#showEmpty').checked=S.showEmpty;
+  $('#balance').checked=S.balance;
+  if(S.vAlign!=='spread') S.vAlign='top';
+  document.querySelectorAll('[data-va]').forEach(x=>x.classList.toggle('on',x.dataset.va===S.vAlign));
+  $('#nameH').disabled=S.autoNameH;
+  $('#nhAuto').classList.toggle('on',S.autoNameH); $('#nhMan').classList.toggle('on',!S.autoNameH);
+  const key=`${S.pw}x${S.ph}`;
+  $('#paper').value=[...$('#paper').options].some(o=>o.value===key)?key:'custom';
+  $('#customsize').style.display=$('#paper').value==='custom'?'flex':'none';
+  refreshFonts();
+}
+
+function setZoom(z){
+  zoom=clamp(z,.25,3);
+  pagewrap.style.transform=`scale(${zoom})`;
+  const sw=$('#sheetswrap');
+  if(sw){ sw.style.transform=`scale(${zoom})`;
+    sw.style.height = S.splitPrint ? ($('#sheets').offsetHeight*zoom)+'px' : '0px'; }
+  $('#zoomval').textContent=Math.round(zoom*100)+'%';
+  pagewrap.style.height=(S.ph*MM*zoom)+'px';
+}
+function fit(){ setZoom(($('#stage').clientWidth-52)/(S.pw*MM)); }
+$('#bZoomIn').onclick=()=>setZoom(zoom*1.15);
+$('#bZoomOut').onclick=()=>setZoom(zoom/1.15);
+$('#bFit').onclick=fit;
+window.addEventListener('resize',()=>setZoom(zoom));
+$('#stage').addEventListener('wheel',e=>{      // chụm hai ngón trên trang in
+  if(!(e.ctrlKey||e.metaKey)) return;
+  e.preventDefault();
+  const dy=clamp(e.deltaY,-30,30);
+  setZoom(zoom*Math.exp(-dy*0.006));
+},{passive:false});
+
+const pstyle=document.createElement('style'); document.head.appendChild(pstyle);
+
+document.querySelectorAll('.grp').forEach(g=>{
+  let card=null;
+  [...g.children].forEach(ch=>{
+    if(ch.classList.contains('row')){
+      if(!card){ card=document.createElement('div'); card.className='card'; g.insertBefore(card,ch); }
+      card.appendChild(ch);
+    } else card=null;
+  });
+});
+
+/* ==================== hệ thống ghi danh ==================== */
+let uid=1;
+function newPerson(o){
+  return Object.assign({id:uid++,name:'',sex:'m',gvcn:'',interp:'',doc:'',ph:0,seat:null},o||{});
+}
+const atSeat=(sex,k)=>S.people.find(p=>p.sex===sex&&p.seat===k);
+
+function syncRoster(){                       // 清書表格 lấy dữ liệu từ đây
+  const mk=sex=>{
+    const cnt=Math.max(0,+(sex==='m'?S.seats.m:S.seats.f)||0);
+    const a=Array.from({length:cnt},()=>({n:''}));
+    S.people.forEach(p=>{ if(p.sex===sex&&p.seat>=1&&p.seat<=cnt) a[p.seat-1]={n:p.name||''}; });
+    return a;
+  };
+  S.qian=mk('m'); S.kun=mk('f');
+}
+function upd(){ render(); renderMap(); }
+
+/* ---------- đọc danh sách dán vào ---------- */
+function detectSex(t){
+  const x=(t||'').toLowerCase();
+  if(/nữ|nu\b|female|女|坤|\bf\b/.test(x)) return 'f';
+  if(/nam|male|男|乾|\bm\b/.test(x)) return 'm';
+  return 'm';
+}
+function splitTSV(text){                     // hiểu cả ô bọc dấu nháy có xuống dòng bên trong
+  const rows=[]; let row=[], cell='', q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; }
+      else cell+=c;
+    }else{
+      if(c==='"') q=true;
+      else if(c==='\t'||c==='|'||c===';'){ row.push(cell); cell=''; }
+      else if(c==='\r'){}
+      else if(c==='\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+      else cell+=c;
+    }
+  }
+  row.push(cell); rows.push(row);
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+const COLKEY=[
+  [/編號|编号|座號|座号|số\s*ghế|so\s*ghe|số\s*báo|stt|^no\.?$|^#$/i,'seat'],
+  [/乾\s*\/?\s*坤|性別|性别|giới\s*tính|gioi\s*tinh|sex|gender/i,'sex'],
+  [/姓\s*名|họ\s*(và\s*)?tên|ho\s*ten|full\s*name|^name$/i,'name'],
+  [/理\s*經|理\s*经|代\s*號|代\s*号|班\s*導|班\s*导|gvcn|導師|导师|teacher/i,'gvcn'],
+  [/翻\s*譯|翻\s*译|語\s*言|语\s*言|聽\s*語|听\s*语|phiên\s*dịch|phien\s*dich|ngôn\s*ngữ\s*nghe|interp/i,'interp'],
+  [/資\s*料|资\s*料|教\s*材|tài\s*liệu|tai\s*lieu|課本|课本|material/i,'doc'],
+  [/電\s*話|电\s*话|điện\s*thoại|dien\s*thoai|手機|手机|phone/i,'ph']
+];
+function mapHeader(cells){
+  const m={}; let hit=0;
+  cells.forEach((c,i)=>{
+    const t=(c||'').replace(/\s+/g,' ').trim();
+    if(!t) return;
+    for(const [re,key] of COLKEY){ if(m[key]===undefined && re.test(t)){ m[key]=i; hit++; break; } }
+  });
+  return hit>=3?m:null;
+}
+function guessMap(rows){                     // không có dòng tiêu đề thì đoán theo nội dung
+  const nc=Math.max(...rows.map(r=>r.length));
+  const col=i=>rows.map(r=>(r[i]||'').trim()).filter(Boolean);
+  const isNum=v=>/^\d+$/.test(v);
+  const isSex=v=>/^(乾|坤|男|女|nam|nữ|nu|male|female|m|f)$/i.test(v);
+  const m={};
+  { const v=col(0); if(v.length&&v.every(isNum)) m.seat=0; }   // chỉ cột đầu mới là số ghế
+  for(let i=0;i<nc;i++){ if(i===m.seat) continue; const v=col(i);
+    if(v.length&&v.filter(isSex).length>=v.length*0.8){ m.sex=i; break; } }
+  const rest=[]; for(let i=0;i<nc;i++) if(i!==m.seat&&i!==m.sex) rest.push(i);
+  ['name','gvcn','interp','doc','ph'].forEach((k,j)=>{ if(rest[j]!==undefined) m[k]=rest[j]; });
+  return m;
+}
+function parseReg(text){
+  const rows=splitTSV(text||'');
+  if(!rows.length) return [];
+  let map=mapHeader(rows[0]), data=rows;
+  if(map) data=rows.slice(1); else map=guessMap(rows);
+  if(!data.length) return [];
+  const get=(r,k)=>map[k]===undefined?'':((r[map[k]]||'').replace(/\s+/g,' ').trim());
+  return data.map(r=>{
+    const praw=get(r,'ph');
+    let ph=parseInt(praw.replace(/\D/g,''),10);
+    if(isNaN(ph)) ph=/^(x|v|có|co|有|✓|yes)$/i.test(praw)?1:0;
+        return newPerson({name:get(r,'name'),sex:detectSex(get(r,'sex')),gvcn:get(r,'gvcn'),
+      interp:get(r,'interp'),doc:get(r,'doc'),ph,seat:null});   // số ghế chỉ cho khi đã đến
+  }).filter(p=>p.name||p.gvcn);
+}
+
+/* ---------- bảng ghi danh ---------- */
+function renderReg(){
+  const box=$('#regview'); if(!box) return;
+  const zh=S.lang==='zh';
+  box.innerHTML='';
+
+  const bar=document.createElement('div'); bar.className='regbar';
+  const seg=document.createElement('div'); seg.className='seg'; seg.style.flex='0 0 auto';
+  [['all',zh?'全部':'Tất cả'],['no',zh?'未掛號':'Chưa có số'],['yes',zh?'已掛號':'Đã có số']].forEach(([k,t])=>{
+    const b=document.createElement('button'); b.textContent=t;
+    b.classList.toggle('on',S.regFilter===k);
+    b.onclick=()=>{ S.regFilter=k; [...seg.children].forEach(x=>x.classList.toggle('on',x===b)); fillRows(); };
+    seg.appendChild(b);
+  });
+  const sr=document.createElement('input'); sr.type='text'; sr.placeholder=zh?'搜尋姓名、經理代號':'Tìm tên, GVCN';
+  sr.value=S.regSearch; sr.style.cssText='flex:0 0 210px;background:#fff';
+  sr.addEventListener('input',()=>{ S.regSearch=sr.value.trim().toLowerCase(); fillRows(); });
+  const cnt=document.createElement('span'); cnt.className='count';
+  bar.append(seg,sr,document.createElement('span'),cnt);
+  bar.children[2].className='spacer'; bar.children[2].style.flex='1';
+  const head=document.createElement('div'); head.id='reghead';
+  head.appendChild(bar);
+  const quick=document.createElement('div'); quick.className='regbar quickbar';
+  head.appendChild(quick);
+  box.appendChild(head);
+  const scroll=document.createElement('div'); scroll.id='regscroll';
+  box.appendChild(scroll);
+
+  const dls={};
+  ['interp','doc'].forEach(k=>{ const dl=document.createElement('datalist'); dl.id='dl-'+k; box.appendChild(dl); dls[k]=dl; });
+  function fillDl(){
+    ['interp','doc'].forEach(k=>{
+      dls[k].innerHTML='';
+      [...new Set(S.people.map(q=>(q[k]||'').trim()).filter(Boolean))].sort()
+        .forEach(v=>{ const o=document.createElement('option'); o.value=v; dls[k].appendChild(o); });
+    });
+  }
+
+  const tb=document.createElement('table'); tb.id='regtable';
+  const arrow = S.regSort==='seat' ? ' ▲' : (S.regSort==='-seat' ? ' ▼' : '');
+  const H = zh ? ['','座號'+arrow,'姓名','性別','經理代號','翻譯','教材','電話','','']
+               : ['','Số ghế'+arrow,'Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','',''];
+  tb.innerHTML='<thead><tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr></thead>';
+  const COLS=['idx','seat','name','sex','gvcn','interp','doc','ph','del','pad'];
+  const thSeat=tb.querySelectorAll('thead th')[1];
+  thSeat.style.cursor='pointer';
+  thSeat.title = zh?'點一下換排序':'Bấm để đổi cách sắp xếp';
+  thSeat.addEventListener('click',e=>{
+    if(e.target.classList.contains('rz')) return;
+    S.regSort = S.regSort==='seat' ? '-seat' : (S.regSort==='-seat' ? null : 'seat');
+    renderReg();
+  });
+  const cg=document.createElement('colgroup');
+  COLS.forEach(k=>{ const c=document.createElement('col');
+    if(k!=='pad') c.style.width=(S.colW[k]||100)+'px'; cg.appendChild(c); });
+  tb.insertBefore(cg,tb.firstChild);
+  [...tb.querySelectorAll('thead th')].forEach((th,i)=>{   // kéo mép để đổi bề ngang cột
+    if(i>=COLS.length-2) return;
+    const rz=document.createElement('span'); rz.className='rz';
+    rz.addEventListener('mousedown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      const key=COLS[i], col=cg.children[i];
+      const sx=e.clientX, w0=col.offsetWidth||S.colW[key]||100;
+      if(key==='name') S.nameAuto=false;        // đã chỉnh tay thì thôi tự giãn
+      const mv=ev=>{ const w=Math.max(36,w0+ev.clientX-sx); col.style.width=w+'px'; S.colW[key]=w; };
+      const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.body.style.cursor=''; };
+      document.body.style.cursor='col-resize';
+      document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+    });
+    th.appendChild(rz);
+  });
+  const body=document.createElement('tbody');
+  tb.appendChild(body); scroll.appendChild(tb);
+
+  const empty=document.createElement('p'); empty.className='mapnote'; scroll.appendChild(empty);
+
+  function show(p){
+    if(S.regFilter==='no'&&p.seat) return false;
+    if(S.regFilter==='yes'&&!p.seat) return false;
+    if(S.regSearch){
+      const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+      if(!hay.includes(S.regSearch)) return false;
+    }
+    if(S.regQuick.length){                      // cùng cột là hoặc, khác cột là và
+      const byF={};
+      S.regQuick.forEach(q=>{ (byF[q.f]=byF[q.f]||[]).push(q.v); });
+      for(const f in byF){
+        const v = f==='sex' ? p.sex : ((p[f]||'').trim());
+        if(!byF[f].includes(v)) return false;
+      }
+    }
+    return true;
+  }
+  function buildQuick(){
+    quick.innerHTML='';
+    const mk=(f,v,label)=>{
+      const b=document.createElement('button'); b.className='fchip';
+      b.textContent=label;
+      const on=S.regQuick.some(q=>q.f===f&&q.v===v);
+      b.classList.toggle('on',on);
+      b.onclick=()=>{
+        S.regQuick = on ? S.regQuick.filter(q=>!(q.f===f&&q.v===v)) : S.regQuick.concat([{f,v}]);
+        buildQuick(); fillRows();
+      };
+      quick.appendChild(b);
+    };
+    // chỉ liệt kê giá trị còn tồn tại sau khi đã áp điều kiện của các cột khác
+    const pool=skip=>S.people.filter(p=>{
+      if(S.regFilter==='no'&&p.seat) return false;
+      if(S.regFilter==='yes'&&!p.seat) return false;
+      if(S.regSearch){
+        const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+        if(!hay.includes(S.regSearch)) return false;
+      }
+      const byF={};
+      S.regQuick.forEach(q=>{ if(q.f!==skip) (byF[q.f]=byF[q.f]||[]).push(q.v); });
+      for(const f in byF){
+        const v = f==='sex' ? p.sex : ((p[f]||'').trim());
+        if(!byF[f].includes(v)) return false;
+      }
+      return true;
+    });
+    const ps=pool('sex');
+    const nm=ps.filter(p=>p.sex==='m').length, nf=ps.filter(p=>p.sex==='f').length;
+    const onSex=v=>S.regQuick.some(q=>q.f==='sex'&&q.v===v);
+    if(nm||onSex('m')) mk('sex','m',(zh?'乾':'Nam')+' '+nm);
+    if(nf||onSex('f')) mk('sex','f',(zh?'坤':'Nữ')+' '+nf);
+    [['gvcn',zh?'經理代號':'GVCN'],['interp',zh?'翻譯':'Phiên dịch'],['doc',zh?'教材':'Tài liệu']].forEach(([f,lab])=>{
+      const set=new Set(pool(f).map(p=>(p[f]||'').trim()).filter(Boolean));
+      S.regQuick.filter(q=>q.f===f).forEach(q=>set.add(q.v));
+      const vals=[...set].sort();
+      if(!vals.length) return;
+      const sep=document.createElement('span'); sep.className='fsep'; sep.textContent=lab;
+      quick.appendChild(sep);
+      vals.forEach(v=>mk(f,v,v));
+    });
+    if(S.regQuick.length){
+      const c=document.createElement('button'); c.className='fchip clear';
+      c.textContent=(zh?'清除篩選':'Bỏ lọc')+' ×';
+      c.onclick=()=>{ S.regQuick=[]; buildQuick(); fillRows(); };
+      quick.appendChild(c);
+    }
+    quick.style.display=quick.children.length?'flex':'none';
+  }
+  function fillRows(){
+    body.innerHTML='';
+    let shown=0;
+    let order=S.people.map((p,i)=>({p,i}));
+    if(S.regSort){                              // sắp theo số ghế
+      const dir=S.regSort[0]==='-'?-1:1;
+      order.sort((a,b)=>((a.p.seat||1e9)-(b.p.seat||1e9))*dir || a.i-b.i);
+    }
+    order.forEach(({p,i})=>{
+      if(!show(p)) return;
+      shown++;
+      const tr=document.createElement('tr');
+      if(p.seat) tr.className='seated';
+
+      const c0=document.createElement('td'); c0.className='idx'; c0.textContent=shown; tr.appendChild(c0);
+
+      const tdSeat=document.createElement('td'); tdSeat.className='seatcell';
+      const si=document.createElement('input'); si.type='number'; si.min='1';
+      si.value=p.seat||''; si.placeholder='–';
+      si.onchange=()=>{
+        const ok=assignSeat(p, si.value===''?null:+si.value);
+        if(!ok){ si.value=p.seat||''; return; }
+        fillRows(); upd();
+      };
+      tdSeat.appendChild(si); tr.appendChild(tdSeat);
+
+      const mkText=(key,w)=>{
+        const td=document.createElement('td');
+        const inp=document.createElement('input'); inp.type='text'; inp.value=p[key]||''; inp.spellcheck=false;
+        if(w) td.style.width=w;
+        inp.addEventListener('input',()=>{ p[key]=inp.value; upd(); });
+        td.appendChild(inp); return td;
+      };
+      tr.appendChild(mkText('name','30%'));
+
+      const tdS=document.createElement('td'); tdS.style.width='118px';
+      const sel=document.createElement('select');
+      sel.innerHTML=`<option value="m">${zh?'乾':'Nam'}</option><option value="f">${zh?'坤':'Nữ'}</option>`;
+      sel.value=p.sex;
+      sel.onchange=()=>{ p.sex=sel.value; p.seat=null; buildQuick(); fillRows(); upd(); };
+      tdS.appendChild(sel); tr.appendChild(tdS);
+
+      tr.appendChild(mkText('gvcn','12%'));
+
+      const mkList=(key,w)=>{                    // gõ tay được, có gợi ý từ dữ liệu đã nạp
+        const td=document.createElement('td'); if(w) td.style.width=w;
+        const inp=document.createElement('input'); inp.type='text'; inp.spellcheck=false;
+        inp.setAttribute('list','dl-'+key);
+        inp.value=(p[key]||'');
+        inp.addEventListener('input',()=>{ p[key]=inp.value; upd(); });
+        inp.addEventListener('change',()=>{ fillDl(); buildQuick(); });
+        td.appendChild(inp); return td;
+      };
+      tr.appendChild(mkList('interp','11%'));
+      tr.appendChild(mkList('doc','11%'));
+
+      const tdP=document.createElement('td'); tdP.style.width='104px';
+      const wrap=document.createElement('div'); wrap.className='phcell';
+      const ck=document.createElement('input'); ck.type='checkbox'; ck.checked=p.ph>0;
+      const num=document.createElement('input'); num.type='number'; num.min='1'; num.max='9';
+      num.value=p.ph||1; num.style.visibility=p.ph>0?'visible':'hidden';
+      ck.onchange=()=>{ p.ph=ck.checked?Math.max(1,+num.value||1):0;
+        num.style.visibility=ck.checked?'visible':'hidden'; num.value=p.ph||1; };
+      num.oninput=()=>{ p.ph=Math.max(1,+num.value||1); };
+      wrap.append(ck,num); tdP.appendChild(wrap); tr.appendChild(tdP);
+
+      const tdD=document.createElement('td'); tdD.style.width='34px';
+      const del=document.createElement('button'); del.className='del'; del.textContent='×';
+      del.title = zh?'刪除':'Xoá';
+      del.onclick=()=>{ snap(); S.people.splice(i,1); fillRows(); upd(); };
+      tdD.appendChild(del); tr.appendChild(tdD);
+      tr.appendChild(document.createElement('td'));   // cột đệm ăn chỗ thừa
+
+      body.appendChild(tr);
+    });
+
+    const nm=S.people.filter(p=>p.sex==='m').length, nf=S.people.filter(p=>p.sex==='f').length;
+    const seated=S.people.filter(p=>p.seat).length;
+    cnt.textContent = zh
+      ? `合計 ${S.people.length} · 乾 ${nm} · 坤 ${nf} · 已掛號 ${seated}`
+      : `Tổng ${S.people.length} · Nam ${nm} · Nữ ${nf} · đã có số ${seated}`;
+    empty.textContent = S.people.length===0
+      ? (zh?'名單是空的，請在左側貼上資料後按「匯入名單」。'
+          :'Danh sách đang trống. Dán dữ liệu vào ô bên trái rồi bấm "Nạp vào danh sách".')
+      : (shown===0 ? (zh?'沒有符合條件的資料。':'Không có dòng nào khớp bộ lọc.') : '');
+  }
+  fillDl(); buildQuick(); fillRows();
+}
+
+/* ---------- gán số ghế ---------- */
+function seatMax(sex){ return Math.max(0,+(sex==='m'?S.seats.m:S.seats.f)||0); }
+let toastT=null;
+function toast(msg){
+  let el=$('#toast');
+  if(!el){ el=document.createElement('div'); el.id='toast'; document.body.appendChild(el); }
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2800);
+}
+function assignSeat(p,k){
+  if(k===null||isNaN(k)){ snap(); p.seat=null; return true; }
+  k=clamp(Math.round(k),1,400);
+  if(k>seatMax(p.sex)){                       // số lớn hơn số ghế thì nới số ghế ra
+    S.seats[p.sex]=k;
+    S.grid[p.sex+'Cols']=0; S.grid[p.sex+'Rows']=0;
+    refreshRoom();
+  }
+  const other=atSeat(p.sex,k);
+  if(other&&other!==p){                       // số đã có người, không cho đè
+    toast(S.lang==='zh' ? `座號 ${k} 已有人掛號，請改用其他號碼。`
+                        : `Số ${k} đã có người ghi danh, hãy chọn số khác.`);
+    return false;
+  }
+  snap(); p.seat=k; return true;
+}
+function firstFreeSeat(sex){
+  const mx=seatMax(sex);
+  for(let k=1;k<=mx;k++) if(!atSeat(sex,k)) return k;
+  return null;
+}
+function autoSeatCount(){
+  const mx=sex=>S.people.reduce((a,p)=>p.sex===sex&&p.seat>a?p.seat:a,0);
+  const nm=Math.max(S.people.filter(p=>p.sex==='m').length, mx('m'));
+  const nf=Math.max(S.people.filter(p=>p.sex==='f').length, mx('f'));
+  S.seats.m=Math.max(S.seats.m,nm); S.seats.f=Math.max(S.seats.f,nf);
+  if($('#seatM')) $('#seatM').value=S.seats.m;
+  if($('#seatF')) $('#seatF').value=S.seats.f;
+}
+
+/* ---------- sơ đồ chỗ ngồi ---------- */
+function calcLayout(count,R){
+  if(!count) return {rows:0,cols:0,width:0,height:0};
+  const getW=c=>c*R.chairWidth+(c-1)*R.gapHorizontal+(c>R.maxSeatsBeforeSubAisle?R.subAisle:0);
+  const getH=r=>r===0?0:r*R.chairLength+(r-1)*R.gapVertical;
+  const res=[];
+  for(let c=(count>1?2:1);c<=30;c++){ const r=Math.ceil(count/c); res.push({rows:r,cols:c,width:getW(c),height:getH(r)}); }
+  return res;
+}
+function bestLayout(m,f){
+  const R=S.room;
+  const availW=R.roomWidth-R.centralAisle-R.wallMarginLeft-(R.wallMarginRight||0);
+  const availH=R.roomLength-R.stageLength-50-(R.wallMarginBottom||0);
+  const mC=m?calcLayout(m,R):[{rows:0,cols:0,width:0,height:0}];
+  const fC=f?calcLayout(f,R):[{rows:0,cols:0,width:0,height:0}];
+  let best={male:mC[0],female:fC[0],overflow:true}, min=Infinity;
+  for(const a of mC) for(const b of fC){
+    const wO=Math.max(0,a.width+b.width-availW);
+    const hO=Math.max(0,a.height-availH,b.height-availH);
+    const sc=wO*1e7+hO*1e4+Math.abs(a.rows-b.rows)*50+((a.rows*a.cols-m)+(b.rows*b.cols-f));
+    if(sc<min){ min=sc; best={male:a,female:b,overflow:wO>0||hO>0}; }
+  }
+  return best;
+}
+let pickedId=null, dragFreeze=null, mapBaseH=0;
+function stageSVG(W, H, small){               // 佛座 trên, 講台 dưới, không đè nhau
+  const fh=Math.max(18, Math.min(50, H*0.30));
+  const gap=Math.max(6, H*0.05);
+  const pw=(small ? W/3*0.5 : W/3);
+  const ph=Math.max(20, Math.min(small?H*0.4:150, H-fh-gap*2));
+  const py=fh+gap+Math.max(0,(H-fh-gap-ph-gap)/2);
+  const m=10;                                  // chừa một chút cho khỏi dính viền
+  return `<rect x="${W/4}" y="${m}" width="${W/2}" height="${fh}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
+   <text x="${W/2}" y="${m+fh*0.68}" text-anchor="middle" font-size="${Math.min(36,fh*0.88)}" font-weight="700" fill="#6b7680">佛座</text>
+   <rect x="${m}" y="${py}" width="${pw}" height="${ph}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
+   <text x="${m+pw/2}" y="${py+ph*0.6}" text-anchor="middle" font-size="${Math.min(32,ph*0.68)}" font-weight="700" fill="#6b7680">講台</text>`;
+}
+function renderMap(){
+  const box=$('#mapview'); if(!box) return;
+  const zh=S.lang==='zh', R=S.room;
+  const keepList = dragFreeze ? box.querySelector('#maplist') : null;
+  if(keepList) keepList.remove();               // kéo đường chỉnh thì giữ nguyên cột danh sách
+  box.innerHTML='';
+
+  const wrap=document.createElement('div'); wrap.id='mapwrap';
+  let list = dragFreeze ? keepList : null;
+  if(!list){
+    list=document.createElement('div'); list.id='maplist';
+    const segm=document.createElement('div'); segm.className='seg'; segm.style.marginBottom='10px';
+    [['no',zh?'未掛號':'Chưa xếp'],['all',zh?'全部':'Tất cả']].forEach(([k,t])=>{
+      const b=document.createElement('button'); b.textContent=t;
+      b.classList.toggle('on',S.mapFilter===k);
+      b.onclick=()=>{ S.mapFilter=k; renderMap(); };
+      segm.appendChild(b);
+    });
+    list.appendChild(segm);
+
+    const msr=document.createElement('input'); msr.type='text';
+    msr.placeholder=zh?'搜尋姓名、經理代號':'Tìm tên, GVCN';
+    msr.value=S.mapSearch; msr.style.cssText='width:100%;background:#f2f2f7;margin-bottom:8px';
+    msr.addEventListener('input',()=>{ S.mapSearch=msr.value.trim().toLowerCase(); renderMap();
+      const el=$('#mapsearch'); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length); } });
+    msr.id='mapsearch';
+    list.appendChild(msr);
+
+    const mq=document.createElement('div'); mq.className='quickbar'; mq.style.cssText='display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px';
+    const mkq=(f,v,label)=>{
+      const b=document.createElement('button'); b.className='fchip'; b.style.fontSize='11.5px'; b.style.padding='4px 9px';
+      b.textContent=label;
+      const on=S.mapQuick.some(q=>q.f===f&&q.v===v);
+      b.classList.toggle('on',on);
+      b.onclick=()=>{ S.mapQuick = on ? S.mapQuick.filter(q=>!(q.f===f&&q.v===v)) : S.mapQuick.concat([{f,v}]); renderMap(); };
+      mq.appendChild(b);
+    };
+    const mpool=skip=>S.people.filter(p=>{
+      if(S.mapSearch){
+        const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+        if(!hay.includes(S.mapSearch)) return false;
+      }
+      const byF={};
+      S.mapQuick.forEach(q=>{ if(q.f!==skip) (byF[q.f]=byF[q.f]||[]).push(q.v); });
+      for(const f in byF){
+        const v = f==='sex' ? p.sex : ((p[f]||'').trim());
+        if(!byF[f].includes(v)) return false;
+      }
+      return true;
+    });
+    const mps=mpool('sex');
+    const onS=v=>S.mapQuick.some(q=>q.f==='sex'&&q.v===v);
+    if(mps.some(p=>p.sex==='m')||onS('m')) mkq('sex','m',zh?'乾':'Nam');
+    if(mps.some(p=>p.sex==='f')||onS('f')) mkq('sex','f',zh?'坤':'Nữ');
+    ['gvcn','interp','doc'].forEach(f=>{
+      const set=new Set(mpool(f).map(p=>(p[f]||'').trim()).filter(Boolean));
+      S.mapQuick.filter(q=>q.f===f).forEach(q=>set.add(q.v));
+      [...set].sort().forEach(v=>mkq(f,v,v));
+    });
+    if(S.mapQuick.length){
+      const c=document.createElement('button'); c.className='fchip clear'; c.style.fontSize='11.5px'; c.style.padding='4px 9px';
+      c.textContent=(zh?'清除':'Bỏ lọc')+' ×';
+      c.onclick=()=>{ S.mapQuick=[]; renderMap(); };
+      mq.appendChild(c);
+    }
+    list.appendChild(mq);
+
+    const matchQ=p=>{
+      if(S.mapSearch){
+        const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+        if(!hay.includes(S.mapSearch)) return false;
+      }
+      if(S.mapQuick.length){
+        const byF={};
+        S.mapQuick.forEach(q=>{ (byF[q.f]=byF[q.f]||[]).push(q.v); });
+        for(const f in byF){
+          const v = f==='sex' ? p.sex : ((p[f]||'').trim());
+          if(!byF[f].includes(v)) return false;
+        }
+      }
+      return true;
+    };
+    const arr=S.people.filter(p=>(S.mapFilter==='all'||!p.seat)&&matchQ(p))
+      .map((p,i)=>({p,i}))
+      .sort((a,b)=> (a.p.seat?1:0)-(b.p.seat?1:0)
+                 || (a.p.sex==='m'?0:1)-(b.p.sex==='m'?0:1)
+                 || a.i-b.i)
+      .map(x=>x.p);
+    const h=document.createElement('h4');
+    h.textContent=(zh?'名單 ':'Danh sách ')+`(${arr.length})`;
+    list.appendChild(h);
+    arr.forEach(p=>{
+      const b=document.createElement('button');
+      b.className='chip '+p.sex+(p.seat?' done':'')+(pickedId===p.id?' on':'');
+      b.draggable=true;
+      if(p.seat){ const n=document.createElement('b'); n.textContent=p.seat; b.appendChild(n); }
+      b.appendChild(document.createTextNode(
+        (p.name||(zh?'（未填姓名）':'(chưa có tên)'))+(p.gvcn?' · '+p.gvcn:'')));
+      b.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData('text/plain',String(p.id));
+        pickedId=p.id;
+        if(e.dataTransfer.setDragImage){          // tên nằm dưới con trỏ, không che ghế
+          const g=document.createElement('div'); g.className='dragghost';
+          const sp=document.createElement('span'); sp.textContent=p.name||'';
+          g.appendChild(sp); document.body.appendChild(g);
+          e.dataTransfer.setDragImage(g, g.offsetWidth/2, 0);
+          setTimeout(()=>g.remove(),0);
+        }
+      });
+      b.onclick=()=>{ pickedId=(pickedId===p.id?null:p.id); renderMap(); };
+      list.appendChild(b);
+    });
+    if(!arr.length){
+      const e=document.createElement('p'); e.className='mapnote';
+      e.textContent = S.people.length
+        ? (zh?'全部已掛號。':'Mọi người đã có số ghế.')
+        : (zh?'名單是空的，請先到「報名」匯入。':'Danh sách trống, hãy nạp ở màn hình Ghi danh trước.');
+      list.appendChild(e);
+    }
+  }
+  wrap.appendChild(list);
+
+  const svgbox=document.createElement('div'); svgbox.id='mapsvgbox';
+  let baseH=mapBaseH;
+  const zl=document.createElement('span'); zl.className='mapnote'; zl.style.alignSelf='center';
+  const applyZoom=()=>{
+    zl.textContent=Math.round(S.mapZoom*100)+'%';
+    if(!baseH) return;
+    svg.style.height=Math.max(220,Math.round(baseH*S.mapZoom))+'px';
+    svg.style.maxWidth=Math.round(S.mapZoom*100)+'%';
+  };
+  const zbar=$('#maptools'); zbar.innerHTML='';
+  [['−',-1],['+',1]].forEach(([t,d])=>{
+    const b=document.createElement('button'); b.className='btn'; b.textContent=t;
+    b.onclick=()=>{ S.mapZoom=clamp(+(S.mapZoom+d*0.2).toFixed(3),0.4,6); applyZoom(); };
+    zbar.appendChild(b);
+  });
+  zbar.appendChild(zl);
+  const bFull=document.createElement('button'); bFull.className='btn';
+  bFull.textContent = S.mapFull ? (zh?'座位區':'Vùng ghế') : (zh?'全場':'Toàn cảnh');
+  bFull.style.marginLeft='8px';
+  bFull.onclick=()=>{ S.mapFull=!S.mapFull; renderMap(); };
+  zbar.appendChild(bFull);
+  const bG=document.createElement('button'); bG.className='btn';
+  bG.textContent = zh?'調整線':'Đường chỉnh';
+  bG.style.marginLeft='6px';
+  if(!S.mapGuides) bG.style.opacity='.5';
+  bG.onclick=()=>{ S.mapGuides=!S.mapGuides; renderMap(); };
+  zbar.appendChild(bG);
+  const tip=document.createElement('span'); tip.className='mapnote'; tip.style.marginLeft='6px';
+  tip.textContent = zh ? '拖曳姓名到座位' : 'Kéo tên vào ghế';
+  tip.title = zh ? '點已有人的座位則取消該號。乾坤不可互坐。'
+                 : 'Bấm ghế đã có người để bỏ số. Nam nữ không ngồi chéo khu.';
+  zbar.appendChild(tip);
+
+  let lay=bestLayout(seatMax('m'),seatMax('f'));
+  const mkLay=(r,c)=>({rows:r,cols:c,
+    width:c*R.chairWidth+(c-1)*R.gapHorizontal+(c>R.maxSeatsBeforeSubAisle?R.subAisle:0),
+    height:r===0?0:r*R.chairLength+(r-1)*R.gapVertical});
+  if(S.grid.mCols>0) lay.male   = mkLay(Math.max(1,S.grid.mRows||Math.ceil(seatMax('m')/S.grid.mCols)), S.grid.mCols);
+  else if(S.grid.mRows>0) lay.male = mkLay(S.grid.mRows, Math.max(1,Math.ceil(seatMax('m')/S.grid.mRows)));
+  if(S.grid.fCols>0) lay.female = mkLay(Math.max(1,S.grid.fRows||Math.ceil(seatMax('f')/S.grid.fCols)), S.grid.fCols);
+  else if(S.grid.fRows>0) lay.female = mkLay(S.grid.fRows, Math.max(1,Math.ceil(seatMax('f')/S.grid.fRows)));
+  const startY=R.stageLength+50;
+  const availH=Math.max(80, (R.roomLength-(R.wallMarginBottom||0))-startY);
+  const fitRows=L=>{                            // hàng ghế không vượt quá lề tường sau
+    if(!L.rows){ L.py=R.chairLength+R.gapVertical; L.height=0; return; }
+    let py=R.chairLength+R.gapVertical;
+    if(L.rows>1 && (L.rows-1)*py+R.chairLength>availH)
+      py=Math.max(R.chairLength,(availH-R.chairLength)/(L.rows-1));
+    L.py=py; L.height=(L.rows-1)*py+R.chairLength;
+  };
+  // thiếu chiều sâu thì nới thêm cột cho bớt hàng, chỉ khi hết cách mới nén khoảng dọc
+  const totalW=(fL,mL)=>R.wallMarginLeft+fL.width+R.centralAisle+mL.width+(R.wallMarginRight||0);
+  const widen=which=>{
+    const manual = which==='m' ? (S.grid.mCols>0||S.grid.mRows>0)
+                               : (S.grid.fCols>0||S.grid.fRows>0);
+    if(manual) return;
+    const count=seatMax(which);
+    if(!count) return;
+    const pitch=R.chairLength+R.gapVertical;
+    for(let guard=0;guard<25;guard++){
+      const L = which==='m'?lay.male:lay.female;
+      if((L.rows-1)*pitch+R.chairLength<=availH || L.rows<=1) break;
+      const c=L.cols+1, cand=mkLay(Math.ceil(count/c),c);
+      const other = which==='m'?lay.female:lay.male;
+      if(totalW(which==='m'?other:cand, which==='m'?cand:other)>R.roomWidth) break;
+      if(which==='m') lay.male=cand; else lay.female=cand;
+    }
+  };
+  widen('f'); widen('m');
+  fitRows(lay.male); fitRows(lay.female);
+  const maleX=R.roomWidth-(R.wallMarginRight||0)-lay.male.width;
+  let aisleEff=R.centralAisle;
+  let femaleX=maleX-aisleEff-lay.female.width;
+  if(femaleX<R.wallMarginLeft){                 // thu lối đi giữa cho khỏi lấn lề trái
+    aisleEff=Math.max(0, aisleEff-(R.wallMarginLeft-femaleX));
+    femaleX=Math.max(R.wallMarginLeft, maleX-aisleEff-lay.female.width);
+  }
+  const svgNS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(svgNS,'svg');
+  svg.id='seatsvg';
+  const seatBot = startY + Math.max(lay.male.height, lay.female.height) + 24;
+  const backY = R.roomLength-(R.wallMarginBottom||0);
+  const viewBot = S.mapGuides ? Math.max(seatBot, backY+26) : seatBot;
+  const vx = S.mapFull ? 0 : Math.max(0, femaleX-24);
+  const vy = S.mapFull ? 0 : Math.max(0, startY-42);
+  const vw = R.roomWidth - vx;
+  const vh = (S.mapFull ? R.roomLength : Math.min(R.roomLength, viewBot)) - vy;
+  svg.setAttribute('viewBox', dragFreeze || `${vx} ${vy} ${vw} ${Math.max(60,vh)}`);
+  svg.dataset.geo=JSON.stringify({w:R.roomWidth,stage:R.stageLength,startY,
+    seatBot:Math.min(R.roomLength,seatBot)});
+
+
+  const add=(html)=>{ const g=document.createElementNS(svgNS,'g'); g.innerHTML=html; svg.appendChild(g); return g; };
+  if(S.mapFull)                               // viền phòng chỉ hiện khi xem toàn cảnh
+    add(`<rect width="${R.roomWidth}" height="${R.roomLength}" fill="none" stroke="#111" stroke-width="2.5"/>`);
+
+  const stg=document.createElementNS(svgNS,'g'); stg.setAttribute('class','stagegrp');
+  stg.innerHTML=stageSVG(R.roomWidth, R.stageLength, false);
+  svg.appendChild(stg);
+
+  const area=document.createElementNS(svgNS,'g'); area.setAttribute('class','seatarea');
+  svg.appendChild(area);
+  const lab=document.createElementNS(svgNS,'g');
+  lab.innerHTML=`<text x="${femaleX+lay.female.width/2}" y="${startY-18}" text-anchor="middle" font-size="18" font-weight="700" fill="#c47a9c">坤</text>
+   <text x="${maleX+lay.male.width/2}" y="${startY-18}" text-anchor="middle" font-size="18" font-weight="700" fill="#5b87c9">乾</text>`;
+  area.appendChild(lab);
+
+  const picked=pickedId?S.people.find(z=>z.id===pickedId):null;
+  const block=(sex,L,ox)=>{
+    const g=document.createElementNS(svgNS,'g');
+    g.setAttribute('transform',`translate(${ox}, ${startY})`);
+    let k=1; const mx=seatMax(sex);
+    for(let r=0;r<L.rows;r++) for(let c=0;c<L.cols;c++){
+      if(k>mx) break;
+      const xr=c*(R.chairWidth+R.gapHorizontal)+((L.cols>R.maxSeatsBeforeSubAisle&&c>=Math.ceil(L.cols/2))?R.subAisle:0);
+      const x=L.width-xr-R.chairWidth, y=r*(L.py||(R.chairLength+R.gapVertical));
+      const num=k;                              // chốt số ghế cho riêng ô này
+      const p=atSeat(sex,num);
+      const seat=document.createElementNS(svgNS,'g');
+      seat.setAttribute('class','seat'); seat.setAttribute('transform',`translate(${x}, ${y})`);
+      seat.dataset.seat=num; seat.dataset.sex=sex;
+      if(picked && picked.sex!==sex) seat.classList.add('off');
+      const nm=(p&&p.name)?p.name.toUpperCase():'';
+      const fs=(nm.length>14?7:(nm.length>9?8:9.5))*1.25;
+      seat.innerHTML=`<rect width="${R.chairWidth}" height="${R.chairLength}" rx="6"
+          fill="${p?(sex==='m'?'#d9e8ff':'#ffdeeb'):'#f7f8fa'}"
+          stroke="${sex==='m'?'#8fb4e8':'#e8a7c2'}" stroke-width="1"/>
+        <text x="${R.chairWidth/2}" y="13" text-anchor="middle" font-size="9" font-weight="700" fill="#8d97a1">${num}</text>
+        ${nm?`<text x="${R.chairWidth/2}" y="29" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2c3c"
+            ${nm.length>6?`textLength="${R.chairWidth-8}" lengthAdjust="spacingAndGlyphs"`:''}>${nm}</text>`:''}
+        ${p&&p.gvcn?`<text x="${R.chairWidth/2}" y="43" text-anchor="middle" font-size="8.75" fill="#7b8590">${p.gvcn}</text>`:''}`;
+      seat.addEventListener('click',()=>{
+        if(p){ snap(); p.seat=null; pickedId=p.id; }
+        else if(pickedId){
+          const q=S.people.find(z=>z.id===pickedId);
+          if(q){
+            if(q.sex!==sex) return;               // nữ không ngồi khu nam và ngược lại
+            assignSeat(q,num); pickedId=null;
+          }
+        }
+        renderReg(); upd();
+      });
+      seat.addEventListener('dragover',e=>{
+        const q=pickedId?S.people.find(z=>z.id===pickedId):null;
+        if(q && q.sex!==sex) return;            // khác khu thì không nhận
+        e.preventDefault(); seat.classList.add('drop');
+      });
+      seat.addEventListener('dragleave',()=>seat.classList.remove('drop'));
+      seat.addEventListener('drop',e=>{
+        e.preventDefault(); seat.classList.remove('drop');
+        const id=+e.dataTransfer.getData('text/plain');
+        const q=S.people.find(z=>z.id===id);
+        if(q&&q.sex===sex){ assignSeat(q,num); pickedId=null; renderReg(); upd(); }
+      });
+      g.appendChild(seat); k++;
+    }
+    return g;
+  };
+  area.appendChild(block('f',lay.female,femaleX));
+  area.appendChild(block('m',lay.male,maleX));
+
+  const rowsN=Math.max(lay.male.rows,lay.female.rows);   // số thứ tự hàng ở lối đi giữa
+  if(rowsN && aisleEff>=22){
+    const ref = lay.female.rows>=lay.male.rows ? lay.female : lay.male;
+    const cx = maleX-aisleEff/2;
+    const rr = Math.min(18, aisleEff*0.38, R.chairLength*0.34)*0.6;
+    const gN=document.createElementNS(svgNS,'g'); gN.setAttribute('class','rownum');
+    let h='';
+    for(let r=0;r<rowsN;r++){
+      const cy=startY+r*(ref.py||R.chairLength)+R.chairLength/2;
+      h+=`<circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fff" stroke="#9aa6b0" stroke-width="1.2"/>
+        <text x="${cx}" y="${cy+rr*0.38}" text-anchor="middle" font-size="${rr*1.05}" font-weight="600" fill="#6b7680">${r+1}</text>`;
+    }
+    gN.innerHTML=h; area.appendChild(gN);
+  }
+
+  if(S.mapGuides){
+    const gl=document.createElementNS(svgNS,'g'); gl.setAttribute('class','glines');
+    const toScale=axis=>{
+      const r=svg.getBoundingClientRect();
+      const vb=(svg.getAttribute('viewBox')||'0 0 1 1').split(/\s+/).map(Number);
+      return axis==='x' ? vb[2]/(r.width||1) : vb[3]/(r.height||1);
+    };
+    const drag=(e,key,sign,axis,lo,hi)=>{
+      e.preventDefault(); e.stopPropagation();
+      dragFreeze=svg.getAttribute('viewBox');    // giữ khung nhìn đứng yên khi kéo
+      const start=S.room[key]||0, s0=(axis==='x'?e.clientX:e.clientY), sc=toScale(axis);
+      let raf=null;
+      const mv=ev=>{
+        const d=((axis==='x'?ev.clientX:ev.clientY)-s0)*sc*sign;
+        S.room[key]=clamp(Math.round((start+d)/5)*5, lo, hi);
+        if(!raf) raf=requestAnimationFrame(()=>{ raf=null; refreshRoom(); renderMap(); });
+      };
+      const up=()=>{
+        document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up);
+        document.body.style.cursor=''; dragFreeze=null; renderMap();
+      };
+      document.body.style.cursor = axis==='x'?'col-resize':'row-resize';
+      document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+    };
+    const mkLine=(x1,y1,x2,y2,key,sign,axis,lo,hi,label)=>{
+      const g2=document.createElementNS(svgNS,'g'); g2.setAttribute('class','gline');
+      g2.innerHTML=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b5322a" stroke-width="1.4" stroke-dasharray="10,7"/>
+        <line class="hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="16"/>`;
+      g2.style.cursor = axis==='x'?'col-resize':'row-resize';
+      const t=document.createElementNS(svgNS,'title'); t.textContent=label; g2.appendChild(t);
+      g2.addEventListener('mousedown',e=>drag(e,key,sign,axis,lo,hi));
+      gl.appendChild(g2);
+    };
+    const H=R.roomLength, W=R.roomWidth;
+    mkLine(R.wallMarginLeft,R.stageLength,R.wallMarginLeft,H,'wallMarginLeft',1,'x',0,400,'Lề tường trái');
+    mkLine(W-(R.wallMarginRight||0),R.stageLength,W-(R.wallMarginRight||0),H,'wallMarginRight',-1,'x',0,400,'Lề tường phải');
+    mkLine(maleX-aisleEff,startY,maleX-aisleEff,H,'centralAisle',-1,'x',0,400,'Lối đi giữa');
+    mkLine(0,R.stageLength,W,R.stageLength,'stageLength',1,'y',60,H-200,'Chiều dài sân khấu');
+    mkLine(0,backY,W,backY,'wallMarginBottom',-1,'y',0,H-300,'Lề tường sau');
+    const sub = lay.female.cols>R.maxSeatsBeforeSubAisle ? {L:lay.female,ox:femaleX}
+              : (lay.male.cols>R.maxSeatsBeforeSubAisle ? {L:lay.male,ox:maleX} : null);
+    if(sub){
+      const cSplit=Math.ceil(sub.L.cols/2);
+      const ax=sub.ox+sub.L.width-cSplit*(R.chairWidth+R.gapHorizontal)-R.subAisle;
+      mkLine(ax,startY,ax,startY+sub.L.height,'subAisle',-1,'x',0,200,'Lối đi phụ');
+    }
+    svg.appendChild(gl);
+  }
+
+  svgbox.appendChild(svg);
+
+  if(lay.overflow){
+    const w=document.createElement('p'); w.className='mapnote'; w.style.color='#8c241d';
+    w.textContent=zh?'空間不足，座位已自動縮排。':'Không gian không đủ, sơ đồ đã tự thu xếp lại.';
+    svgbox.appendChild(w);
+  }
+  wrap.appendChild(svgbox);
+  box.appendChild(wrap);
+  if(dragFreeze) applyZoom();                 // đang kéo thì khỏi đo lại, tránh giật
+  else requestAnimationFrame(()=>{             // sơ đồ lấp hết chiều cao khung
+    mapBaseH=svgbox.clientHeight-28; baseH=mapBaseH;
+    applyZoom();
+  });
+  svgbox.addEventListener('wheel',e=>{         // chụm hai ngón trên trackpad
+    if(!(e.ctrlKey||e.metaKey)) return;
+    e.preventDefault();
+    const dy=clamp(e.deltaY,-30,30);
+    S.mapZoom=clamp(+(S.mapZoom*Math.exp(-dy*0.006)).toFixed(3),0.4,6);
+    applyZoom();
+  },{passive:false});
+}
+
+/* ---------- chuyển màn hình ---------- */
+function setView(v){
+  S.view=v;
+  document.body.classList.remove('v-reg','v-map','v-print');
+  document.body.classList.add('v-'+v);
+  document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  const tabs=[...document.querySelectorAll('#tabs button')];
+  tabs.forEach(b=>b.style.display=(b.dataset.view===v)?'':'none');
+  const mine=tabs.filter(b=>b.dataset.view===v);
+  $('#tabs').style.display=mine.length>1?'flex':'none';
+  if(mine.length && !mine.some(b=>b.classList.contains('on'))) showPane(mine[0].dataset.p);
+  else if(mine.length) showPane(mine.find(b=>b.classList.contains('on')).dataset.p);
+  if(v==='reg') renderReg();
+  if(v==='map') renderMap();
+  render();
+  if(v==='print') fit();
+}
+document.querySelectorAll('#viewseg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+function doImport(replace){
+  const ta=$('#regpaste'); const v=parseReg(ta.value);
+  const note=$('#regpastenote'); const zh=S.lang==='zh';
+  if(!v.length){ note.textContent=zh?'讀不到資料。':'Không đọc được dữ liệu nào.'; return; }
+  snap();
+  S.people = replace ? v : S.people.concat(v);
+  ta.value='';
+  note.textContent = zh?`已匯入 ${v.length} 筆。`:`Đã nạp ${v.length} người.`;
+  autoSeatCount(); renderReg(); upd();
+}
+$('#bPanel').onclick=()=>{ document.body.classList.toggle('nopanel'); setZoom(zoom); };
+$('#bRegImport').onclick=()=>doImport(false);
+$('#bRegReplace').onclick=()=>doImport(true);
+$('#bRegAdd').onclick=()=>{ snap(); S.people.push(newPerson()); renderReg(); upd(); };
+$('#bRegXls').onclick=()=>{
+  const zh=S.lang==='zh';
+  const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
+               : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
+  const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const rows=S.people.map(q=>'<tr>'+[
+      q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
+      q.gvcn||'', q.interp||'', q.doc||'', q.ph||''
+    ].map(v=>`<td>${esc(v)}</td>`).join('')+'</tr>').join('');
+  const html='<html><head><meta charset="utf-8"></head><body><table border="1">'+
+    '<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr>'+rows+'</table></body></html>';
+  const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='danh-sach-ghi-danh.xls'; a.click(); URL.revokeObjectURL(a.href);
+};
+$('#bRegClear').onclick=()=>{ snap(); S.people=[]; renderReg(); upd(); };
+$('#bMapAuto').onclick=()=>{
+  snap();
+  S.people.forEach(p=>{ if(!p.seat){ const k=firstFreeSeat(p.sex); if(k) p.seat=k; } });
+  renderReg(); upd();
+};
+$('#bMapClear').onclick=()=>{ snap(); S.people.forEach(p=>p.seat=null); renderReg(); upd(); };
+$('#bSeatAuto').onclick=()=>{
+  const nm=S.people.filter(p=>p.sex==='m').length, nf=S.people.filter(p=>p.sex==='f').length;
+  S.seats.m=nm; S.seats.f=nf;
+  S.grid={mRows:0,mCols:0,fRows:0,fCols:0};       // trở về tự động
+  refreshRoom(); upd();
+};
+function syncGrid(sx){                        // hàng × cột và số ghế luôn khớp nhau
+  const c=S.grid[sx+'Cols'], r=S.grid[sx+'Rows'];
+  if(c>0&&r>0) S.seats[sx]=c*r;
+  else if(c>0) S.grid[sx+'Rows']=Math.ceil(S.seats[sx]/c);
+  else if(r>0) S.grid[sx+'Cols']=Math.ceil(S.seats[sx]/r);
+  refreshRoom();
+}
+['mRows','mCols','fRows','fCols'].forEach(id=>{
+  const el=$('#'+id); if(!el) return;
+  el.addEventListener('input',()=>{
+    S.grid[id]=Math.max(0,+el.value||0);
+    syncGrid(id[0]==='m'?'m':'f'); renderMap(); render();
+  });
+});
+['seatM','seatF'].forEach(id=>{
+  const el=$('#'+id), key=id==='seatM'?'m':'f';
+  el.addEventListener('input',()=>{
+    S.seats[key]=clamp(+el.value||0,0,400);
+    S.grid[key+'Cols']=0; S.grid[key+'Rows']=0;   // nhập số ghế thì quay về tự động
+    refreshRoom(); upd();
+  });
+});
+Object.keys(S.room).forEach(k=>{
+  const el=$('#'+k); if(!el) return;
+  el.addEventListener('input',()=>{ S.room[k]=+el.value||0; renderMap(); });
+});
+function refreshRoom(){
+  if($('#seatM')) $('#seatM').value=S.seats.m;
+  if($('#seatF')) $('#seatF').value=S.seats.f;
+  Object.keys(S.room).forEach(k=>{ const el=$('#'+k); if(el) el.value=S.room[k]; });
+  Object.keys(S.grid).forEach(k=>{ const el=$('#'+k); if(el) el.value=S.grid[k]; });
+}
+
+
+refreshFonts(); applyLang(); buildHeadList(); refreshControls(); refreshRoom();
+renderReg(); setView('reg'); render(); renderMap(); fit();
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>render());
+</script>
+</body>
+</html>

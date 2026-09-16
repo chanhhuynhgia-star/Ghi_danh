@@ -2,6 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>清書表格</title>
 <style>
@@ -54,11 +56,15 @@ body.nopanel #side{display:none}
 input[data-num],input[type=text],select,textarea{
   font:inherit;font-size:14px;color:#000;background:#f2f2f7;border:0;border-radius:8px;padding:6px 9px}
 input[data-num]{width:66px;text-align:right}
-.stepper{display:inline-flex;flex-direction:column;gap:2px;flex:0 0 auto;margin-left:-4px}
-.stepper button{border:0;background:#e9e9ef;color:#5c6470;width:26px;height:15px;padding:0;font-size:8px;line-height:15px;
-  border-radius:4px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.numbox{position:relative;display:inline-block;flex:0 0 auto;line-height:0}
+.numbox>input[data-num]{width:84px;padding-right:24px}
+.stepper{position:absolute;top:3px;right:3px;bottom:3px;width:18px;display:flex;flex-direction:column}
+.stepper button{flex:1;display:flex;align-items:center;justify-content:center;border:0;padding:0;margin:0;background:transparent;
+  color:#8e939b;border-radius:4px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.stepper button svg{width:8px;height:5px;display:block;fill:currentColor}
+.stepper button:hover{background:#e2e2e9;color:#3c4148}
 .stepper button:active{background:#0a84ff;color:#fff}
-@media (any-pointer:coarse){.stepper button{width:32px;height:19px;line-height:19px;font-size:9px}}
+.numbox:has(input:disabled) .stepper{display:none}
 .unit{flex:0 0 28px;font-size:12.5px;color:#8a8a8e;margin-left:-2px}
 select{width:126px;padding:5px 6px}
 textarea{width:100%;min-height:200px;resize:vertical;background:#fff;font-size:13.5px;line-height:22px;padding:11px 13px}
@@ -121,6 +127,18 @@ body.v-print #stage{display:flex}
 body:not(.v-print) #stage{display:none}
 .onlyreg,.onlymap,.onlyprint{display:none}
 body.v-map #maptools{display:flex;align-items:center;gap:7px;margin-left:10px}
+body.v-reg #regtools{display:flex;align-items:center;gap:7px}
+#printtools .btn,#maptools .btn{padding:7px 11px}
+#filemenu{position:relative}
+#filepop{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:#fff;border-radius:11px;
+  padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.16);flex-direction:column;gap:4px;min-width:130px}
+#filepop.on{display:flex}
+#filepop .btn{box-shadow:none;text-align:left}
+#filepop .btn:hover{background:#f2f2f7}
+@media (max-width:1300px){ #zoomval{display:none!important} #maptools .mapnote{display:none} #toolbar{gap:5px;padding:10px} body.v-print #printtools,body.v-map #maptools{gap:5px;margin-left:0} #toolbar .sep{margin:0 1px} }
+.btn.danger{color:#c0362c}
+.btn.danger:hover{background:#fff0ee}
+#mapSubHost select{width:auto}
 body.v-print #printtools{display:flex;align-items:center;gap:7px;margin-left:10px}
 .tg.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
 body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-block}
@@ -204,6 +222,12 @@ body.selmode #seatsvg .rn{cursor:pointer}
 #langbar .hint{font-size:12.5px;color:#8a8a8e}
 #langbar .fchip{display:inline-flex;align-items:center;gap:6px}
 #langbar .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+#langlegend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:2px 2px 10px;margin-bottom:10px;border-bottom:.5px solid #e4e4ea;font-size:14px;color:#1b2c3c;flex:0 0 auto}
+#langlegend .li{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+#langlegend i{width:5px;height:18px;border-radius:3px;display:inline-block}
+#langlegend .rg{color:#6b7680}
+#langlegend .ct{font-size:12.5px;color:#6b7680;background:#f2f2f7;border-radius:10px;padding:1px 8px}
+#langlegend .ct.full{color:#1f7a3a;background:#e3f4e8}
 #selrect{position:fixed;z-index:80;border:1.5px dashed #0a58d0;background:rgba(10,88,208,.08);pointer-events:none;display:none}
 #seatpop{position:fixed;z-index:85;background:#fff;border-radius:11px;box-shadow:0 6px 22px rgba(0,0,0,.18);
   padding:8px 10px;max-width:320px;font-size:12.5px;display:none}
@@ -300,6 +324,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 .stattable th:first-child,.stattable td:first-child{width:31%}
 .stattable tr.total td{background:#ffffa6;font-weight:800;font-size:19px}
 .stattable td.zero{color:#333}
+.stattable td.n{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-variant-numeric:tabular-nums;color:#000;-webkit-text-fill-color:#000}
+.stattable tr.total td.n{font-weight:800}
 #pdfmask{position:fixed;inset:0;z-index:60;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
 #pdfmask.on{display:flex}
 #pdfbox{background:#fff;border-radius:16px;padding:22px 24px 18px;width:400px;box-shadow:0 20px 60px rgba(20,40,60,.3)}
@@ -376,6 +402,10 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   body.printguides .frame,body.printguides .secline,
   body.printguides .mline,body.printguides .vline{display:block}
   #pdfmask,#statmask{display:none!important}
+  #printarea .printlegend{display:flex;flex-wrap:wrap;justify-content:center;gap:1mm 6mm;margin:0 0 3mm;font-size:10pt;color:#000}
+  #printarea .printlegend .li{display:inline-flex;align-items:center;gap:1.5mm;white-space:nowrap}
+  #printarea .printlegend i{width:1.4mm;height:4mm;border-radius:.7mm;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printarea .printlegend .rg,#printarea .printlegend .ct{color:#444}
   #printarea .stattable{font-size:15px} #printarea .stattable th,#printarea .stattable td{padding:9px 6px}
 }
 </style>
@@ -387,7 +417,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   <div class="seg" id="viewseg">
     <button data-view="reg" class="on">Ghi danh</button>
     <button data-view="map">Sơ đồ</button>
-    <button data-view="print">清書表格</button>
+    <button data-view="print">Bảng tên</button>
   </div>
   <span class="spacer"></span>
   <select id="lang" autocomplete="off"><option value="vi">Tiếng Việt</option><option value="zh">繁體中文</option></select>
@@ -398,15 +428,99 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 <aside id="side">
   <div id="tabs">
     <button data-p="p-reg" data-view="reg" class="on">Danh sách</button>
-    <button data-p="p-room" data-view="map">Phòng</button>
-    <button data-p="p-page" data-view="print">Trang</button>
+    <button data-p="p-room" data-view="map">Xếp chỗ</button>
+    <button data-p="p-roomset" data-view="map">Phòng</button>
+    <button data-p="p-page" data-view="print">Bố cục</button>
     <button data-p="p-head" data-view="print">Tiêu đề</button>
     <button data-p="p-font" data-view="print">Chữ</button>
   </div>
   <div id="panels">
 
-    <section class="pane on" id="p-page">
-      <div id="warnbox"></div>
+    <!-- ============ ① GHI DANH ============ -->
+    <section class="pane on" id="p-reg">
+      <div class="grp">
+        <h2>Nhập dữ liệu</h2>
+        <textarea id="regpaste" spellcheck="false" wrap="off"></textarea>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" id="bRegImport">Nạp thêm vào danh sách</button>
+          <button class="btn" id="bRegReplace">Thay toàn bộ…</button>
+        </div>
+        <p class="note" id="regpastenote"></p>
+      </div>
+      <div class="grp danger">
+        <h2>Xoá dữ liệu</h2>
+        <div class="row"><label>Xoá toàn bộ danh sách</label><button class="btn danger" id="bRegClear" style="flex:0 0 auto">Xoá hết…</button></div>
+      </div>
+    </section>
+
+    <!-- ============ ② SƠ ĐỒ · tab Xếp chỗ (dùng thường) ============ -->
+    <section class="pane" id="p-room">
+      <div class="grp">
+        <h2>Xếp chỗ</h2>
+        <div class="row"><label>Xếp hết người chưa có số</label><button class="btn primary" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
+        <div class="row"><label>Bỏ số của mọi người</label><button class="btn danger" id="bMapClear" style="flex:0 0 auto">Bỏ hết…</button></div>
+        <div class="row"><label>Dưới tên hiển thị</label><span id="mapSubHost" style="flex:0 0 auto"></span></div>
+      </div>
+      <div class="grp">
+        <h2>Ghế theo ngôn ngữ</h2>
+        <div class="card" id="langpanel"></div>
+      </div>
+      <div class="grp">
+        <h2>Khi in sơ đồ</h2>
+        <div class="row"><label>In kèm 佛座 và 講台</label><input type="checkbox" id="printStage" checked></div>
+        <div class="row" id="rowStageCompact"><label><span>Thu gọn khoảng sân khấu khi in</span><br><span style="font-size:12px;color:#8a8a8e">Tắt thì in đúng vị trí, kích thước đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
+        <div class="row"><label>In khung viền phòng</label><input type="checkbox" id="printRoom" checked></div>
+      </div>
+    </section>
+
+    <!-- ============ ② SƠ ĐỒ · tab Phòng (thiết lập một lần) ============ -->
+    <section class="pane" id="p-roomset">
+      <div class="grp">
+        <h2>Số ghế</h2>
+        <div class="row"><label>Ghế nam</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Ghế nữ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatF" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Lấy theo danh sách ghi danh</label><button class="btn" id="bSeatAuto" style="flex:0 0 auto">Áp dụng</button></div>
+      </div>
+      <div class="grp">
+        <h2>Hàng và cột</h2>
+        <p class="note">Để 0 thì tự tính theo số ghế.</p>
+        <div class="row"><label>Nam · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nam · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+        <div class="row"><label>Nữ · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nữ · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+      </div>
+      <div class="grp">
+        <h2>Kích thước phòng</h2>
+        <div class="row"><label>Chiều ngang phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Chiều dài phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường trái</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường phải</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường sau</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
+      </div>
+      <div class="grp">
+        <h2>Sân khấu</h2>
+        <div class="row"><label>Chiều dài sân khấu</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · vị trí</label><button class="btn" id="bPodiumReset" style="flex:0 0 auto">Về mặc định</button></div>
+      </div>
+      <div class="grp">
+        <h2>Ghế và lối đi</h2>
+        <div class="row"><label>Ngang ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairWidth" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Sâu ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairLength" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapHorizontal" min="0" max="60" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapVertical" min="0" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi giữa</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="centralAisle" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="subAisle" min="0" max="200" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Số ghế rồi mới chia lối phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="maxSeatsBeforeSubAisle" min="2" max="30" step="1"><span class="unit">ghế</span></div>
+      </div>
+    </section>
+
+    <!-- ============ ③ BẢNG TÊN · tab Bố cục ============ -->
+    <section class="pane" id="p-page">
+      <div id="warnbox" hidden></div>
       <div class="grp">
         <h2>Khổ giấy</h2>
         <div class="row"><label>Kích thước</label>
@@ -422,125 +536,70 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
           <input type="text" inputmode="numeric" data-num autocomplete="off" id="pw" min="80" max="900" step="1">
           <input type="text" inputmode="numeric" data-num autocomplete="off" id="ph" min="80" max="900" step="1"><span class="unit">mm</span>
         </div>
+        <div class="row"><label>Chia đôi trang khi in</label><button class="btn tg" id="tgSplit" style="flex:0 0 auto">Chia đôi trang</button></div>
+        <div class="row" id="rowSheet"><label>Khổ mỗi tờ</label>
+          <select id="sheetSize">
+            <option value="210x297">A4 dọc</option>
+            <option value="297x210">A4 ngang</option>
+            <option value="176x250">B5 dọc</option>
+            <option value="250x176">B5 ngang</option>
+          </select></div>
       </div>
-
+      <div class="grp">
+        <h2>Số cột từng khoảng</h2>
+        <div class="row"><label>Số cột khoảng 1</label>
+          <select id="cps1" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+        <div class="row"><label>Số cột khoảng 2</label>
+          <select id="cps2" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+        <div class="row"><label>Số cột khoảng 3, 4, 5</label>
+          <select id="cps" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
+      </div>
       <div class="grp">
         <h2>Lề</h2>
-        <div class="row"><label>Lề trên</label>
-          <input type="text" inputmode="decimal" data-num autocomplete="off" id="marginTop" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
-        <div class="row"><label>Lề dưới</label>
-          <input type="text" inputmode="decimal" data-num autocomplete="off" id="marginBottom" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
-        <div class="row"><label>Lề trái</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="marginLeft" min="0" max="12" step="2"><span class="unit">cột</span></div>
-        <div class="row"><label>Lề phải</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="marginRight" min="0" max="12" step="2"><span class="unit">cột</span></div>
+        <div class="row"><label>Lề trên</label> <input type="text" inputmode="decimal" data-num autocomplete="off" id="marginTop" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Lề dưới</label> <input type="text" inputmode="decimal" data-num autocomplete="off" id="marginBottom" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label>Lề trái</label> <input type="text" inputmode="numeric" data-num autocomplete="off" id="marginLeft" min="0" max="12" step="2"><span class="unit">cột</span></div>
+        <div class="row"><label>Lề phải</label> <input type="text" inputmode="numeric" data-num autocomplete="off" id="marginRight" min="0" max="12" step="2"><span class="unit">cột</span></div>
       </div>
-
       <div class="grp">
         <h2>Khoảng chừa</h2>
-        <div class="row"><label>Giữa các cột</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="colGapPct" min="0" max="40" step="1"><span class="unit">%</span></div>
-        <div class="row"><label>Thêm ở nếp gấp</label>
-          <input type="text" inputmode="decimal" data-num autocomplete="off" id="foldPad" min="0" max="10" step=".1"><span class="unit">mm</span></div>
+        <div class="row"><label>Giữa các cột</label> <input type="text" inputmode="numeric" data-num autocomplete="off" id="colGapPct" min="0" max="40" step="1"><span class="unit">%</span></div>
+        <div class="row"><label>Thêm ở nếp gấp</label> <input type="text" inputmode="decimal" data-num autocomplete="off" id="foldPad" min="0" max="10" step=".1"><span class="unit">mm</span></div>
       </div>
-
       <div class="grp">
         <h2>Khoảng cách hàng</h2>
         <div class="row"><label>Giữa các hàng cùng nhóm</label><input type="text" inputmode="decimal" data-num autocomplete="off" id="gapIn" min="0" max="6" step=".1"><span class="unit">chữ</span></div>
         <div class="row"><label>Giữa nhóm nam và nhóm nữ</label><input type="text" inputmode="decimal" data-num autocomplete="off" id="gapOut" min="0" max="8" step=".1"><span class="unit">chữ</span></div>
       </div>
-
       <div class="grp">
         <h2>Ô tên</h2>
         <div class="row"><label>Chiều cao ô tên</label>
           <div class="seg" style="flex:0 0 140px"><button id="nhAuto">Tự động</button><button id="nhMan" class="on">Tự đặt</button></div></div>
-        <div class="row"><label>Chiều cao ô tên</label><input type="text" inputmode="decimal" data-num autocomplete="off" id="nameH" min="2" max="9" step=".1"><span class="unit">chữ</span></div>
+        <div class="row"><label></label><input type="text" inputmode="decimal" data-num autocomplete="off" id="nameH" min="2" max="9" step=".1"><span class="unit">chữ</span></div>
         <div class="row"><label>Chỗ trống thừa dồn về</label>
           <div class="seg" style="flex:0 0 174px">
             <button data-va="top" class="on">Dưới</button><button data-va="spread">Giữa hàng</button>
           </div></div>
         <div class="row"><label>Cân đối số người mỗi hàng</label><input type="checkbox" id="balance" checked></div>
       </div>
+    </section>
 
+    <!-- ============ ③ BẢNG TÊN · tab Tiêu đề ============ -->
+    <section class="pane" id="p-head">
       <div class="grp">
-        <h2>Hiển thị khi soạn</h2>
-        <div class="row"><label>Tô màu ô theo loại</label><input type="checkbox" id="fills"></div>
-        <div class="row"><label>Hiện ô trống còn thừa</label><input type="checkbox" id="showEmpty"></div>
+        <h2>Cột tiêu đề</h2>
+        <div class="row"><label>Tổng số cột tiêu đề</label>
+          <input type="text" inputmode="numeric" data-num autocomplete="off" id="headerCols" min="2" max="42" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label><span>Thụt nửa chữ từ cột</span><br><span style="font-size:12px;color:#8a8a8e">0 là không cột nào thụt</span></label>
+          <input type="text" inputmode="numeric" data-num autocomplete="off" id="indentFrom" min="0" max="42" step="1"></div>
+      </div>
+      <div class="grp">
+        <h2>Nội dung từng cột</h2>
+        <div id="headlist"></div>
       </div>
     </section>
 
-    <section class="pane on" id="p-reg">
-      <div class="grp">
-        <h2>Nhập dữ liệu</h2>
-        <textarea id="regpaste" spellcheck="false" wrap="off"></textarea>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn primary" id="bRegImport">Nạp vào danh sách</button>
-          <button class="btn" id="bRegReplace">Thay mới</button>
-        </div>
-        <p class="note" id="regpastenote"></p>
-      </div>
-      <div class="grp">
-        <h2>Danh sách</h2>
-        <div class="row"><label>Thêm một dòng trống</label><button class="btn" id="bRegAdd" style="flex:0 0 auto">Thêm dòng</button></div>
-        <div class="row"><label>Thống kê số lớp học viên</label><button class="btn" id="bStats" style="flex:0 0 auto">Xem bảng</button></div>
-        <div class="row"><label>Xuất ra Excel</label><button class="btn" id="bRegXls" style="flex:0 0 auto">Xuất Excel</button></div>
-        <div class="row"><label>Xoá toàn bộ</label><button class="btn" id="bRegClear" style="flex:0 0 auto">Xoá hết</button></div>
-      </div>
-    </section>
-
-    <section class="pane" id="p-room">
-      <div class="grp">
-        <h2>Xếp chỗ</h2>
-        <div class="row"><label>Xếp hết người chưa có số</label><button class="btn" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
-        <div class="row"><label>Bỏ số của mọi người</label><button class="btn" id="bMapClear" style="flex:0 0 auto">Bỏ hết</button></div>
-        <div class="row"><label>In kèm 佛台 và 講台</label><input type="checkbox" id="printStage" checked></div>
-        <div class="row" id="rowStageCompact"><label><span>Thu gọn khoảng sân khấu khi in</span><br><span style="font-size:12px;color:#8a8a8e">Tắt thì in đúng vị trí, kích thước đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
-        <div class="row"><label>In khung viền phòng</label><input type="checkbox" id="printRoom" checked></div>
-      </div>
-      <div class="grp">
-        <h2>Ghế theo ngôn ngữ</h2>
-        <div class="card" id="langpanel"></div>
-      </div>
-      <div class="grp">
-        <h2>Nhập tay</h2>
-        <div class="row"><label>Nam · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
-        <div class="row"><label>Nam · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
-        <div class="row"><label>Nữ · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
-        <div class="row"><label>Nữ · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
-      </div>
-
-      <div class="grp">
-        <h2>Số ghế</h2>
-        <div class="row"><label>Ghế nam</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
-        <div class="row"><label>Ghế nữ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatF" min="0" max="400" step="1"><span class="unit">ghế</span></div>
-        <div class="row"><label>Lấy theo danh sách ghi danh</label><button class="btn" id="bSeatAuto" style="flex:0 0 auto">Áp dụng</button></div>
-      </div>
-      <div class="grp">
-        <h2>Kích thước phòng</h2>
-        <div class="row"><label>Chiều ngang phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>Chiều dài phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>Chiều dài sân khấu</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>佛座 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>佛座 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · vị trí</label><button class="btn" id="bPodiumReset" style="flex:0 0 auto">Về mặc định</button></div>
-        <div class="row"><label>Lề tường trái</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lề tường phải</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lề tường sau</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
-      </div>
-      <div class="grp">
-        <h2>Ghế và lối đi</h2>
-        <div class="row"><label>Ngang ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairWidth" min="20" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Sâu ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairLength" min="20" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Cách ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapHorizontal" min="0" max="60" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Cách dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapVertical" min="0" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Lối đi giữa</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="centralAisle" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lối đi phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="subAisle" min="0" max="200" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Số ghế rồi mới chia lối phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="maxSeatsBeforeSubAisle" min="2" max="30" step="1"><span class="unit">ghế</span></div>
-      </div>
-    </section>
-
+    <!-- ============ ③ BẢNG TÊN · tab Chữ ============ -->
     <section class="pane" id="p-font">
       <div class="grp">
         <h2>Font</h2>
@@ -559,56 +618,36 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
       </div>
     </section>
 
-    <section class="pane" id="p-head">
-      <div class="grp">
-        <h2>Số cột từng khoảng</h2>
-        <div class="row"><label>Số cột khoảng 1</label>
-          <select id="cps1" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
-        <div class="row"><label>Số cột khoảng 2</label>
-          <select id="cps2" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
-        <div class="row"><label>Số cột khoảng 3, 4, 5</label>
-          <select id="cps" style="width:70px"><option>5</option><option>7</option><option>9</option></select></div>
-      </div>
-
-      <div class="grp">
-        <h2>Cột tiêu đề</h2>
-        <div class="row"><label>Tổng số cột tiêu đề</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="headerCols" min="2" max="42" step="1"><span class="unit">cột</span></div>
-        <div class="row"><label><span>Thụt nửa chữ từ cột</span><br><span style="font-size:12px;color:#8a8a8e">0 là không cột nào thụt</span></label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="indentFrom" min="0" max="42" step="1"></div>
-      </div>
-      <div class="grp">
-        <h2>Nội dung từng cột</h2>
-        <div id="headlist"></div>
-      </div>
-    </section>
-
-
-
   </div>
 </aside>
 
 <main id="main">
   <div id="toolbar">
+    <div id="regtools" class="onlyreg">
+      <button class="btn" id="bRegAdd">+ Thêm dòng</button>
+      <button class="btn" id="bStats">Thống kê lớp</button>
+    </div>
     <div id="maptools" class="onlymap"></div>
     <div id="printtools" class="onlyprint">
+      <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
+      <button class="btn onlyprint" id="bFit">Vừa khung</button>
+      <span class="sep"></span>
       <button class="btn tg" id="tgGuides">Lề viền</button>
       <button class="btn tg" id="tgFold">Khung vạch</button>
-      <button class="btn tg" id="tgSplit">Chia đôi trang</button>
-      <select id="sheetSize">
-        <option value="210x297">A4 dọc</option>
-        <option value="297x210">A4 ngang</option>
-        <option value="176x250">B5 dọc</option>
-        <option value="250x176">B5 ngang</option>
-      </select>
+      <button class="btn tg" id="tgFills" title="Tô màu ô theo loại">Tô màu</button>
+      <button class="btn tg" id="tgEmpty" title="Hiện ô trống còn thừa">Ô trống</button>
     </div>
     <span class="spacer"></span>
-    <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
-    <button class="btn onlyprint" id="bFit">Vừa khung</button>
+    <button class="btn" id="bUndo" title="Hoàn tác (Ctrl/⌘ + Z)">↶</button>
+    <div id="filemenu">
+      <button class="btn" id="bFile">Tệp ▾</button>
+      <div id="filepop">
+        <button class="btn" id="bSave">Lưu .json</button>
+        <button class="btn" id="bOpen">Mở .json</button>
+      </div>
+    </div>
     <span class="sep"></span>
-    <button class="btn touchonly" id="bUndo" title="Hoàn tác">↶</button>
-    <button class="btn" id="bSave">Lưu .json</button>
-    <button class="btn" id="bOpen">Mở .json</button>
+    <button class="btn onlyreg" id="bRegXls">Xuất Excel</button>
     <button class="btn" id="bPrint">In</button>
     <button class="btn primary" id="bPdf">Lưu PDF</button>
     <input type="file" id="fileIn" accept=".json" hidden>
@@ -629,7 +668,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 </div>
 
 <div id="statmask"><div id="statbox">
-  <div id="statsheet"></div>
+  <div id="statsheet" translate="no" class="notranslate"></div>
   <details id="statorder" hidden style="display:none"><summary></summary>
     <textarea id="statorderta" spellcheck="false"></textarea>
     <p class="note" id="statordernote"></p>
@@ -886,7 +925,13 @@ const I18N={
  'Mũi tên':'方向鍵','Di chuyển ô hiện hành':'移動游標格',
  'Mở ô nhập':'進入編輯','Gõ chữ':'直接輸入','Nhập đè lên ô đang chọn':'覆寫選取格',
  'Chép, cắt, dán':'複製、剪下、貼上','Xóa nội dung ô đã chọn':'清除選取格內容',
- 'Chọn tất cả ô nhập được':'選取全部可編輯格'
+ 'Chọn tất cả ô nhập được':'選取全部可編輯格',
+ 'Bảng tên':'清書表格','Bố cục':'版面','Nạp thêm vào danh sách':'加入名單','Thay toàn bộ…':'全部取代…',
+ 'Xoá dữ liệu':'清除資料','Xoá toàn bộ danh sách':'清空整份名單','Xoá hết…':'清空…','Bỏ hết…':'全部清除…',
+ 'Dưới tên hiển thị':'名下顯示','Khi in sơ đồ':'列印座位圖時','In kèm 佛座 và 講台':'列印時含佛座與講台',
+ 'Hàng và cột':'排與欄','Để 0 thì tự tính theo số ghế.':'設為 0 則依座位數自動計算。','Sân khấu':'舞台',
+ '+ Thêm dòng':'+ 新增一列','Thống kê lớp':'班員統計','Tô màu':'著色','Ô trống':'空格',
+ 'Tệp ▾':'檔案 ▾','In danh sách':'列印名冊','In sơ đồ':'列印座位圖','In bảng tên':'列印清書表格'
 };
 function L(t){ return (S.lang==='zh' && I18N[t]) ? I18N[t] : t; }
 const TRANS_SEL='#tabs button,.grp>h2,.row>label,.row>label>span,.pane .btn,.unit,.seg button,#toolbar .btn,'+
@@ -1767,8 +1812,11 @@ $('#cps').addEventListener('change',()=>{S.cps=+$('#cps').value;render();});
 function syncTg(){
   const set=(id,on)=>{ const b=$('#'+id); if(b) b.classList.toggle('on',!!on); };
   set('tgGuides',S.guides); set('tgFold',S.foldLines); set('tgSplit',S.splitPrint);
-  const sz=$('#sheetSize'); if(sz) sz.style.display=S.splitPrint?'':'none';
+  set('tgFills',S.fills); set('tgEmpty',S.showEmpty);
+  const rs=$('#rowSheet'); if(rs) rs.style.display=S.splitPrint?'':'none';
 }
+$('#tgFills').onclick=()=>{ S.fills=!S.fills; syncTg(); render(); };
+$('#tgEmpty').onclick=()=>{ S.showEmpty=!S.showEmpty; syncTg(); render(); };
 $('#tgGuides').onclick=()=>{ S.guides=!S.guides; syncTg(); render(); };
 $('#tgFold').onclick=()=>{ S.foldLines=!S.foldLines; syncTg(); render(); };
 $('#tgSplit').onclick=()=>{ S.splitPrint=!S.splitPrint; syncTg(); render(); };
@@ -1856,7 +1904,7 @@ function statsData(){
   const norm=t=>(t||'').replace(/\s+/g,'');
   const rows=new Map(), firstSeen=[];
   S.people.forEach(p=>{
-    if(!(p.name||'').trim() && !(p.gvcn||'').trim()) return;   // bỏ dòng trống
+    if(!p.seat) return;                                         // chỉ tính người đã có số báo danh
     const g=norm(p.gvcn);
     if(!rows.has(g)){ rows.set(g,{g,m:0,f:0}); firstSeen.push(g); }
     rows.get(g)[p.sex==='f'?'f':'m']++;
@@ -1870,11 +1918,11 @@ function statsData(){
 function statsHTML(){
   const {list,tot}=statsData(), zh=S.lang==='zh';
   const c=n=>n?String(n):'–';
-  const body=list.map(r=>`<tr><td>${esc(r.g||(zh?'（未填）':'(chưa ghi)'))}</td><td>${c(r.m)}</td><td>${c(r.f)}</td><td>${c(r.m+r.f)}</td></tr>`).join('');
+  const body=list.map(r=>`<tr><td>${esc(r.g||(zh?'（未填）':'(chưa ghi)'))}</td><td class="n">${c(r.m)}</td><td class="n">${c(r.f)}</td><td class="n">${c(r.m+r.f)}</td></tr>`).join('');
   return `<div class="stattitle">班員統計表</div>
     <table class="stattable"><thead><tr><th>理經(代號)</th><th>乾道</th><th>坤道</th><th>小計</th></tr></thead>
-    <tbody>${body||`<tr><td colspan="4" style="color:#8a8a8e">${zh?'名冊是空的':'Danh sách trống'}</td></tr>`}
-    <tr class="total"><td>總計</td><td>${tot.m}</td><td>${tot.f}</td><td>${tot.m+tot.f}</td></tr></tbody></table>`;
+    <tbody>${body||`<tr><td colspan="4" style="color:#8a8a8e">${zh?'尚無已掛號的學員':'Chưa có học viên nào có số báo danh'}</td></tr>`}
+    <tr class="total"><td>總計</td><td class="n">${tot.m}</td><td class="n">${tot.f}</td><td class="n">${tot.m+tot.f}</td></tr></tbody></table>`;
 }
 function openStats(){
   const zh=S.lang==='zh';
@@ -2053,7 +2101,7 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
   pa.innerHTML=''; document.body.classList.remove('pmode');
   if(printStats){                               // chỉ in bảng thống kê lớp
     const wrap=document.createElement('div'); wrap.style.cssText='max-width:150mm;margin:0 auto';
-    wrap.innerHTML=statsHTML(); pa.appendChild(wrap);
+    wrap.setAttribute('translate','no'); wrap.innerHTML=statsHTML(); pa.appendChild(wrap);
     document.body.classList.add('pmode'); return;
   }
   const zh=S.lang==='zh';
@@ -2100,6 +2148,10 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
     let w=aw, h=aw/r;
     if(h>ah){ h=ah; w=ah*r; }
     c.setAttribute('style',`display:block;margin:0 auto;width:${w}mm;height:${h}mm;max-width:none`);
+    const lg=$('#langlegend');
+    if(lg){ const lc=lg.cloneNode(true); lc.removeAttribute('id'); lc.className='printlegend'; pa.appendChild(lc);
+      const lines=Math.ceil(lg.querySelectorAll('.li').length/3);   // bớt chiều cao sơ đồ cho chú thích
+      const k=Math.min(1,(ah-lines*7)/h); c.style.width=(w*k)+'mm'; c.style.height=(h*k)+'mm'; }
     pa.appendChild(c);
     document.body.classList.add('pmode');
   } else if(S.view==='reg'){
@@ -2185,8 +2237,7 @@ function refreshControls(){
   $('#colGapPct').value=S.colGapPct;
   $('#printStage').checked=S.printStage; $('#printStageCompact').checked=!!S.printStageCompact; $('#printRoom').checked=S.printRoom!==false;
   $('#rowStageCompact').style.display=S.printStage?'':'none'; $('#sheetSize').value=`${S.sheetW}x${S.sheetH}`;
-  syncTg(); $('#fills').checked=S.fills;
-  $('#showEmpty').checked=S.showEmpty;
+  syncTg();
   $('#balance').checked=S.balance;
   if(S.vAlign!=='spread') S.vAlign='top';
   document.querySelectorAll('[data-va]').forEach(x=>x.classList.toggle('on',x.dataset.va===S.vAlign));
@@ -2857,12 +2908,11 @@ function renderMap(){
     .forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; subSel.appendChild(o); });
   subSel.value=S.mapSub||'gvcn';
   subSel.onchange=()=>{ S.mapSub=subSel.value; renderMap(); };
-  zbar.append(subLb,subSel);
+  const subHost=$('#mapSubHost'); if(subHost){ subHost.innerHTML=''; subHost.appendChild(subSel); } else zbar.append(subLb,subSel);
   const bSel=document.createElement('button'); bSel.className='btn tg'+(mapSelMode?' on':'');
   bSel.textContent = zh?'選取座位':'Chọn ghế'; bSel.style.marginLeft='10px';
   bSel.title = zh?'選取座位後指定翻譯語言':'Chọn ghế rồi gán ngôn ngữ phiên dịch';
   bSel.onclick=()=>{ mapSelMode=!mapSelMode; mapSel.clear(); pickedId=null; renderMap(); };
-  zbar.appendChild(bSel);
   document.body.classList.toggle('selmode',mapSelMode);
   const tip=document.createElement('span'); tip.className='mapnote'; tip.style.marginLeft='6px';
   const touchUI = window.matchMedia && matchMedia('(any-pointer:coarse)').matches;
@@ -2928,7 +2978,7 @@ function renderMap(){
     return [...m.values()].sort((a,b)=>langKey(a.v)<langKey(b.v)?-1:1);
   })();
   const seatsBottom = startY + Math.max(lay.male.height, lay.female.height);
-  const seatBot = seatsBottom + 24 + (legend.length ? legend.length*22+10 : 0);
+  const seatBot = seatsBottom + 24;
   const backY = R.roomLength-(R.wallMarginBottom||0);
   const viewBot = S.mapGuides ? Math.max(seatBot, backY+26) : seatBot;
   const vx = S.mapFull ? 0 : Math.max(0, femaleX-24);
@@ -3043,7 +3093,7 @@ function renderMap(){
       seat.innerHTML=`<rect class="bg" width="${R.chairWidth}" height="${R.chairLength}" rx="6"
           fill="${p?(sex==='m'?'#d9e8ff':'#ffdeeb'):'#f7f8fa'}"
           stroke="${sex==='m'?'#8fb4e8':'#e8a7c2'}" stroke-width="1"/>
-        ${sLang?`<path d="M0.5,6.5 Q0.5,0.5 6.5,0.5 H${CW-6.5} Q${CW-0.5},0.5 ${CW-0.5},6.5 Z" fill="${langColor(sLang)}"><title>${esc(sLang)}</title></path>`:''}
+        ${sLang?`<rect x="1.5" y="7" width="3" height="${R.chairLength-14}" rx="1.5" fill="${langColor(sLang)}"><title>${esc(sLang)}</title></rect>`:''}
         ${warn?`<g><title>${esc(warn)}</title><circle cx="${CW-7.5}" cy="14" r="5.5" fill="#d0342c"/>
           <text x="${CW-7.5}" y="17.2" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">!</text></g>`:''}
         <text x="${R.chairWidth/2}" y="13" text-anchor="middle" font-size="9" font-weight="700" fill="#8d97a1">${num}</text>
@@ -3082,21 +3132,6 @@ function renderMap(){
   };
   area.appendChild(block('f',lay.female,femaleX));
   area.appendChild(block('m',lay.male,maleX));
-  if(legend.length){
-    const gL=document.createElementNS(svgNS,'g'); gL.setAttribute('class','langlegend');
-    let h='', y=seatsBottom+36;
-    legend.forEach(it=>{
-      const tot=it.m.length+it.f.length;
-      const used=it.m.filter(n=>atSeat('m',n)).length+it.f.filter(n=>atSeat('f',n)).length;
-      const parts=[]; if(it.f.length) parts.push('坤 '+rangeText(it.f)); if(it.m.length) parts.push('乾 '+rangeText(it.m));
-      const cnt = zh ? `已坐 ${used}/${tot}` : `đã ngồi ${used}/${tot}`;
-      h+=`<rect x="${femaleX}" y="${y-11}" width="14" height="14" rx="3" fill="${langColor(it.v)}"/>
-        <text x="${femaleX+22}" y="${y+1}" font-size="14" fill="#1b2c3c"><tspan font-weight="700">${esc(it.v)}</tspan><tspan fill="#6b7680">  ·  ${parts.join('  ·  ')}  ·  ${cnt}</tspan></text>`;
-      y+=22;
-    });
-    gL.innerHTML=h; area.appendChild(gL);
-  }
-
   const rowsN=Math.max(lay.male.rows,lay.female.rows);   // số thứ tự hàng ở lối đi giữa
   if(rowsN && aisleEff>=22){
     const ref = lay.female.rows>=lay.male.rows ? lay.female : lay.male;
@@ -3249,6 +3284,17 @@ function renderMap(){
     svg.addEventListener('pointerup',finish);
     svg.addEventListener('pointercancel',finish);
   }
+  if(legend.length){                          // chú thích ngôn ngữ nằm trên đầu sơ đồ
+    const lg=document.createElement('div'); lg.id='langlegend'; lg.setAttribute('translate','no');
+    lg.innerHTML=legend.map(it=>{
+      const tot=it.m.length+it.f.length;
+      const used=it.m.filter(n=>atSeat('m',n)).length+it.f.filter(n=>atSeat('f',n)).length;
+      const parts=[]; if(it.f.length) parts.push('坤 '+rangeText(it.f)); if(it.m.length) parts.push('乾 '+rangeText(it.m));
+      const cnt = zh ? `已坐 ${used}/${tot}` : `đã ngồi ${used}/${tot}`;
+      return `<span class="li"><i style="background:${langColor(it.v)}"></i><b>${esc(it.v)}</b><span class="rg">${esc(parts.join(', '))}</span><span class="ct${used>=tot?' full':''}">${cnt}</span></span>`;
+    }).join('');
+    svgbox.appendChild(lg);
+  }
   svgbox.appendChild(svg);
 
   if(lay.overflow){
@@ -3260,7 +3306,8 @@ function renderMap(){
   box.appendChild(wrap);
   if(dragFreeze) applyZoom();                 // đang kéo thì khỏi đo lại, tránh giật
   else requestAnimationFrame(()=>{             // sơ đồ lấp hết chiều cao khung
-    mapBaseH=svgbox.clientHeight-28; baseH=mapBaseH;
+    const lgH=($('#langlegend')||{}).offsetHeight||0;
+    mapBaseH=svgbox.clientHeight-28-(lgH?lgH+10:0); baseH=mapBaseH;
     applyZoom();
   });
   svgbox.addEventListener('wheel',e=>{         // chụm hai ngón trên trackpad
@@ -3284,6 +3331,8 @@ function setView(v){
   $('#tabs').style.display=mine.length>1?'flex':'none';
   if(mine.length && !mine.some(b=>b.classList.contains('on'))) showPane(mine[0].dataset.p);
   else if(mine.length) showPane(mine.find(b=>b.classList.contains('on')).dataset.p);
+  const pl={reg:'In danh sách',map:'In sơ đồ',print:'In bảng tên'}[v];
+  const bp=$('#bPrint'); if(bp){ bp.dataset.vi=pl; bp.textContent=L(pl); }
   if(v==='reg') renderReg();
   if(v==='map') renderMap();
   render();
@@ -3302,7 +3351,12 @@ function doImport(replace){
 }
 $('#bPanel').onclick=()=>{ document.body.classList.toggle('nopanel'); setZoom(zoom); };
 $('#bRegImport').onclick=()=>doImport(false);
-$('#bRegReplace').onclick=()=>doImport(true);
+$('#bRegReplace').onclick=()=>{
+  if(!$('#regpaste').value.trim()){ doImport(true); return; }
+  if(S.people.length && !askSure(`Danh sách hiện có ${S.people.length} người sẽ bị thay bằng dữ liệu vừa dán. Tiếp tục?`,
+                                 `目前名單 ${S.people.length} 人將被取代，確定繼續？`)) return;
+  doImport(true);
+};
 $('#bRegAdd').onclick=()=>{ snap(); S.people.push(newPerson()); renderReg(); upd(); };
 $('#bRegXls').onclick=()=>{
   const zh=S.lang==='zh';
@@ -3319,7 +3373,13 @@ $('#bRegXls').onclick=()=>{
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='danh-sach-ghi-danh.xls'; a.click(); URL.revokeObjectURL(a.href);
 };
-$('#bRegClear').onclick=()=>{ snap(); S.people=[]; renderReg(); upd(); };
+function askSure(vi,zh){ return confirm(S.lang==='zh'?zh:vi); }
+$('#bRegClear').onclick=()=>{
+  if(!S.people.length) return;
+  if(!askSure(`Xoá toàn bộ ${S.people.length} người trong danh sách? Có thể bấm Hoàn tác để lấy lại.`,
+              `確定清空名單共 ${S.people.length} 人？可按復原還原。`)) return;
+  snap(); S.people=[]; renderReg(); upd();
+};
 $('#bMapAuto').onclick=()=>{
   snap();
   const todo=S.people.filter(p=>!p.seat);
@@ -3327,7 +3387,12 @@ $('#bMapAuto').onclick=()=>{
   todo.forEach(p=>{ const k=autoSeatFor(p); if(k) p.seat=k; });
   renderReg(); upd();
 };
-$('#bMapClear').onclick=()=>{ snap(); S.people.forEach(p=>p.seat=null); renderReg(); upd(); };
+$('#bMapClear').onclick=()=>{
+  const n=S.people.filter(p=>p.seat).length; if(!n) return;
+  if(!askSure(`Bỏ số ghế của ${n} người đã xếp? Có thể bấm Hoàn tác để lấy lại.`,
+              `確定清除 ${n} 人的座號？可按復原還原。`)) return;
+  snap(); S.people.forEach(p=>p.seat=null); renderReg(); upd();
+};
 $('#bSeatAuto').onclick=()=>{
   const nm=S.people.filter(p=>p.sex==='m').length, nf=S.people.filter(p=>p.sex==='f').length;
   S.seats.m=nm; S.seats.f=nf;
@@ -3473,10 +3538,12 @@ function regArrowNav(e,body){
     if(e.key!=='ArrowUp'&&e.key!=='ArrowDown') return;
     e.preventDefault(); stepNum(el,e.key==='ArrowUp'?1:-1); toEnd(el);
   });
-  document.querySelectorAll('#side input[data-num]').forEach(el=>{   // nút ▲▼ bên cạnh ô số, nhấn giữ để chạy nhanh
+  document.querySelectorAll('#side input[data-num]').forEach(el=>{   // nút ▲▼ ở cuối ô số, nhấn giữ để chạy nhanh
     const box=document.createElement('span'); box.className='stepper';
-    [['▲',1],['▼',-1]].forEach(([t,d])=>{
-      const b=document.createElement('button'); b.type='button'; b.tabIndex=-1; b.textContent=t;
+    const TRI={1:'<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M4 0 8 5H0z"/></svg>',
+               '-1':'<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M0 0h8L4 5z"/></svg>'};
+    [[1],[-1]].forEach(([d])=>{
+      const b=document.createElement('button'); b.type='button'; b.tabIndex=-1; b.innerHTML=TRI[d];
       b.setAttribute('aria-label', d>0?'+':'−');
       let t1=null, t2=null;
       const stop=()=>{ clearTimeout(t1); clearInterval(t2); t1=t2=null; };
@@ -3490,7 +3557,8 @@ function regArrowNav(e,body){
       b.addEventListener('click',e=>e.preventDefault());
       box.appendChild(b);
     });
-    el.insertAdjacentElement('afterend',box);
+    const wrap=document.createElement('span'); wrap.className='numbox';   // ▲▼ nằm trong mép phải ô số
+    el.replaceWith(wrap); wrap.append(el,box);
   });
 })();
 
@@ -3657,6 +3725,12 @@ document.addEventListener('gestureend',e=>{ if(gz){ e.preventDefault(); gz=null;
 
 /* nút hoàn tác, chỉ hiện trên thiết bị cảm ứng */
 document.getElementById('bUndo').onclick=()=>doUndo();
+(function(){                                        // menu Tệp
+  const pop=document.getElementById('filepop'), bt=document.getElementById('bFile');
+  bt.onclick=e=>{ e.stopPropagation(); pop.classList.toggle('on'); };
+  pop.addEventListener('click',()=>pop.classList.remove('on'));
+  document.addEventListener('click',e=>{ if(!e.target.closest('#filemenu')) pop.classList.remove('on'); });
+})();
 </script>
 </body>
 </html>

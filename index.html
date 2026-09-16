@@ -256,6 +256,30 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 #pdfbox .btnrow{justify-content:flex-end}
 
 
+
+/* ---------- cảm ứng (iPad) ---------- */
+.touchonly{display:none}
+.gapline,.mhandle,.rz,#seatsvg .gline{touch-action:none}
+.touchghost{position:fixed;left:0;top:0;z-index:95;pointer-events:none;
+  transform:translate(-50%,calc(-100% - 28px));background:#1b2c3c;color:#fff;border-radius:10px;
+  padding:7px 14px;font-size:15px;font-weight:600;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+@media (any-pointer:coarse){
+  html{touch-action:manipulation}
+  .btn.touchonly{display:inline-block}
+  .btn{min-height:38px}
+  .seg button{padding:8px 12px}
+  .chip{padding:10px 11px;font-size:14px;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+  .chip.lifted{opacity:.35}
+  #page,#seatsvg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+  .inline-edit{-webkit-user-select:text;user-select:text;font-size:16px}
+  .gapline{height:6mm;margin-top:-3mm}
+  .gapline::before{top:3mm}
+  .mhandle.v{width:7mm;margin-left:-3.5mm}
+  .mhandle.h{height:7mm;margin-top:-3.5mm}
+  .rz{width:24px;right:-12px}
+  #seatsvg .gline .hit{stroke-width:34}
+  #regtable .del{padding:8px 12px;font-size:18px}
+}
 @media print{
   #side,#toolbar,#topbar,#marquee,#pagewarn,#toast{display:none!important}
   html body.pmode #regview,html body.pmode #mapview,html body.pmode #stage{display:none!important}
@@ -511,6 +535,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
     <button class="btn onlyprint" id="bFit">Vừa khung</button>
     <span class="sep"></span>
+    <button class="btn touchonly" id="bUndo" title="Hoàn tác">↶</button>
     <button class="btn" id="bSave">Lưu .json</button>
     <button class="btn" id="bOpen">Mở .json</button>
     <button class="btn" id="bPrint">In</button>
@@ -2120,7 +2145,7 @@ function bestLayout(m,f){
   }
   return best;
 }
-let pickedId=null, dragFreeze=null, mapBaseH=0;
+let pickedId=null, dragFreeze=null, mapBaseH=0, mapApplyZoom=null;
 function stageSVG(W, H, small){               // 佛座 trên, 講台 dưới, không đè nhau
   const fh=Math.max(18, Math.min(50, H*0.30));
   const gap=Math.max(6, H*0.05);
@@ -2227,7 +2252,7 @@ function renderMap(){
     arr.forEach(p=>{
       const b=document.createElement('button');
       b.className='chip '+p.sex+(p.seat?' done':'')+(pickedId===p.id?' on':'');
-      b.draggable=true;
+      b.draggable=true; b.dataset.pid=p.id;
       if(p.seat){ const n=document.createElement('b'); n.textContent=p.seat; b.appendChild(n); }
       b.appendChild(document.createTextNode(
         (p.name||(zh?'（未填姓名）':'(chưa có tên)'))+(p.gvcn?' · '+p.gvcn:'')));
@@ -2264,6 +2289,7 @@ function renderMap(){
     svg.style.height=Math.max(220,Math.round(baseH*S.mapZoom))+'px';
     svg.style.maxWidth=Math.round(S.mapZoom*100)+'%';
   };
+  mapApplyZoom=applyZoom;
   const zbar=$('#maptools'); zbar.innerHTML='';
   [['−',-1],['+',1]].forEach(([t,d])=>{
     const b=document.createElement('button'); b.className='btn'; b.textContent=t;
@@ -2283,7 +2309,10 @@ function renderMap(){
   bG.onclick=()=>{ S.mapGuides=!S.mapGuides; renderMap(); };
   zbar.appendChild(bG);
   const tip=document.createElement('span'); tip.className='mapnote'; tip.style.marginLeft='6px';
-  tip.textContent = zh ? '拖曳姓名到座位' : 'Kéo tên vào ghế';
+  const touchUI = window.matchMedia && matchMedia('(any-pointer:coarse)').matches;
+  tip.textContent = touchUI
+    ? (zh ? '長按姓名拖到座位 · 點有人的座位取消' : 'Nhấn giữ tên rồi kéo vào ghế · chạm ghế có người để bỏ số')
+    : (zh ? '拖曳姓名到座位' : 'Kéo tên vào ghế');
   tip.title = zh ? '點已有人的座位則取消該號。乾坤不可互坐。'
                  : 'Bấm ghế đã có người để bỏ số. Nam nữ không ngồi chéo khu.';
   zbar.appendChild(tip);
@@ -2600,6 +2629,166 @@ function refreshRoom(){
 refreshFonts(); applyLang(); buildHeadList(); refreshControls(); refreshRoom();
 renderReg(); setView('reg'); render(); renderMap(); fit();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>render());
+</script>
+
+<script>
+/* ============ lớp cảm ứng cho iPad: không đụng tới cách dùng chuột ============ */
+(()=>{
+if(!('ontouchstart' in window)) return;
+const HOLD=280, SLOP=10;
+let fingers=0, touchDragging=false;
+['touchstart','touchend','touchcancel'].forEach(t=>
+  document.addEventListener(t,e=>{ fingers=e.touches.length; },{capture:true,passive:true}));
+
+const pt=t=>({clientX:t.clientX,clientY:t.clientY,screenX:t.screenX,screenY:t.screenY});
+const fire=(type,target,p)=>target.dispatchEvent(new MouseEvent(type,Object.assign(
+  {bubbles:true,cancelable:true,view:window,button:0,buttons:type==='mouseup'?0:1},p)));
+const findT=(e,id)=>[...e.changedTouches].find(x=>x.identifier===id);
+
+// Chuyển một ngón tay thành chuỗi mousedown → mousemove → mouseup để dùng lại code chuột sẵn có.
+// Nghe trên chính phần tử bị chạm vì Safari vẫn gửi sự kiện tới nó kể cả khi nó bị vẽ lại.
+function bridge(tnode,id,p0){
+  fire('mousedown',tnode,p0);
+  const mv=e=>{ const t=findT(e,id); if(!t) return; e.preventDefault(); fire('mousemove',document,pt(t)); };
+  const end=e=>{ const t=findT(e,id); if(!t) return; fire('mouseup',document,pt(t)); off(); };
+  const off=()=>{ tnode.removeEventListener('touchmove',mv); tnode.removeEventListener('touchend',end);
+                  tnode.removeEventListener('touchcancel',end); };
+  tnode.addEventListener('touchmove',mv,{passive:false});
+  tnode.addEventListener('touchend',end); tnode.addEventListener('touchcancel',end);
+}
+
+/* 1. Kéo các đường chỉnh: khoảng cách hàng, lề trang, bề ngang cột, đường chỉnh sơ đồ */
+document.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||!e.target.closest) return;
+  if(!e.target.closest('.gapline,.mhandle,.rz,#seatsvg .gline')) return;
+  e.preventDefault();
+  const t=e.changedTouches[0];
+  bridge(e.target,t.identifier,pt(t));
+},{capture:true,passive:false});
+
+/* 2. Trang in: chạm = chọn ô (như cũ), chạm đúp = sửa ô, nhấn giữ rồi kéo = quét chọn nhiều ô */
+const pg=document.getElementById('page');
+let lastTap=null;
+pg.addEventListener('touchstart',e=>{
+  if(e.defaultPrevented||e.touches.length!==1) return;
+  if(edit&&e.target===edit.inp) return;
+  const t=e.changedTouches[0], id=t.identifier, p0=pt(t), tnode=e.target;
+  let timer=setTimeout(()=>{ timer=null; if(fingers===1){ off(); bridge(tnode,id,p0); } },HOLD);
+  const mv=ev=>{ const t2=findT(ev,id); if(!t2||!timer) return;
+    if(Math.hypot(t2.clientX-p0.clientX,t2.clientY-p0.clientY)>SLOP){ clearTimeout(timer); timer=null; off(); } };
+  const end=ev=>{
+    if(!timer) return off();
+    clearTimeout(timer); timer=null; off();
+    if(ev.type!=='touchend') return;
+    const cell=tnode.closest&&tnode.closest('.cell.slot'), now=Date.now();
+    if(cell&&lastTap&&lastTap.id===cell.dataset.slot&&now-lastTap.t<350){
+      ev.preventDefault(); lastTap=null;
+      selectOnly(cell.dataset.slot); openEditor(cell.dataset.slot);
+    } else lastTap=cell?{id:cell.dataset.slot,t:now}:null;
+  };
+  const off=()=>{ tnode.removeEventListener('touchmove',mv); tnode.removeEventListener('touchend',end);
+                  tnode.removeEventListener('touchcancel',end); };
+  tnode.addEventListener('touchmove',mv,{passive:true});
+  tnode.addEventListener('touchend',end); tnode.addEventListener('touchcancel',end);
+},{passive:true});
+
+/* 3. Sơ đồ ghế: nhấn giữ tên rồi kéo vào ghế. Chạm nhanh vẫn là chọn tên rồi chạm ghế như cũ. */
+document.addEventListener('dragstart',e=>{ if(touchDragging) e.preventDefault(); },true);
+document.getElementById('mapview').addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||!e.target.closest) return;
+  const chip=e.target.closest('.chip'); if(!chip||!chip.dataset.pid) return;
+  const t=e.changedTouches[0], id=t.identifier, tnode=e.target;
+  let x=t.clientX, y=t.clientY; const x0=x, y0=y;
+  chip.draggable=false;                         // không để kéo thả mặc định của Safari chen vào
+  let timer=setTimeout(start,HOLD), drag=null, ghost=null, raf=null;
+
+  const markOff=sex=>document.querySelectorAll('#seatsvg .seat').forEach(s=>
+    s.classList.toggle('off', !!sex && s.dataset.sex!==sex));
+  function start(){
+    timer=null;
+    if(fingers!==1) return off();
+    const q=S.people.find(z=>z.id===+chip.dataset.pid); if(!q) return off();
+    touchDragging=true;
+    drag={q,prev:pickedId,seat:null};
+    pickedId=q.id; markOff(q.sex);
+    chip.classList.add('lifted');
+    ghost=document.createElement('div'); ghost.className='touchghost';
+    ghost.textContent=q.name||(S.lang==='zh'?'（未填姓名）':'(chưa có tên)');
+    document.body.appendChild(ghost);
+    move(); raf=requestAnimationFrame(autoScroll);
+  }
+  function hit(){
+    const el=document.elementFromPoint(x,y);
+    const s=el&&el.closest&&el.closest('#seatsvg .seat');
+    const ok=(s&&s.dataset.sex===drag.q.sex)?s:null;
+    if(ok!==drag.seat){ if(drag.seat) drag.seat.classList.remove('drop');
+      if(ok) ok.classList.add('drop'); drag.seat=ok; }
+  }
+  function move(){ ghost.style.left=x+'px'; ghost.style.top=y+'px'; hit(); }
+  function autoScroll(){                         // đưa tên tới sát mép khung thì sơ đồ tự cuộn
+    if(!drag) return;
+    const box=document.getElementById('mapsvgbox');
+    if(box){
+      const r=box.getBoundingClientRect(), E=56, sp=d=>Math.round((E-d)/3)+2;
+      let dx=0, dy=0;
+      if(x>r.left&&x<r.right){ if(y<r.top+E&&y>r.top-20) dy=-sp(y-r.top); else if(y>r.bottom-E&&y<r.bottom+20) dy=sp(r.bottom-y); }
+      if(y>r.top&&y<r.bottom){ if(x>r.right-E&&x<r.right+20) dx=sp(r.right-x); else if(x<r.left+E&&x>r.left) dx=-sp(x-r.left); }
+      if(dx||dy){ box.scrollBy(dx,dy); hit(); }
+    }
+    raf=requestAnimationFrame(autoScroll);
+  }
+  const mv=ev=>{
+    const t2=findT(ev,id); if(!t2) return;
+    x=t2.clientX; y=t2.clientY;
+    if(timer){ if(Math.hypot(x-x0,y-y0)>SLOP){ clearTimeout(timer); timer=null; off(); } return; }
+    if(drag){ ev.preventDefault(); move(); }
+  };
+  const end=ev=>{
+    if(!findT(ev,id)) return;
+    if(timer){ clearTimeout(timer); timer=null; return off(); }   // chạm nhanh: để click chọn tên như cũ
+    if(!drag) return off();
+    ev.preventDefault();
+    const {q,seat,prev}=drag;
+    if(seat) seat.classList.remove('drop');
+    if(seat&&ev.type==='touchend'){
+      assignSeat(q,+seat.dataset.seat); pickedId=null; off(); renderReg(); upd();
+    } else {
+      pickedId=prev; chip.classList.remove('lifted');
+      const pp=prev?S.people.find(z=>z.id===prev):null; markOff(pp&&pp.sex); off();
+    }
+  };
+  function off(){
+    if(raf) cancelAnimationFrame(raf); raf=null;
+    if(ghost) ghost.remove(); ghost=null; drag=null;
+    touchDragging=false;
+    setTimeout(()=>{ chip.draggable=true; },0);
+    tnode.removeEventListener('touchmove',mv); tnode.removeEventListener('touchend',end);
+    tnode.removeEventListener('touchcancel',end);
+  }
+  tnode.addEventListener('touchmove',mv,{passive:false});
+  tnode.addEventListener('touchend',end); tnode.addEventListener('touchcancel',end);
+},{passive:true});
+
+/* 4. Chụm hai ngón để phóng to thu nhỏ trang in và sơ đồ ghế */
+let gz=null;
+document.addEventListener('gesturestart',e=>{
+  const tg=e.target&&e.target.closest?e.target:(e.target&&e.target.parentElement);
+  if(!tg) return;
+  const inMap=tg.closest('#mapsvgbox'), inStage=tg.closest('#stage');
+  if(!inMap&&!inStage) return;
+  e.preventDefault();
+  gz={map:!!inMap, z0: inMap?S.mapZoom:zoom};
+},{passive:false});
+document.addEventListener('gesturechange',e=>{
+  if(!gz) return; e.preventDefault();
+  if(gz.map){ S.mapZoom=clamp(+(gz.z0*e.scale).toFixed(3),0.4,6); if(mapApplyZoom) mapApplyZoom(); }
+  else setZoom(gz.z0*e.scale);
+},{passive:false});
+document.addEventListener('gestureend',e=>{ if(gz){ e.preventDefault(); gz=null; } },{passive:false});
+})();
+
+/* nút hoàn tác, chỉ hiện trên thiết bị cảm ứng */
+document.getElementById('bUndo').onclick=()=>doUndo();
 </script>
 </body>
 </html>

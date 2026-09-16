@@ -54,6 +54,11 @@ body.nopanel #side{display:none}
 input[data-num],input[type=text],select,textarea{
   font:inherit;font-size:14px;color:#000;background:#f2f2f7;border:0;border-radius:8px;padding:6px 9px}
 input[data-num]{width:66px;text-align:right}
+.stepper{display:inline-flex;flex-direction:column;gap:2px;flex:0 0 auto;margin-left:-4px}
+.stepper button{border:0;background:#e9e9ef;color:#5c6470;width:26px;height:15px;padding:0;font-size:8px;line-height:15px;
+  border-radius:4px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.stepper button:active{background:#0a84ff;color:#fff}
+@media (any-pointer:coarse){.stepper button{width:32px;height:19px;line-height:19px;font-size:9px}}
 .unit{flex:0 0 28px;font-size:12.5px;color:#8a8a8e;margin-left:-2px}
 select{width:126px;padding:5px 6px}
 textarea{width:100%;min-height:200px;resize:vertical;background:#fff;font-size:13.5px;line-height:22px;padding:11px 13px}
@@ -178,8 +183,40 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 #seatsvg{display:block;margin:0 auto;width:auto}
 #seatsvg .seat{cursor:pointer}
 #seatsvg .seat.off{opacity:.3;cursor:not-allowed}
+#seatsvg .seat.sel rect.bg{stroke:#0a58d0;stroke-width:3.5}
+#seatsvg .seat.sel rect.bg{fill:#e3edff}
+body.selmode #seatsvg{touch-action:none;cursor:crosshair}
+body.selmode #seatsvg .rn{cursor:pointer}
+#langpanel .lrow{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:.5px solid #e4e4ea;font-size:14px}
+#langpanel .lrow .dot{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+#langpanel .lrow .nm{font-weight:600}
+#langpanel .lrow .rg{flex:1;font-size:12px;color:#8a8a8e;line-height:1.35;min-width:0}
+#langpanel .lrow .x{border:0;background:none;color:#c0c6cd;font-size:18px;cursor:pointer;padding:2px 6px}
+#langpanel .ladd{display:flex;gap:8px;padding:10px 14px;border-bottom:.5px solid #e4e4ea}
+#langpanel .ladd input{flex:1;min-width:0}
+#langpanel .lfoot{padding:10px 14px}
+#langpanel .lfoot .btn{width:100%}
+#langpanel .note{margin:8px 0 0}
+#langbar{position:sticky;top:-14px;left:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  margin:-14px -14px 10px;padding:9px 14px;background:rgba(255,255,255,.96);border-bottom:.5px solid #e4e4ea;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#langbar .cnt{font-size:13px;font-weight:600;margin-right:6px}
+#langbar .hint{font-size:12.5px;color:#8a8a8e}
+#langbar .fchip{display:inline-flex;align-items:center;gap:6px}
+#langbar .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+#selrect{position:fixed;z-index:80;border:1.5px dashed #0a58d0;background:rgba(10,88,208,.08);pointer-events:none;display:none}
+#seatpop{position:fixed;z-index:85;background:#fff;border-radius:11px;box-shadow:0 6px 22px rgba(0,0,0,.18);
+  padding:8px 10px;max-width:320px;font-size:12.5px;display:none}
+#seatpop .t{color:#6b7280;margin-bottom:6px}
+#seatpop .nums{display:flex;flex-wrap:wrap;gap:5px}
+#seatpop button{border:0;background:#eef4ff;color:#0a58d0;font:inherit;font-weight:650;border-radius:7px;
+  min-width:36px;padding:6px 8px;cursor:pointer}
+@media (any-pointer:coarse){#seatpop button{min-width:44px;padding:9px 10px;font-size:14px}}
+#regtable .seatcell input.lwarn{background:#fff1dc;color:#b25c00}
 #seatsvg .seat.drop rect{stroke-width:3}
 #seatsvg .gline:hover .hit{stroke:rgba(10,132,255,.2)}
+#seatsvg .stagehandles rect.sh:hover{fill:rgba(10,132,255,.08)}
+@media (any-pointer:coarse){#seatsvg .stagehandles circle.sh{r:10px}}
 #seatsvg .gline:active .hit{stroke:rgba(10,132,255,.34)}
 #seatsvg .gline:hover line:not(.hit){stroke:#0a84ff}
 .mapnote{font-size:12.5px;color:#8a8a8e}
@@ -247,6 +284,22 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #marquee{position:absolute;border:1px solid var(--accent);background:rgba(181,50,42,.09);pointer-events:none;display:none}
 
+#statmask{position:fixed;inset:0;z-index:60;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center;padding:16px}
+#statmask.on{display:flex}
+#statbox{background:#fff;border-radius:16px;padding:22px 24px 18px;width:560px;max-width:100%;max-height:100%;overflow:auto;box-shadow:0 20px 60px rgba(20,40,60,.3)}
+#statbox .btnrow{justify-content:flex-end;margin-top:14px}
+#statorder{margin-top:12px;font-size:13.5px}
+#statorder summary{cursor:pointer;color:#0a58d0;padding:4px 0}
+#statorderta{min-height:180px;margin-top:6px;background:#f2f2f7;font-size:14px;line-height:1.5}
+.stattitle{text-align:center;font-size:24px;font-weight:800;letter-spacing:.55em;margin:0 0 10px;padding-left:.55em;
+  font-family:var(--zhui),'Kaiti TC','BiauKai','標楷體','KaiTi','Noto Serif TC',serif}
+.stattable{width:100%;border-collapse:collapse;font-size:17px;color:#000;
+  font-family:var(--zhui),'Kaiti TC','BiauKai','標楷體','KaiTi','Noto Serif TC',serif}
+.stattable th,.stattable td{border:1.5px solid #000;text-align:center;padding:11px 6px;font-weight:400}
+.stattable th{font-size:16px}
+.stattable th:first-child,.stattable td:first-child{width:31%}
+.stattable tr.total td{background:#ffffa6;font-weight:800;font-size:19px}
+.stattable td.zero{color:#333}
 #pdfmask{position:fixed;inset:0;z-index:60;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
 #pdfmask.on{display:flex}
 #pdfbox{background:#fff;border-radius:16px;padding:22px 24px 18px;width:400px;box-shadow:0 20px 60px rgba(20,40,60,.3)}
@@ -322,7 +375,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   .frame,.secline,.mline,.vline,.gapline{display:none}
   body.printguides .frame,body.printguides .secline,
   body.printguides .mline,body.printguides .vline{display:block}
-  #pdfmask{display:none!important}
+  #pdfmask,#statmask{display:none!important}
+  #printarea .stattable{font-size:15px} #printarea .stattable th,#printarea .stattable td{padding:9px 6px}
 }
 </style>
 </head>
@@ -428,6 +482,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
       <div class="grp">
         <h2>Danh sách</h2>
         <div class="row"><label>Thêm một dòng trống</label><button class="btn" id="bRegAdd" style="flex:0 0 auto">Thêm dòng</button></div>
+        <div class="row"><label>Thống kê số lớp học viên</label><button class="btn" id="bStats" style="flex:0 0 auto">Xem bảng</button></div>
         <div class="row"><label>Xuất ra Excel</label><button class="btn" id="bRegXls" style="flex:0 0 auto">Xuất Excel</button></div>
         <div class="row"><label>Xoá toàn bộ</label><button class="btn" id="bRegClear" style="flex:0 0 auto">Xoá hết</button></div>
       </div>
@@ -439,6 +494,10 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
         <div class="row"><label>Xếp hết người chưa có số</label><button class="btn" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
         <div class="row"><label>Bỏ số của mọi người</label><button class="btn" id="bMapClear" style="flex:0 0 auto">Bỏ hết</button></div>
         <div class="row"><label>In kèm 佛台 và 講台</label><input type="checkbox" id="printStage" checked></div>
+      </div>
+      <div class="grp">
+        <h2>Ghế theo ngôn ngữ</h2>
+        <div class="card" id="langpanel"></div>
       </div>
       <div class="grp">
         <h2>Nhập tay</h2>
@@ -459,6 +518,11 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
         <div class="row"><label>Chiều ngang phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
         <div class="row"><label>Chiều dài phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
         <div class="row"><label>Chiều dài sân khấu</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · vị trí</label><button class="btn" id="bPodiumReset" style="flex:0 0 auto">Về mặc định</button></div>
         <div class="row"><label>Lề tường trái</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
         <div class="row"><label>Lề tường phải</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
         <div class="row"><label>Lề tường sau</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
@@ -562,6 +626,20 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 </main>
 </div>
 
+<div id="statmask"><div id="statbox">
+  <div id="statsheet"></div>
+  <details id="statorder" hidden style="display:none"><summary></summary>
+    <textarea id="statorderta" spellcheck="false"></textarea>
+    <p class="note" id="statordernote"></p>
+  </details>
+  <div class="btnrow">
+    <button class="btn" id="statXls"></button>
+    <button class="btn" id="statCopy"></button>
+    <button class="btn" id="statClose"></button>
+    <button class="btn primary" id="statPrint"></button>
+  </div>
+</div></div>
+
 <div id="pdfmask"><div id="pdfbox">
   <h3>Lưu thành PDF</h3>
   <ol>
@@ -620,9 +698,128 @@ const parsePeople = t => {                 // mỗi dòng là một người, k�
 S.seats={m:20,f:40};
 S.room={roomWidth:600,roomLength:1200,stageLength:300,wallMarginLeft:50,
         chairWidth:50,chairLength:50,gapHorizontal:5,gapVertical:40,
-        wallMarginRight:0,wallMarginBottom:100,centralAisle:80,subAisle:20,maxSeatsBeforeSubAisle:5};
+        wallMarginRight:0,wallMarginBottom:100,centralAisle:80,subAisle:20,maxSeatsBeforeSubAisle:5,
+        altarW:300,altarH:50,podiumW:200,podiumH:150};
 S.grid={mRows:0,mCols:0,fRows:0,fCols:0};
 S.mapGuides=true;
+S.mapSub='gvcn';
+S.seatLang={m:{},f:{}}; S.langList=[];            // ngôn ngữ cố định theo số ghế
+let mapSel=new Set(), mapSelMode=false;          // ghế đang chọn dạng "m:3"
+const LANG_COLORS=['#e8912d','#2a9d8f','#8e5cc4','#d1495b','#3a86ff','#6a994e','#b5838d','#c9a227','#577590','#f28482'];
+const langKey=t=>(t||'').trim().toLowerCase();
+function seatLangOf(sex){ if(!S.seatLang) S.seatLang={m:{},f:{}}; return S.seatLang[sex]||(S.seatLang[sex]={}); }
+function allLangs(){                              // ngôn ngữ đã gán ghế trước, rồi tới ngôn ngữ trong danh sách
+  const seen=new Map();
+  ['m','f'].forEach(sx=>Object.values(seatLangOf(sx)).forEach(v=>{ const k=langKey(v); if(k&&!seen.has(k)) seen.set(k,v.trim()); }));
+  const assigned=[...seen.keys()];
+  (S.langList||[]).forEach(v=>{ const k=langKey(v); if(k&&!seen.has(k)) seen.set(k,v.trim()); });
+  S.people.forEach(p=>{ const k=langKey(p.interp); if(k&&!seen.has(k)) seen.set(k,p.interp.trim()); });
+  return {list:[...seen.entries()].map(([k,v])=>({k,v})), assigned};
+}
+function langColor(name){
+  const {list}=allLangs(), k=langKey(name);
+  const keys=list.map(x=>x.k).sort();
+  const i=keys.indexOf(k);
+  return LANG_COLORS[(i<0?0:i)%LANG_COLORS.length];
+}
+function renderLangPanel(){                       // bảng điều khiển: danh sách ngôn ngữ và ghế đã gán
+  const box=$('#langpanel'); if(!box) return;
+  const zh=S.lang==='zh'; box.innerHTML='';
+  const list=allLangs().list;
+  list.forEach(({k,v})=>{
+    const seats={m:[],f:[]};
+    ['m','f'].forEach(sx=>{ const map=seatLangOf(sx), mx=seatMax(sx);
+      Object.keys(map).forEach(n=>{ if(+n<=mx && langKey(map[n])===k) seats[sx].push(+n); }); });
+    const tot=seats.m.length+seats.f.length;
+    const row=document.createElement('div'); row.className='lrow';
+    const d=document.createElement('span'); d.className='dot'; d.style.background=langColor(v);
+    const info=document.createElement('div'); info.style.cssText='flex:1;min-width:0';
+    const nm=document.createElement('div'); nm.className='nm'; nm.textContent=v;
+    const rg=document.createElement('div'); rg.className='rg';
+    const parts=[]; if(seats.f.length) parts.push('坤 '+rangeText(seats.f)); if(seats.m.length) parts.push('乾 '+rangeText(seats.m));
+    rg.textContent = tot ? parts.join(' · ') : (zh?'尚未指定座位':'Chưa gán ghế nào');
+    info.append(nm,rg);
+    const x=document.createElement('button'); x.className='x'; x.textContent='×';
+    x.title = zh?'刪除此語言':'Xoá ngôn ngữ này';
+    x.onclick=()=>{
+      if(tot && !confirm(zh?`刪除「${v}」並取消 ${tot} 個座位的指定？`:`Xoá "${v}" và bỏ gán ${tot} ghế?`)) return;
+      snap();
+      ['m','f'].forEach(sx=>{ const map=seatLangOf(sx); Object.keys(map).forEach(n=>{ if(langKey(map[n])===k) delete map[n]; }); });
+      S.langList=(S.langList||[]).filter(t=>langKey(t)!==k);
+      renderReg(); renderMap();
+    };
+    row.append(d,info,x); box.appendChild(row);
+  });
+  const add=document.createElement('div'); add.className='ladd';
+  const inp=document.createElement('input'); inp.type='text'; inp.spellcheck=false;
+  inp.placeholder = zh?'新增語言，例：English':'Thêm ngôn ngữ, vd: English';
+  const b=document.createElement('button'); b.className='btn'; b.textContent=zh?'新增':'Thêm';
+  const doAdd=()=>{ const v=inp.value.trim(); if(!v) return;
+    if(!allLangs().list.some(x=>x.k===langKey(v))){ S.langList=(S.langList||[]).concat([v]); }
+    inp.value=''; renderMap(); };
+  b.onclick=doAdd; inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); doAdd(); } });
+  add.append(inp,b); box.appendChild(add);
+  const foot=document.createElement('div'); foot.className='lfoot';
+  const bs=document.createElement('button'); bs.className='btn'+(mapSelMode?' primary':'');
+  bs.textContent = mapSelMode ? (zh?'完成選取':'Xong, tắt chọn ghế') : (zh?'選取座位來指定語言':'Chọn ghế để gán ngôn ngữ');
+  bs.onclick=()=>{ mapSelMode=!mapSelMode; mapSel.clear(); pickedId=null; renderMap(); };
+  const note=document.createElement('p'); note.className='note';
+  note.textContent = zh
+    ? '開啟後在座位圖上點選或拖曳框選座位，再按座位圖上方列中的語言名稱。'
+    : 'Bật lên, chạm hoặc kéo khung chọn ghế trên sơ đồ, rồi bấm tên ngôn ngữ ở thanh ngay trên sơ đồ.';
+  foot.append(bs,note); box.appendChild(foot);
+}
+function hasSeatLang(){ return ['m','f'].some(sx=>Object.values(seatLangOf(sx)).some(v=>langKey(v))); }
+function seatMismatch(p){                         // ghế có ngôn ngữ mà người ngồi không đúng ngôn ngữ đó
+  if(!p||!p.seat) return '';
+  const sl=seatLangOf(p.sex)[p.seat];
+  if(!langKey(sl)) return '';
+  if(langKey(p.interp)===langKey(sl)) return '';
+  return sl.trim();
+}
+function mismatchMsg(p){
+  const sl=seatMismatch(p); if(!sl) return '';
+  const zh=S.lang==='zh', who=p.name||(zh?'此人':'Người này');
+  return langKey(p.interp)
+    ? (zh?`${p.seat} 號是「${sl}」翻譯座，${who} 的翻譯是「${p.interp.trim()}」。`:`Ghế ${p.seat} dành cho dịch ${sl}, nhưng ${who} cần dịch ${p.interp.trim()}.`)
+    : (zh?`${p.seat} 號是「${sl}」翻譯座，${who} 未填翻譯。`:`Ghế ${p.seat} dành cho dịch ${sl}, nhưng ${who} không có phiên dịch.`);
+}
+function rangeText(nums){                         // 1,2,3,5 -> 1–3, 5
+  nums=[...nums].sort((a,b)=>a-b); const out=[];
+  for(let i=0;i<nums.length;){
+    let j=i; while(j+1<nums.length&&nums[j+1]===nums[j]+1) j++;
+    out.push(j>i?`${nums[i]}–${nums[j]}`:String(nums[i])); i=j+1;
+  }
+  return out.join(', ');
+}
+function freeSeatsFor(p){                         // ghế trống hợp với người này
+  const L=langKey(p.interp), mx=seatMax(p.sex), map=seatLangOf(p.sex);
+  const langExists=L && Object.keys(map).some(k=>+k<=mx && langKey(map[k])===L);
+  const free=[];
+  for(let k=1;k<=mx;k++){
+    const o=atSeat(p.sex,k); if(o&&o!==p) continue;
+    const sk=langKey(map[k]);
+    if(langExists ? sk===L : !sk) free.push(k);
+  }
+  return {lang: langExists ? p.interp.trim() : '', free};
+}
+function autoSeatFor(p){                          // đúng ngôn ngữ trước, rồi ghế thường, cuối cùng mới tới ghế dịch khác
+  const a=freeSeatsFor(p); if(a.free.length) return a.free[0];
+  if(a.lang){ const b=freeSeatsFor(Object.assign({},p,{interp:''})); if(b.free.length) return b.free[0]; }
+  return firstFreeSeat(p.sex);
+}                                  // dòng nhỏ dưới tên trên sơ đồ ghế
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function subText(p){                              // nội dung dòng phụ theo lựa chọn
+  if(!p) return '';
+  const g=k=>(p[k]||'').trim();
+  switch(S.mapSub){
+    case 'interp': return g('interp');
+    case 'doc': return g('doc');
+    case 'both': return [g('interp'),g('doc')].filter(Boolean).join(' · ');
+    case 'none': return '';
+    default: return g('gvcn');
+  }
+}
 S.nameAuto=true; S.regSort=null;
 S.colW={idx:34,seat:82,name:280,sex:112,gvcn:140,interp:120,doc:120,ph:112,del:34};
 S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.regQuick=[];
@@ -637,14 +834,14 @@ const I18N={
  'Tiêu đề · Danh sách nam nữ · Thống kê':'表頭 · 乾坤名冊 · 共計',
  'Trang':'頁面','Tiêu đề':'表頭','Chữ':'字體','Phòng':'場地',
  'Ghi danh':'報名','Sơ đồ':'座位圖','Danh sách':'名冊','Nạp vào danh sách':'匯入名單',
- 'Xếp chỗ':'排位','In kèm 佛台 và 講台':'列印時含佛台與講台','Toàn cảnh':'全場','Vùng ghế':'座位區','Xếp hết người chưa có số':'替未掛號者排位','Xếp tự động':'自動排位','Bỏ số của mọi người':'清除全部座號','Bỏ hết':'全部清除',
- 'Dán từ Excel':'從 Excel 貼上','Thêm một dòng trống':'新增空白列','Xuất ra Excel':'匯出 Excel','Xuất Excel':'匯出 Excel','Xoá toàn bộ':'清空名單','Xoá hết':'清空',
+ 'Xếp chỗ':'排位','Ghế theo ngôn ngữ':'翻譯語言座位','In kèm 佛台 và 講台':'列印時含佛台與講台','Toàn cảnh':'全場','Vùng ghế':'座位區','Xếp hết người chưa có số':'替未掛號者排位','Xếp tự động':'自動排位','Bỏ số của mọi người':'清除全部座號','Bỏ hết':'全部清除',
+ 'Dán từ Excel':'從 Excel 貼上','Thêm một dòng trống':'新增空白列','Xuất ra Excel':'匯出 Excel','Xuất Excel':'匯出 Excel','Xoá toàn bộ':'清空名單','Thống kê số lớp học viên':'班員統計表','Xem bảng':'檢視','Xoá hết':'清空',
  'Lọc':'篩選','Hiện':'顯示','Tất cả':'全部','Chưa có số':'未掛號','Đã có số':'已掛號','Tìm tên':'搜尋姓名',
  'Dán danh sách':'貼上名單','Thêm dòng':'新增一列',
  'Xếp tự động':'自動排位','Bỏ hết số ghế':'清除座號',
  'Số ghế':'座位數','Ghế nam':'乾位','Ghế nữ':'坤位','Lấy theo danh sách ghi danh':'依名單設定','Áp dụng':'套用',
  'Kích thước phòng':'場地尺寸','Nhập tay':'手動設定','Nam · số cột':'乾 · 欄數','Nam · số hàng':'乾 · 排數','Nữ · số cột':'坤 · 欄數','Nữ · số hàng':'坤 · 排數','Lề tường phải':'右牆留白','Lề tường sau':'後牆留白','hàng':'排','Đường chỉnh':'調整線','Chiều ngang phòng':'場地寬','Chiều dài phòng':'場地長',
- 'Chiều dài sân khấu':'舞台長','Lề tường trái':'左牆留白',
+ 'Chiều dài sân khấu':'舞台長','講台 · vị trí':'講台 · 位置','Về mặc định':'恢復預設','佛座 · chiều ngang':'佛座 · 寬','佛座 · chiều dọc':'佛座 · 深','講台 · chiều ngang':'講台 · 寬','講台 · chiều dọc':'講台 · 深','Lề tường trái':'左牆留白',
  'Ghế và lối đi':'座椅與走道','Ngang ghế':'椅寬','Sâu ghế':'椅深',
  'Cách ngang':'橫向間距','Cách dọc':'縱向間距','Lối đi giữa':'中央走道','Lối đi phụ':'次走道',
  'Số ghế rồi mới chia lối phụ':'幾張後設次走道','cm':'公分','ghế':'位',
@@ -1290,11 +1487,11 @@ function setSlot(id,txt){
 }
 
 let undo=[];
-function snap(){ undo.push(JSON.stringify({h:S.header,hc:S.headerCols,ind:S.indentFrom,p:S.people,s:S.seats})); if(undo.length>60) undo.shift(); }
+function snap(){ undo.push(JSON.stringify({h:S.header,hc:S.headerCols,ind:S.indentFrom,p:S.people,s:S.seats,sl:S.seatLang,rm:S.room})); if(undo.length>60) undo.shift(); }
 function doUndo(){
   if(!undo.length) return;
   const d=JSON.parse(undo.pop());
-  S.header=d.h; S.people=d.p; S.seats=d.s;
+  S.header=d.h; S.people=d.p; S.seats=d.s; if(d.sl) S.seatLang=d.sl; if(d.rm){ S.room=d.rm; refreshRoom(); }
   if(d.hc!==undefined){ S.headerCols=d.hc; S.indentFrom=d.ind; $('#headerCols').value=S.headerCols; $('#indentFrom').value=S.indentFrom; buildHeadList(); }
   renderReg(); render(); renderMap();
 }
@@ -1649,21 +1846,226 @@ function deleteHeadCol(i){
 
 function syncBulk(){ renderReg(); }
 
+/* ---------- thống kê số lớp học viên (班員統計表) ---------- */
+const GVCN_ORDER_DEFAULT=['中張','宜賴','東張','中王','妙劉','鳳柳','中岑','彰蕭','星吳','三郭','東楊','東楊代','中梁','高趙','坤杜','坤杜代','加許'];
+let printStats=false;
+function gvcnOrder(){ return (Array.isArray(S.gvcnOrder)&&S.gvcnOrder.length) ? S.gvcnOrder : GVCN_ORDER_DEFAULT; }
+function statsData(){
+  const norm=t=>(t||'').replace(/\s+/g,'');
+  const rows=new Map(), firstSeen=[];
+  S.people.forEach(p=>{
+    if(!(p.name||'').trim() && !(p.gvcn||'').trim()) return;   // bỏ dòng trống
+    const g=norm(p.gvcn);
+    if(!rows.has(g)){ rows.set(g,{g,m:0,f:0}); firstSeen.push(g); }
+    rows.get(g)[p.sex==='f'?'f':'m']++;
+  });
+  const order=gvcnOrder().map(norm);
+  const rank=g=>{ if(!g) return 1e9; const i=order.indexOf(g); return i<0 ? 1e6+firstSeen.indexOf(g) : i; };
+  const list=[...rows.values()].sort((a,b)=>rank(a.g)-rank(b.g));
+  const tot={m:0,f:0}; list.forEach(r=>{ tot.m+=r.m; tot.f+=r.f; });
+  return {list,tot};
+}
+function statsHTML(){
+  const {list,tot}=statsData(), zh=S.lang==='zh';
+  const c=n=>n?String(n):'–';
+  const body=list.map(r=>`<tr><td>${esc(r.g||(zh?'（未填）':'(chưa ghi)'))}</td><td>${c(r.m)}</td><td>${c(r.f)}</td><td>${c(r.m+r.f)}</td></tr>`).join('');
+  return `<div class="stattitle">班員統計表</div>
+    <table class="stattable"><thead><tr><th>理經(代號)</th><th>乾道</th><th>坤道</th><th>小計</th></tr></thead>
+    <tbody>${body||`<tr><td colspan="4" style="color:#8a8a8e">${zh?'名冊是空的':'Danh sách trống'}</td></tr>`}
+    <tr class="total"><td>總計</td><td>${tot.m}</td><td>${tot.f}</td><td>${tot.m+tot.f}</td></tr></tbody></table>`;
+}
+function openStats(){
+  const zh=S.lang==='zh';
+  $('#statsheet').innerHTML=statsHTML();
+  $('#statorder summary').textContent = zh?'理經排列順序':'Thứ tự sắp xếp GVCN';
+  $('#statorderta').value=gvcnOrder().join('\n');
+  $('#statordernote').textContent = zh ? '每行一個代號。不在清單中的代號排在後面，依名冊出現順序。'
+    : 'Mỗi dòng một GVCN. GVCN không có trong danh sách sẽ xếp sau cùng, theo thứ tự xuất hiện trong danh sách ghi danh.';
+  $('#statCopy').textContent = zh?'複製到 Excel':'Chép sang Excel';
+  $('#statXls').textContent = zh?'匯出 Excel':'Xuất Excel';
+  $('#statClose').textContent = zh?'關閉':'Đóng';
+  $('#statPrint').textContent = zh?'列印 / 存成 PDF':'In / Lưu PDF';
+  $('#statmask').classList.add('on');
+}
+$('#bStats').onclick=openStats;
+$('#statClose').onclick=()=>{ $('#statmask').classList.remove('on'); const c=$('#statcopybox'); if(c) c.remove(); };
+$('#statmask').onclick=e=>{ if(e.target.id==='statmask') $('#statmask').classList.remove('on'); };
+$('#statorderta').addEventListener('input',()=>{
+  const v=$('#statorderta').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  S.gvcnOrder = v.length ? v : null;
+  $('#statsheet').innerHTML=statsHTML();
+});
+$('#statPrint').onclick=()=>{ $('#statmask').classList.remove('on'); printStats=true; fitForPrint(); window.print(); };
+function copyRich(text, html){                  // chép được cả khi mở tệp trực tiếp trên iPad (không phải https)
+  // 1. cách cũ execCommand: chạy ngay trong lúc chạm nên Safari cho phép, chép kèm dạng bảng
+  try{
+    const box=document.createElement('div');
+    box.contentEditable='true';
+    box.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;white-space:pre;font-size:16px';
+    box.innerHTML=html||'';
+    if(!html) box.textContent=text;
+    document.body.appendChild(box);
+    const sel=window.getSelection(), rg=document.createRange();
+    rg.selectNodeContents(box); sel.removeAllRanges(); sel.addRange(rg);
+    let viaEvent=false;
+    const onCopy=e=>{ try{ e.clipboardData.setData('text/plain',text); if(html) e.clipboardData.setData('text/html',html);
+      e.preventDefault(); viaEvent=true; }catch(err){} };
+    document.addEventListener('copy',onCopy,true);
+    const ok=document.execCommand('copy');
+    document.removeEventListener('copy',onCopy,true);
+    sel.removeAllRanges(); box.remove();
+    if(ok||viaEvent) return Promise.resolve(true);
+  }catch(e){}
+  // 2. Clipboard API (chỉ chạy trên https hoặc localhost)
+  if(navigator.clipboard && window.isSecureContext){
+    return navigator.clipboard.writeText(text).then(()=>true,()=>false);
+  }
+  return Promise.resolve(false);
+}
+function showCopyFallback(text){                  // không chép tự động được thì cho người dùng tự chép
+  const zh=S.lang==='zh';
+  let wrap=$('#statcopybox');
+  if(!wrap){
+    wrap=document.createElement('div'); wrap.id='statcopybox'; wrap.style.marginTop='12px';
+    wrap.innerHTML='<p class="note" style="margin:0 0 6px"></p><textarea readonly style="min-height:150px;background:#f2f2f7;font-size:14px" wrap="off"></textarea>';
+    $('#statbox .btnrow').before(wrap);
+  }
+  wrap.querySelector('p').textContent = zh ? '瀏覽器不允許自動複製。已全選下方內容，請按「拷貝」或 ⌘C。'
+    : 'Trình duyệt không cho chép tự động. Nội dung bên dưới đã được chọn sẵn, hãy bấm "Chép"/"Copy" hoặc ⌘C.';
+  const ta=wrap.querySelector('textarea'); ta.value=text;
+  ta.focus(); ta.setSelectionRange(0,text.length);
+}
+/* tạo tệp .xlsx thật (zip không nén) để Excel, Numbers trên iPad, Google Sheets đều mở được */
+function makeZip(files){                          // files: [{name, data:Uint8Array}]
+  const T=makeZip.T||(makeZip.T=(()=>{ const t=new Uint32Array(256);
+    for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })());
+  const crc=d=>{ let c=0xFFFFFFFF; for(let i=0;i<d.length;i++) c=T[(c^d[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
+  const enc=new TextEncoder(), parts=[], cen=[]; let off=0;
+  const u16=v=>[v&255,(v>>8)&255], u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{
+    const nm=enc.encode(f.name), d=f.data, c=crc(d);
+    const head=[...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0)];
+    parts.push(new Uint8Array(head),nm,d);
+    cen.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=head.length+nm.length+d.length;
+  });
+  const cenLen=cen.reduce((a,x)=>a+x.length,0);
+  const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cenLen),...u32(off),...u16(0)]);
+  return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function downloadBlob(blob,name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);    // iPad cần thời gian để lưu tệp
+}
+$('#statXls').onclick=()=>{                    // khung, chữ 標楷體, dòng 總計 tô vàng như bảng in
+  const {list,tot}=statsData(), zh=S.lang==='zh';
+  const x=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const COLS='ABCD'; let rn=0; const rowsXml=[];
+  const cellXml=(ci,v,st)=> (typeof v==='number')
+    ? `<c r="${COLS[ci]}${rn}" s="${st}"><v>${v}</v></c>`
+    : `<c r="${COLS[ci]}${rn}" s="${st}" t="inlineStr"><is><t>${x(v)}</t></is></c>`;
+  const addRow=(vals,st,ht)=>{ rn++; rowsXml.push(`<row r="${rn}" ht="${ht}" customHeight="1">`+vals.map((v,i)=>cellXml(i,v,Array.isArray(st)?st[i]:st)).join('')+'</row>'); };
+  const z=n=>n?n:'–';
+  addRow(['班　員　統　計　表','','',''],1,40);
+  addRow(['理經(代號)','乾道','坤道','小計'],4,30);
+  list.forEach(r=>addRow([r.g||(zh?'（未填）':'(chưa ghi)'), z(r.m), z(r.f), z(r.m+r.f)],2,30));
+  addRow(['總計',tot.m,tot.f,tot.m+tot.f],3,32);
+  const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<cols><col min="1" max="1" width="22" customWidth="1"/><col min="2" max="4" width="16" customWidth="1"/></cols>
+<sheetData>${rowsXml.join('')}</sheetData>
+<mergeCells count="1"><mergeCell ref="A1:D1"/></mergeCells>
+<pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
+<pageSetup paperSize="9" orientation="portrait"/>
+</worksheet>`;
+  const KAI='標楷體';
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<fonts count="5">
+<font><sz val="11"/><name val="Calibri"/></font>
+<font><b/><sz val="20"/><name val="${KAI}"/><charset val="136"/></font>
+<font><sz val="14"/><name val="${KAI}"/><charset val="136"/></font>
+<font><b/><sz val="16"/><name val="${KAI}"/><charset val="136"/></font>
+<font><sz val="13"/><name val="${KAI}"/><charset val="136"/></font>
+</fonts>
+<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>
+<fill><patternFill patternType="solid"><fgColor rgb="FFFFFFA6"/><bgColor indexed="64"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border>
+<border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="5">
+<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+<xf numFmtId="0" fontId="2" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+<xf numFmtId="0" fontId="4" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+</cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
+</styleSheet>`;
+  const E=t=>new TextEncoder().encode(t);
+  const blob=makeZip([
+    {name:'[Content_Types].xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+</Types>`)},
+    {name:'_rels/.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`)},
+    {name:'xl/workbook.xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets><sheet name="班員統計表" sheetId="1" r:id="rId1"/></sheets></workbook>`)},
+    {name:'xl/_rels/workbook.xml.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`)},
+    {name:'xl/styles.xml',data:E(styles)},
+    {name:'xl/worksheets/sheet1.xml',data:E(sheet)}
+  ]);
+  downloadBlob(blob,'ban-vien-thong-ke.xlsx');
+};
+$('#statCopy').onclick=()=>{
+  const {list,tot}=statsData(), zh=S.lang==='zh';
+  const rows=[['理經(代號)','乾道','坤道','小計']]
+    .concat(list.map(r=>[r.g||(zh?'（未填）':'(chưa ghi)'), r.m||'–', r.f||'–', (r.m+r.f)||'–']))
+    .concat([['總計',tot.m,tot.f,tot.m+tot.f]]);
+  const txt='班員統計表\n'+rows.map(r=>r.join('\t')).join('\n');
+  const html='<table border="1"><tr><td colspan="4"><b>班員統計表</b></td></tr>'+
+    rows.map((r,i)=>'<tr>'+r.map(v=>{ const t=esc(String(v));
+      return (i===0||i===rows.length-1)?`<td><b>${t}</b></td>`:`<td>${t}</td>`; }).join('')+'</tr>').join('')+'</table>';
+  const old=$('#statcopybox'); if(old) old.remove();
+  copyRich(txt,html).then(ok=>{
+    if(ok) toast(zh?'已複製，可直接貼到 Excel。':'Đã chép, dán thẳng vào Excel được.');
+    else showCopyFallback(txt);
+  });
+};
+
 function fitForPrint(){                       // dựng riêng một vùng in cho sơ đồ và danh sách
   const pa=$('#printarea'); if(!pa) return;
   pa.innerHTML=''; document.body.classList.remove('pmode');
+  if(printStats){                               // chỉ in bảng thống kê lớp
+    const wrap=document.createElement('div'); wrap.style.cssText='max-width:150mm;margin:0 auto';
+    wrap.innerHTML=statsHTML(); pa.appendChild(wrap);
+    document.body.classList.add('pmode'); return;
+  }
   const zh=S.lang==='zh';
   if(S.view==='map'){
     const svg=$('#seatsvg'); if(!svg) return;
     const c=svg.cloneNode(true); c.removeAttribute('id');
     c.querySelectorAll('.grey').forEach(e=>e.remove());   // bỏ mảng xám sân khấu, lối đi, tường
-    c.querySelectorAll('.seat.off').forEach(e=>e.classList.remove('off'));
+    c.querySelectorAll('.seat.off,.seat.sel').forEach(e=>e.classList.remove('off','sel'));
     c.querySelectorAll('.glines').forEach(e=>e.remove());
     const G=JSON.parse(svg.dataset.geo||'{}');
     const pad=12;
     let vb;
     if(S.printStage){                                     // thu gọn dải sân khấu cho ghế to hơn
-      const band=Math.max(60, G.stage*0.25);
+      const band=Math.max(80, G.stage*0.3);
       const shift=G.stage-band;
       const sg=c.querySelector('.stagegrp');
       if(sg) sg.innerHTML=stageSVG(G.w, band, true);
@@ -1702,7 +2104,7 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
 }
 window.addEventListener('beforeprint',fitForPrint);
 window.addEventListener('afterprint',()=>{
-  document.body.classList.remove('pmode');
+  document.body.classList.remove('pmode'); printStats=false;
   const pa=$('#printarea'); if(pa) pa.innerHTML='';
 });
 $('#bPrint').onclick=()=>{ fitForPrint(); window.print(); };
@@ -2065,6 +2467,10 @@ function renderReg(){
       const tdSeat=document.createElement('td'); tdSeat.className='seatcell';
       const si=document.createElement('input'); si.type='text'; si.inputMode='numeric'; si.dataset.num=''; si.setAttribute('min','1');
       si.value=p.seat||''; si.placeholder='–';
+      { const w=mismatchMsg(p); if(w){ si.classList.add('lwarn'); si.title=w; } }
+      si.addEventListener('focus',()=>showSeatPop(si,p));
+      si.addEventListener('blur',()=>setTimeout(hideSeatPop,120));
+      si.addEventListener('input',()=>hideSeatPop());
       si.onchange=()=>{
         const ok=assignSeat(p, si.value===''?null:+si.value);
         if(!ok){ si.value=p.seat||''; return; }
@@ -2096,7 +2502,8 @@ function renderReg(){
         inp.setAttribute('list','dl-'+key);
         inp.value=(p[key]||'');
         inp.addEventListener('input',()=>{ p[key]=inp.value; upd(); });
-        inp.addEventListener('change',()=>{ fillDl(); buildQuick(); });
+        inp.addEventListener('change',()=>{ fillDl(); buildQuick();
+          if(key==='interp'){ const w=mismatchMsg(p); if(w) toast(w); fillRows(); upd(); } });
         td.appendChild(inp); return td;
       };
       tr.appendChild(mkList('interp','11%'));
@@ -2138,6 +2545,35 @@ function renderReg(){
 }
 
 /* ---------- gán số ghế ---------- */
+function showSeatPop(inp,p){
+  if(!hasSeatLang()) return;                      // chưa gán ngôn ngữ cho ghế nào thì thôi
+  let pop=$('#seatpop');
+  if(!pop){ pop=document.createElement('div'); pop.id='seatpop'; document.body.appendChild(pop);
+    pop.addEventListener('pointerdown',e=>e.preventDefault());   // bấm số không làm mất con trỏ
+    pop.addEventListener('mousedown',e=>e.preventDefault()); }
+  const zh=S.lang==='zh', a=freeSeatsFor(p);
+  const typ=a.lang ? (zh?`「${a.lang}」翻譯座`:`Ghế dịch ${a.lang}`) : (zh?'一般座位':'Ghế thường');
+  pop.innerHTML='';
+  const t=document.createElement('div'); t.className='t';
+  t.textContent = a.free.length ? (zh?`${typ}尚空：`:`${typ} còn trống:`) : (zh?`${typ}已滿。`:`${typ} đã hết.`);
+  if(langKey(p.interp)&&!a.lang) t.textContent=(zh?`「${p.interp.trim()}」沒有指定座位，`:`Chưa có ghế riêng cho ${p.interp.trim()}, `)+t.textContent.toLowerCase();
+  pop.appendChild(t);
+  const nums=document.createElement('div'); nums.className='nums';
+  a.free.slice(0,24).forEach(k=>{
+    const b=document.createElement('button'); b.type='button'; b.textContent=k;
+    b.onclick=()=>{ inp.value=k; hideSeatPop(); inp.dispatchEvent(new Event('change')); };
+    nums.appendChild(b);
+  });
+  if(a.free.length>24){ const m=document.createElement('span'); m.className='t'; m.textContent=' +'+(a.free.length-24); nums.appendChild(m); }
+  pop.appendChild(nums);
+  const r=inp.getBoundingClientRect();
+  pop.style.display='block';
+  const ph=pop.offsetHeight, below=r.bottom+6+ph<innerHeight;
+  pop.style.left=Math.max(8,Math.min(r.left,innerWidth-pop.offsetWidth-8))+'px';
+  pop.style.top=(below? r.bottom+6 : Math.max(8,r.top-ph-6))+'px';
+}
+function hideSeatPop(){ const pop=$('#seatpop'); if(pop) pop.style.display='none'; }
+document.addEventListener('scroll',hideSeatPop,true);
 function seatMax(sex){ return Math.max(0,+(sex==='m'?S.seats.m:S.seats.f)||0); }
 let toastT=null;
 function toast(msg){
@@ -2160,7 +2596,9 @@ function assignSeat(p,k){
                         : `Số ${k} đã có người ghi danh, hãy chọn số khác.`);
     return false;
   }
-  snap(); p.seat=k; return true;
+  snap(); p.seat=k;
+  const w=mismatchMsg(p); if(w) setTimeout(()=>toast(w),0);   // chỉ nhắc, vẫn cho xếp
+  return true;
 }
 function firstFreeSeat(sex){
   const mx=seatMax(sex);
@@ -2201,21 +2639,51 @@ function bestLayout(m,f){
   return best;
 }
 let pickedId=null, dragFreeze=null, mapBaseH=0, mapApplyZoom=null;
-function stageSVG(W, H, small){               // 佛座 trên, 講台 dưới, không đè nhau
-  const fh=Math.max(18, Math.min(50, H*0.30));
-  const gap=Math.max(6, H*0.05);
-  const pw=(small ? W/3*0.5 : W/3);
-  const ph=Math.max(20, Math.min(small?H*0.4:150, H-fh-gap*2));
-  const py=fh+gap+Math.max(0,(H-fh-gap-ph-gap)/2);
-  const m=10;                                  // chừa một chút cho khỏi dính viền
-  return `<rect x="${W/4}" y="${m}" width="${W/2}" height="${fh}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
-   <text x="${W/2}" y="${m+fh*0.68}" text-anchor="middle" font-size="${Math.min(36,fh*0.88)}" font-weight="700" fill="#6b7680">佛座</text>
-   <rect x="${m}" y="${py}" width="${pw}" height="${ph}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
-   <text x="${m+pw/2}" y="${py+ph*0.6}" text-anchor="middle" font-size="${Math.min(32,ph*0.68)}" font-weight="700" fill="#6b7680">講台</text>`;
+const STAGE_DEF={altarW:300,altarH:50,podiumW:200,podiumH:150};
+function ensureStage(){ Object.keys(STAGE_DEF).forEach(k=>{ if(!(+S.room[k]>0)) S.room[k]=STAGE_DEF[k]; }); }
+function stageGeom(W, H, small){               // vị trí 佛座 và 講台, luôn tách rời nhau
+  ensureStage();
+  const R=S.room;
+  const k = small ? H/Math.max(1,R.stageLength||H) : 1;   // bản in thu dải sân khấu theo chiều dọc
+  const m = Math.max(4, 10*k), gap = Math.max(5, 12*k);
+  let ah=R.altarH*k, ph=R.podiumH*k;
+  if(small){ ah=Math.max(ah,24); ph=Math.max(ph,24); }
+  const A={w:Math.min(W-2*m, R.altarW), h:Math.min(ah, Math.max(10,H-2*m))};
+  A.x=(W-A.w)/2; A.y=m;
+  const P={w:Math.min(W-2*m, R.podiumW), h:Math.min(ph, Math.max(10,H-2*m))};
+  const auto = R.podiumX==null || R.podiumY==null;
+  P.x = auto ? m : R.podiumX;
+  P.y = auto ? A.y+A.h+gap : R.podiumY*k;
+  P.x=clamp(P.x, m, W-m-P.w); P.y=clamp(P.y, m, Math.max(m,H-m-P.h));
+  const hit=(a,b)=>a.x<b.x+b.w+gap && b.x<a.x+a.w+gap && a.y<b.y+b.h+gap && b.y<a.y+a.h+gap;
+  if(hit(P,A)){
+    const c=[];
+    if(A.x-gap-P.w>=m) c.push({x:A.x-gap-P.w, y:P.y});
+    if(A.x+A.w+gap+P.w<=W-m) c.push({x:A.x+A.w+gap, y:P.y});
+    if(A.y+A.h+gap+P.h<=H-m) c.push({x:P.x, y:A.y+A.h+gap});
+    if(c.length){
+      c.sort((u,v)=>Math.hypot(u.x-P.x,u.y-P.y)-Math.hypot(v.x-P.x,v.y-P.y));
+      P.x=c[0].x; P.y=c[0].y;
+    } else {                                     // không chỗ nào vừa: thu cả hai theo tỉ lệ, 講台 nằm dưới
+      const room=H-2*m-gap, f=Math.max(0,room)/(A.h+P.h);
+      A.h*=f; P.h*=f; P.y=A.y+A.h+gap;
+    }
+  }
+  return {A,P,k,m,gap};
+}
+function stageSVG(W, H, small){
+  const {A,P}=stageGeom(W,H,small);
+  const fsA=Math.max(6,Math.min(40, A.h*0.7, A.w/2.4));
+  const fsP=Math.max(6,Math.min(40, P.h*0.6, P.w/2.4));
+  return `<rect x="${A.x}" y="${A.y}" width="${A.w}" height="${A.h}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
+   <text x="${A.x+A.w/2}" y="${A.y+A.h/2+fsA*0.36}" text-anchor="middle" font-size="${fsA}" font-weight="700" fill="#6b7680">佛座</text>
+   <rect x="${P.x}" y="${P.y}" width="${P.w}" height="${P.h}" rx="8" fill="#fff" stroke="#c9a227" stroke-width="1.2"/>
+   <text x="${P.x+P.w/2}" y="${P.y+P.h/2+fsP*0.36}" text-anchor="middle" font-size="${fsP}" font-weight="700" fill="#6b7680">講台</text>`;
 }
 function renderMap(){
   const box=$('#mapview'); if(!box) return;
   const zh=S.lang==='zh', R=S.room;
+  renderLangPanel();
   const keepList = dragFreeze ? box.querySelector('#maplist') : null;
   if(keepList) keepList.remove();               // kéo đường chỉnh thì giữ nguyên cột danh sách
   box.innerHTML='';
@@ -2310,7 +2778,7 @@ function renderMap(){
       b.draggable=true; b.dataset.pid=p.id;
       if(p.seat){ const n=document.createElement('b'); n.textContent=p.seat; b.appendChild(n); }
       b.appendChild(document.createTextNode(
-        (p.name||(zh?'（未填姓名）':'(chưa có tên)'))+(p.gvcn?' · '+p.gvcn:'')));
+        (p.name||(zh?'（未填姓名）':'(chưa có tên)'))+(subText(p)?' · '+subText(p):'')));
       b.addEventListener('dragstart',e=>{
         e.dataTransfer.setData('text/plain',String(p.id));
         pickedId=p.id;
@@ -2363,6 +2831,21 @@ function renderMap(){
   if(!S.mapGuides) bG.style.opacity='.5';
   bG.onclick=()=>{ S.mapGuides=!S.mapGuides; renderMap(); };
   zbar.appendChild(bG);
+  const subLb=document.createElement('span'); subLb.className='mapnote'; subLb.style.marginLeft='10px';
+  subLb.textContent = zh?'名下顯示':'Dưới tên';
+  const subSel=document.createElement('select'); subSel.id='mapSub'; subSel.style.width='auto';
+  (zh ? [['gvcn','經理代號'],['interp','翻譯'],['doc','教材'],['both','翻譯 · 教材'],['none','不顯示']]
+      : [['gvcn','GVCN'],['interp','Phiên dịch'],['doc','Tài liệu'],['both','Phiên dịch · Tài liệu'],['none','Không hiện']])
+    .forEach(([v,t])=>{ const o=document.createElement('option'); o.value=v; o.textContent=t; subSel.appendChild(o); });
+  subSel.value=S.mapSub||'gvcn';
+  subSel.onchange=()=>{ S.mapSub=subSel.value; renderMap(); };
+  zbar.append(subLb,subSel);
+  const bSel=document.createElement('button'); bSel.className='btn tg'+(mapSelMode?' on':'');
+  bSel.textContent = zh?'選取座位':'Chọn ghế'; bSel.style.marginLeft='10px';
+  bSel.title = zh?'選取座位後指定翻譯語言':'Chọn ghế rồi gán ngôn ngữ phiên dịch';
+  bSel.onclick=()=>{ mapSelMode=!mapSelMode; mapSel.clear(); pickedId=null; renderMap(); };
+  zbar.appendChild(bSel);
+  document.body.classList.toggle('selmode',mapSelMode);
   const tip=document.createElement('span'); tip.className='mapnote'; tip.style.marginLeft='6px';
   const touchUI = window.matchMedia && matchMedia('(any-pointer:coarse)').matches;
   tip.textContent = touchUI
@@ -2419,7 +2902,15 @@ function renderMap(){
   const svgNS='http://www.w3.org/2000/svg';
   const svg=document.createElementNS(svgNS,'svg');
   svg.id='seatsvg';
-  const seatBot = startY + Math.max(lay.male.height, lay.female.height) + 24;
+  const legend=(()=>{                            // chú thích ngôn ngữ ghế, in kèm sơ đồ
+    const m=new Map();
+    ['m','f'].forEach(sx=>{ const mx=seatMax(sx), map=seatLangOf(sx);
+      Object.keys(map).forEach(k=>{ const n=+k, v=(map[k]||'').trim(); if(!v||n>mx) return;
+        const key=langKey(v); if(!m.has(key)) m.set(key,{v,m:[],f:[]}); m.get(key)[sx].push(n); }); });
+    return [...m.values()].sort((a,b)=>langKey(a.v)<langKey(b.v)?-1:1);
+  })();
+  const seatsBottom = startY + Math.max(lay.male.height, lay.female.height);
+  const seatBot = seatsBottom + 24 + (legend.length ? legend.length*22+10 : 0);
   const backY = R.roomLength-(R.wallMarginBottom||0);
   const viewBot = S.mapGuides ? Math.max(seatBot, backY+26) : seatBot;
   const vx = S.mapFull ? 0 : Math.max(0, femaleX-24);
@@ -2438,6 +2929,70 @@ function renderMap(){
   const stg=document.createElementNS(svgNS,'g'); stg.setAttribute('class','stagegrp');
   stg.innerHTML=stageSVG(R.roomWidth, R.stageLength, false);
   svg.appendChild(stg);
+  if(S.mapGuides && !mapSelMode){                // kéo để đổi cỡ 佛座, 講台 và dời 講台
+    const G=stageGeom(R.roomWidth, R.stageLength, false), W=R.roomWidth, SL=R.stageLength;
+    const hg=document.createElementNS(svgNS,'g'); hg.setAttribute('class','stagehandles');
+    const sc=()=>{ const r=svg.getBoundingClientRect(); const vb=(svg.getAttribute('viewBox')||'0 0 1 1').split(/\s+/).map(Number);
+      return {x:vb[2]/(r.width||1), y:vb[3]/(r.height||1)}; };
+    const r5=v=>Math.round(v/5)*5;
+    const startDrag=(e,cursor,apply)=>{
+      e.preventDefault(); e.stopPropagation();
+      dragFreeze=svg.getAttribute('viewBox');
+      const k=sc(), x0=e.clientX, y0=e.clientY, snap0=JSON.stringify(S.room);
+      let raf=null, moved=false;
+      const mv=ev=>{
+        const dx=(ev.clientX-x0)*k.x, dy=(ev.clientY-y0)*k.y;
+        if(!moved){ if(Math.hypot(ev.clientX-x0,ev.clientY-y0)<3) return; moved=true; snap(); }
+        apply(dx,dy);
+        if(!raf) raf=requestAnimationFrame(()=>{ raf=null; refreshRoom(); renderMap(); });
+      };
+      const up=()=>{
+        document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up);
+        document.body.style.cursor=''; dragFreeze=null;
+        if(moved && S.room.podiumX!=null){       // chốt vị trí 講台 sau khi đã tránh 佛座
+          const g=stageGeom(S.room.roomWidth,S.room.stageLength,false);
+          S.room.podiumX=r5(g.P.x); S.room.podiumY=r5(g.P.y);
+        }
+        refreshRoom(); renderMap();
+      };
+      document.body.style.cursor=cursor;
+      document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+    };
+    const T=zh?{w:'拖曳調整寬度',h:'拖曳調整深度',wh:'拖曳調整大小',mv:'拖曳移動講台'}
+              :{w:'Kéo để đổi chiều ngang',h:'Kéo để đổi chiều dọc',wh:'Kéo để đổi kích thước',mv:'Kéo để dời 講台'};
+    const mk=(tag,attrs,cursor,title,apply)=>{
+      const el=document.createElementNS(svgNS,tag);
+      Object.entries(attrs).forEach(([a,v])=>el.setAttribute(a,v));
+      el.setAttribute('class','gline sh'); el.style.cursor=cursor;
+      const t=document.createElementNS(svgNS,'title'); t.textContent=title; el.appendChild(t);
+      el.addEventListener('mousedown',e=>startDrag(e,cursor,apply));
+      hg.appendChild(el); return el;
+    };
+    const HIT=14, maxH=()=>Math.max(20,S.room.stageLength-20);
+    // 講台: kéo thân để dời (vẽ trước cho tay cầm nằm trên)
+    {
+      const P=G.P, px0=P.x, py0=P.y;
+      mk('rect',{x:P.x,y:P.y,width:P.w,height:P.h,rx:8,fill:'transparent','pointer-events':'all'},'move',T.mv,(dx,dy)=>{
+        S.room.podiumX=r5(clamp(px0+dx,0,W-P.w)); S.room.podiumY=r5(clamp(py0+dy,0,SL-P.h));
+      });
+    }
+    const box=(B,which,centered)=>{
+      const w0=S.room[which+'W'], h0=S.room[which+'H'];
+      const setW=dx=>{ S.room[which+'W']=r5(clamp(w0+(centered?2*dx:dx),40,W-20)); };
+      const setH=dy=>{ S.room[which+'H']=r5(clamp(h0+dy,20,maxH())); };
+      const pinPodium=()=>{ if(which==='podium'&&S.room.podiumX==null){ S.room.podiumX=G.P.x; S.room.podiumY=G.P.y; } };
+      mk('rect',{x:B.x+B.w-HIT/2,y:B.y+HIT/2,width:HIT,height:Math.max(1,B.h-HIT),fill:'transparent','pointer-events':'all'},'ew-resize',T.w,dx=>{ pinPodium(); setW(dx); });
+      mk('rect',{x:B.x+HIT/2,y:B.y+B.h-HIT/2,width:Math.max(1,B.w-HIT),height:HIT,fill:'transparent','pointer-events':'all'},'ns-resize',T.h,(dx,dy)=>{ pinPodium(); setH(dy); });
+      if(centered)                               // 佛座 nằm giữa: tay cầm bên trái cũng đổi bề ngang
+        mk('rect',{x:B.x-HIT/2,y:B.y+HIT/2,width:HIT,height:Math.max(1,B.h-HIT),fill:'transparent','pointer-events':'all'},'ew-resize',T.w,dx=>setW(-dx));
+      mk('circle',{cx:B.x+B.w,cy:B.y+B.h,r:7,fill:'#fff',stroke:'#0a84ff','stroke-width':2},'nwse-resize',T.wh,(dx,dy)=>{ pinPodium(); setW(dx); setH(dy); });
+      mk('circle',{cx:B.x+B.w,cy:B.y+B.h/2,r:4.5,fill:'#0a84ff',stroke:'#fff','stroke-width':1.5},'ew-resize',T.w,dx=>{ pinPodium(); setW(dx); });
+      mk('circle',{cx:B.x+B.w/2,cy:B.y+B.h,r:4.5,fill:'#0a84ff',stroke:'#fff','stroke-width':1.5},'ns-resize',T.h,(dx,dy)=>{ pinPodium(); setH(dy); });
+    };
+    box(G.A,'altar',true);
+    box(G.P,'podium',false);
+    stg.appendChild(hg);
+  }
 
   const area=document.createElementNS(svgNS,'g'); area.setAttribute('class','seatarea');
   svg.appendChild(area);
@@ -2459,18 +3014,28 @@ function renderMap(){
       const p=atSeat(sex,num);
       const seat=document.createElementNS(svgNS,'g');
       seat.setAttribute('class','seat'); seat.setAttribute('transform',`translate(${x}, ${y})`);
-      seat.dataset.seat=num; seat.dataset.sex=sex;
+      seat.dataset.seat=num; seat.dataset.sex=sex; seat.dataset.row=r;
       if(picked && picked.sex!==sex) seat.classList.add('off');
+      if(mapSel.has(sex+':'+num)) seat.classList.add('sel');
+      const sLang=(seatLangOf(sex)[num]||'').trim();
+      const warn=p?mismatchMsg(p):'';
       const nm=(p&&p.name)?p.name.toUpperCase():'';
       const fs=(nm.length>14?7:(nm.length>9?8:9.5))*1.25;
-      seat.innerHTML=`<rect width="${R.chairWidth}" height="${R.chairLength}" rx="6"
+      const CW=R.chairWidth;
+      seat.innerHTML=`<rect class="bg" width="${R.chairWidth}" height="${R.chairLength}" rx="6"
           fill="${p?(sex==='m'?'#d9e8ff':'#ffdeeb'):'#f7f8fa'}"
           stroke="${sex==='m'?'#8fb4e8':'#e8a7c2'}" stroke-width="1"/>
+        ${sLang?`<path d="M0.5,6.5 Q0.5,0.5 6.5,0.5 H${CW-6.5} Q${CW-0.5},0.5 ${CW-0.5},6.5 Z" fill="${langColor(sLang)}"><title>${esc(sLang)}</title></path>`:''}
+        ${warn?`<g><title>${esc(warn)}</title><circle cx="${CW-7.5}" cy="14" r="5.5" fill="#d0342c"/>
+          <text x="${CW-7.5}" y="17.2" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">!</text></g>`:''}
         <text x="${R.chairWidth/2}" y="13" text-anchor="middle" font-size="9" font-weight="700" fill="#8d97a1">${num}</text>
         ${nm?`<text x="${R.chairWidth/2}" y="29" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2c3c"
             ${nm.length>6?`textLength="${R.chairWidth-8}" lengthAdjust="spacingAndGlyphs"`:''}>${nm}</text>`:''}
-        ${p&&p.gvcn?`<text x="${R.chairWidth/2}" y="43" text-anchor="middle" font-size="8.75" fill="#7b8590">${p.gvcn}</text>`:''}`;
+        ${(()=>{ const st=subText(p); if(!st) return '';
+          const fit=[...st].length>8 ? `textLength="${R.chairWidth-6}" lengthAdjust="spacingAndGlyphs"` : '';
+          return `<text x="${R.chairWidth/2}" y="43" text-anchor="middle" font-size="8.75" fill="#7b8590" ${fit}>${esc(st)}</text>`; })()}`;
       seat.addEventListener('click',()=>{
+        if(mapSelMode) return;                    // đang chọn ghế thì không xếp người
         if(p){ snap(); p.seat=null; pickedId=p.id; }
         else if(pickedId){
           const q=S.people.find(z=>z.id===pickedId);
@@ -2499,6 +3064,20 @@ function renderMap(){
   };
   area.appendChild(block('f',lay.female,femaleX));
   area.appendChild(block('m',lay.male,maleX));
+  if(legend.length){
+    const gL=document.createElementNS(svgNS,'g'); gL.setAttribute('class','langlegend');
+    let h='', y=seatsBottom+36;
+    legend.forEach(it=>{
+      const tot=it.m.length+it.f.length;
+      const used=it.m.filter(n=>atSeat('m',n)).length+it.f.filter(n=>atSeat('f',n)).length;
+      const parts=[]; if(it.f.length) parts.push('坤 '+rangeText(it.f)); if(it.m.length) parts.push('乾 '+rangeText(it.m));
+      const cnt = zh ? `已坐 ${used}/${tot}` : `đã ngồi ${used}/${tot}`;
+      h+=`<rect x="${femaleX}" y="${y-11}" width="14" height="14" rx="3" fill="${langColor(it.v)}"/>
+        <text x="${femaleX+22}" y="${y+1}" font-size="14" fill="#1b2c3c"><tspan font-weight="700">${esc(it.v)}</tspan><tspan fill="#6b7680">  ·  ${parts.join('  ·  ')}  ·  ${cnt}</tspan></text>`;
+      y+=22;
+    });
+    gL.innerHTML=h; area.appendChild(gL);
+  }
 
   const rowsN=Math.max(lay.male.rows,lay.female.rows);   // số thứ tự hàng ở lối đi giữa
   if(rowsN && aisleEff>=22){
@@ -2509,8 +3088,8 @@ function renderMap(){
     let h='';
     for(let r=0;r<rowsN;r++){
       const cy=startY+r*(ref.py||R.chairLength)+R.chairLength/2;
-      h+=`<circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fff" stroke="#9aa6b0" stroke-width="1.2"/>
-        <text x="${cx}" y="${cy+rr*0.38}" text-anchor="middle" font-size="${rr*1.05}" font-weight="600" fill="#6b7680">${r+1}</text>`;
+      h+=`<g class="rn" data-r="${r}"><circle cx="${cx}" cy="${cy}" r="${rr}" fill="#fff" stroke="#9aa6b0" stroke-width="1.2"/>
+        <text x="${cx}" y="${cy+rr*0.38}" text-anchor="middle" font-size="${rr*1.05}" font-weight="600" fill="#6b7680">${r+1}</text></g>`;
     }
     gN.innerHTML=h; area.appendChild(gN);
   }
@@ -2564,6 +3143,94 @@ function renderMap(){
     svg.appendChild(gl);
   }
 
+  if(mapSelMode){
+    const bar=document.createElement('div'); bar.id='langbar';
+    const cnt=document.createElement('span'); cnt.className='cnt';
+    bar.appendChild(cnt);
+    const acts=document.createElement('span'); acts.style.cssText='display:contents';
+    bar.appendChild(acts);
+    const paintBar=()=>{
+      acts.innerHTML='';
+      const n=mapSel.size;
+      cnt.textContent = zh ? `已選 ${n} 個座位` : `Đã chọn ${n} ghế`;
+      if(!n){
+        const t=document.createElement('span'); t.className='hint';
+        t.textContent = zh ? '點座位選取，拖曳框選範圍，點排號選整排。' : 'Chạm ghế để chọn, kéo khung để chọn vùng, chạm số hàng để chọn cả hàng.';
+        acts.appendChild(t); return;
+      }
+      const assign=v=>{
+        snap();
+        mapSel.forEach(id=>{ const [sx,k]=id.split(':'); const map=seatLangOf(sx);
+          if(v) map[k]=v; else delete map[k]; });
+        mapSel.clear(); renderReg(); renderMap();
+      };
+      if(!allLangs().list.length){
+        const t=document.createElement('span'); t.className='hint';
+        t.textContent = zh?'尚無語言，請按「＋ 新語言」：':'Chưa có ngôn ngữ nào, bấm "+ Ngôn ngữ mới":';
+        acts.appendChild(t);
+      }
+      allLangs().list.forEach(({v})=>{
+        const b=document.createElement('button'); b.className='fchip';
+        const d=document.createElement('span'); d.className='dot'; d.style.background=langColor(v);
+        b.append(d,document.createTextNode(v)); b.onclick=()=>assign(v); acts.appendChild(b);
+      });
+      const bn=document.createElement('button'); bn.className='fchip'; bn.textContent=zh?'＋ 新語言':'+ Ngôn ngữ mới';
+      bn.onclick=()=>{ const v=(prompt(zh?'語言名稱':'Tên ngôn ngữ')||'').trim(); if(v) assign(v); };
+      acts.appendChild(bn);
+      const bx=document.createElement('button'); bx.className='fchip'; bx.textContent=zh?'取消指定':'Bỏ gán';
+      bx.onclick=()=>assign(''); acts.appendChild(bx);
+      const bc=document.createElement('button'); bc.className='fchip clear'; bc.textContent=(zh?'取消選取':'Bỏ chọn')+' ×';
+      bc.onclick=()=>{ mapSel.clear(); svg.querySelectorAll('.seat.sel').forEach(x=>x.classList.remove('sel')); paintBar(); };
+      acts.appendChild(bc);
+    };
+    paintBar();
+    svgbox.appendChild(bar);
+
+    let rectEl=$('#selrect');
+    if(!rectEl){ rectEl=document.createElement('div'); rectEl.id='selrect'; document.body.appendChild(rectEl); }
+    let st=null;
+    const setSel=(el,on)=>{ const id=el.dataset.sex+':'+el.dataset.seat;
+      if(on){ mapSel.add(id); el.classList.add('sel'); } else { mapSel.delete(id); el.classList.remove('sel'); } };
+    svg.addEventListener('pointerdown',e=>{
+      if(e.button>0 || (e.target.closest&&e.target.closest('.gline'))) return;
+      if(st){ st=null; rectEl.style.display='none'; return; }        // ngón thứ hai: bỏ, để chụm phóng to
+      st={id:e.pointerId,x:e.clientX,y:e.clientY,drag:false};
+      try{ svg.setPointerCapture(e.pointerId); }catch(err){}
+    });
+    svg.addEventListener('pointermove',e=>{
+      if(!st||e.pointerId!==st.id) return;
+      const dx=e.clientX-st.x, dy=e.clientY-st.y;
+      if(!st.drag && Math.hypot(dx,dy)<8) return;
+      st.drag=true; e.preventDefault();
+      const l=Math.min(st.x,e.clientX), t=Math.min(st.y,e.clientY);
+      Object.assign(rectEl.style,{display:'block',left:l+'px',top:t+'px',width:Math.abs(dx)+'px',height:Math.abs(dy)+'px'});
+    });
+    const finish=e=>{
+      if(!st||e.pointerId!==st.id) return;
+      const s0=st; st=null;
+      if(e.type==='pointercancel'){ rectEl.style.display='none'; return; }
+      if(s0.drag){
+        const rr=rectEl.getBoundingClientRect(); rectEl.style.display='none';
+        svg.querySelectorAll('.seat').forEach(el=>{
+          const b=el.getBoundingClientRect();
+          if(b.right>rr.left&&b.left<rr.right&&b.bottom>rr.top&&b.top<rr.bottom) setSel(el,true);
+        });
+      } else {
+        const hitEl=document.elementFromPoint(e.clientX,e.clientY);
+        const seatEl=hitEl&&hitEl.closest&&hitEl.closest('#seatsvg .seat');
+        const rn=hitEl&&hitEl.closest&&hitEl.closest('#seatsvg .rn');
+        if(seatEl) setSel(seatEl,!seatEl.classList.contains('sel'));
+        else if(rn){
+          const row=[...svg.querySelectorAll(`.seat[data-row="${rn.dataset.r}"]`)];
+          const allOn=row.length&&row.every(x=>x.classList.contains('sel'));
+          row.forEach(x=>setSel(x,!allOn));
+        }
+      }
+      paintBar();
+    };
+    svg.addEventListener('pointerup',finish);
+    svg.addEventListener('pointercancel',finish);
+  }
   svgbox.appendChild(svg);
 
   if(lay.overflow){
@@ -2637,7 +3304,9 @@ $('#bRegXls').onclick=()=>{
 $('#bRegClear').onclick=()=>{ snap(); S.people=[]; renderReg(); upd(); };
 $('#bMapAuto').onclick=()=>{
   snap();
-  S.people.forEach(p=>{ if(!p.seat){ const k=firstFreeSeat(p.sex); if(k) p.seat=k; } });
+  const todo=S.people.filter(p=>!p.seat);
+  todo.sort((a,b)=>(langKey(b.interp)?1:0)-(langKey(a.interp)?1:0));   // người cần dịch được xếp trước
+  todo.forEach(p=>{ const k=autoSeatFor(p); if(k) p.seat=k; });
   renderReg(); upd();
 };
 $('#bMapClear').onclick=()=>{ snap(); S.people.forEach(p=>p.seat=null); renderReg(); upd(); };
@@ -2673,7 +3342,17 @@ Object.keys(S.room).forEach(k=>{
   const el=$('#'+k); if(!el) return;
   el.addEventListener('input',()=>{ S.room[k]=+el.value||0; renderMap(); });
 });
+['altarH','podiumH'].forEach(k=>{               // sân khấu tự dài ra cho đủ chỗ hai ô
+  const el=$('#'+k); if(!el) return;
+  el.addEventListener('change',()=>{
+    const need=Math.ceil((S.room.altarH+S.room.podiumH+32)/10)*10;
+    if(S.room.stageLength<need){ S.room.stageLength=need; refreshRoom(); renderMap();
+      toast(S.lang==='zh'?`舞台長已加大為 ${need} 公分。`:`Đã nới chiều dài sân khấu lên ${need} cm cho vừa hai ô.`); }
+  });
+});
+$('#bPodiumReset').onclick=()=>{ snap(); S.room.podiumX=null; S.room.podiumY=null; renderMap(); };
 function refreshRoom(){
+  ensureStage();
   if($('#seatM')) $('#seatM').value=S.seats.m;
   if($('#seatF')) $('#seatF').value=S.seats.f;
   Object.keys(S.room).forEach(k=>{ const el=$('#'+k); if(el) el.value=S.room[k]; });
@@ -2759,19 +3438,41 @@ function regArrowNav(e,body){
     if(dec){ const p=v.indexOf('.'); if(p>=0) v=v.slice(0,p+1)+v.slice(p+1).replace(/\./g,''); }
     if(v!==el.value){ const pos=el.selectionStart-(el.value.length-v.length); el.value=v; try{ el.setSelectionRange(pos,pos); }catch(err){} }
   },true);
-  document.addEventListener('keydown',e=>{          // mũi tên lên/xuống tăng giảm như ô số cũ
-    const el=e.target; if(e.defaultPrevented || !isNum(el) || !el.isConnected || el.closest('#regtable')) return;
-    if(e.key!=='ArrowUp'&&e.key!=='ArrowDown') return;
-    e.preventDefault();
+  function stepNum(el,dir){
     const st=Math.abs(parseFloat(el.getAttribute('step')))||1;
     const mn=el.hasAttribute('min')?+el.getAttribute('min'):-Infinity, mx=el.hasAttribute('max')?+el.getAttribute('max'):Infinity;
     const dp=(String(st).split('.')[1]||'').length;
-    let v=(parseFloat(el.value)||0)+(e.key==='ArrowUp'?st:-st);
+    const cur=parseFloat(el.value)||0;
+    let v = dir>0 ? Math.floor(+(cur/st).toFixed(6))*st+st : Math.ceil(+(cur/st).toFixed(6))*st-st;   // bám theo bước
     v=Math.min(mx,Math.max(mn,+v.toFixed(dp)));
+    if(String(v)===el.value) return;
     el.value=String(v);
     el.dispatchEvent(new Event('input',{bubbles:true}));
     el.dispatchEvent(new Event('change',{bubbles:true}));
-    toEnd(el);
+  }
+  document.addEventListener('keydown',e=>{          // mũi tên lên/xuống tăng giảm như ô số cũ
+    const el=e.target; if(e.defaultPrevented || !isNum(el) || !el.isConnected || el.closest('#regtable')) return;
+    if(e.key!=='ArrowUp'&&e.key!=='ArrowDown') return;
+    e.preventDefault(); stepNum(el,e.key==='ArrowUp'?1:-1); toEnd(el);
+  });
+  document.querySelectorAll('#side input[data-num]').forEach(el=>{   // nút ▲▼ bên cạnh ô số, nhấn giữ để chạy nhanh
+    const box=document.createElement('span'); box.className='stepper';
+    [['▲',1],['▼',-1]].forEach(([t,d])=>{
+      const b=document.createElement('button'); b.type='button'; b.tabIndex=-1; b.textContent=t;
+      b.setAttribute('aria-label', d>0?'+':'−');
+      let t1=null, t2=null;
+      const stop=()=>{ clearTimeout(t1); clearInterval(t2); t1=t2=null; };
+      b.addEventListener('pointerdown',e=>{
+        e.preventDefault(); if(el.disabled) return;
+        stop(); stepNum(el,d);
+        t1=setTimeout(()=>{ t2=setInterval(()=>stepNum(el,d),70); },420);
+        try{ b.setPointerCapture(e.pointerId); }catch(err){}
+      });
+      ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,stop));
+      b.addEventListener('click',e=>e.preventDefault());
+      box.appendChild(b);
+    });
+    el.insertAdjacentElement('afterend',box);
   });
 })();
 

@@ -32,8 +32,19 @@ body{display:flex;flex-direction:column}
 #viewseg button.on{background:none;box-shadow:none;color:#111;border-bottom-color:var(--accent)}
 #app{display:flex;flex:1;min-height:0;overflow:hidden}
 
-body.nopanel #side{display:none}
-#bPanel{padding:7px 11px;font-size:15px;line-height:1}
+#side{transition:margin-left .22s ease,visibility 0s linear 0s}
+body.nopanel #side{margin-left:-339px;visibility:hidden;transition:margin-left .22s ease,visibility 0s linear .22s}
+#bPanel{position:relative;padding:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:#57606a;background:none!important;border:0;box-shadow:none!important;border-radius:0}
+#bPanel:hover{color:#1f2328}
+#bPanel::before{content:'';position:absolute;top:4px;right:3px;width:8px;height:8px;border-radius:50%;background:#0969da;border:1.5px solid #fff;transform:scale(0);transition:transform .18s ease}
+body.nopanel #bPanel::before{transform:scale(1)}
+#bPanel svg{display:block;width:20px;height:20px}
+#bPanel .chev{transition:transform .22s ease;transform-origin:9.6px 8px}
+body.nopanel #bPanel .chev{transform:scaleX(-1)}
+@media (hover:hover){
+  #bPanel[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 7px);z-index:50;white-space:nowrap;
+    background:#1f2328;color:#fff;font-size:12.5px;font-weight:500;padding:6px 10px;border-radius:7px;pointer-events:none}
+}
 #side{width:338px;flex:0 0 338px;background:#f2f2f7;border-right:.5px solid #d3d3d9;display:flex;flex-direction:column}
 #brand{display:none}
 #brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
@@ -498,7 +509,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 <body class="guides v-reg">
 
 <div id="topbar">
-  <button class="btn" id="bPanel" title="Ẩn hoặc hiện panel">☰</button>
+  <button class="btn" id="bPanel" aria-label="Ẩn bảng điều khiển" data-tip="Ẩn bảng điều khiển"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="1.75" y="2.25" width="12.5" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="6" y1="2.5" x2="6" y2="13.5" stroke="currentColor" stroke-width="1.4"/><path class="chev" d="M10.6 6 8.6 8l2 2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="seg" id="viewseg">
     <button data-view="reg" class="on">Ghi danh</button>
     <button data-view="map">Sơ đồ</button>
@@ -550,7 +561,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
             <button id="bGsPush"><span>↑</span>Ghi số ghế</button>
           </div>
         </div>
-        <p class="note">Số ghế tự ghi về Sheet vài giây sau khi xếp.</p>
+        <p class="note" id="gsNote">Số ghế tự ghi về Sheet vài giây sau khi xếp.</p>
       </div>
       <div class="grp danger">
         <h2>Xoá dữ liệu</h2>
@@ -1042,7 +1053,7 @@ const I18N={
  'Chép, cắt, dán':'複製、剪下、貼上','Xóa nội dung ô đã chọn':'清除選取格內容',
  'Chọn tất cả ô nhập được':'選取全部可編輯格',
  'Bảng tên':'清書表格','Bố cục':'版面','Nạp thêm vào danh sách':'加入名單','Nạp thêm':'加入名單','Thay toàn bộ…':'全部取代…',
- 'Xoá dữ liệu':'清除資料','Xoá toàn bộ danh sách':'清空整份名單','Xoá hết…':'清空…','Bỏ hết…':'全部清除…','Bỏ hết số ghế…':'全部清除…','Thu gọn sân khấu':'壓縮舞台區','Tắt: in đúng vị trí đã chỉnh':'關閉則依調整後位置列印','In 佛座 và 講台':'列印佛座與講台',
+ 'Xoá dữ liệu':'清除資料','Nhập dữ liệu':'匯入資料','Google Sheet':'Google 試算表','Số ghế tự ghi về Sheet vài giây sau khi xếp.':'排好座位後，座號會在幾秒內自動寫回試算表。','Xoá toàn bộ danh sách':'清空整份名單','Xoá hết…':'清空…','Bỏ hết…':'全部清除…','Bỏ hết số ghế…':'全部清除…','Thu gọn sân khấu':'壓縮舞台區','Tắt: in đúng vị trí đã chỉnh':'關閉則依調整後位置列印','In 佛座 và 講台':'列印佛座與講台',
  'Dưới tên hiển thị':'名下顯示','Khi in sơ đồ':'列印座位圖時','In kèm 佛座 và 講台':'列印時含佛座與講台',
  'Hàng và cột':'排與欄','Để 0 thì tự tính theo số ghế.':'設為 0 則依座位數自動計算。','Sân khấu':'舞台',
  '+ Thêm dòng':'+ 新增一列','Thống kê lớp':'班員統計','Tô màu':'著色','Ô trống':'空格',
@@ -1061,6 +1072,8 @@ function applyLang(){
   { const ta=$('#regpaste'); if(ta) ta.placeholder=S.lang==='zh'?'從 Excel 或 Google Sheet 貼上表格（含標題列）':'Dán bảng từ Excel hoặc Google Sheet, gồm cả dòng tiêu đề'; }
   { const vb=document.querySelector('#viewseg button[data-view=print]');   // tab thứ 3: tên riêng, không lẫn với 'Danh sách' khác
     if(vb){ vb.dataset.vi='Danh sách'; vb.textContent=S.lang==='zh'?'清書表格':'Danh sách'; } }
+  setPanel(document.body.classList.contains('nopanel'),false);
+  if(window.gsRelang) window.gsRelang();
   $('#lang').value=S.lang;
   refreshFonts(); buildHeadList(); syncBulk(); render(); renderMap(); setView(S.view);
 }
@@ -2233,7 +2246,7 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
     const pad=12, W=G.w, svgNS='http://www.w3.org/2000/svg';
     const roomL=+S.room.roomLength||G.seatBot;
     let top, bottom, shift=0;
-    const sg=c.querySelector('.stagegrp');
+    const sg=c.querySelector('.stagegrp'); if(sg) sg.style.display='';
     if(S.printStage){
       top=0;
       if(S.printStageCompact){                          // thu gọn dải sân khấu cho ghế to hơn
@@ -3119,6 +3132,7 @@ function renderMap(){
 
   const stg=document.createElementNS(svgNS,'g'); stg.setAttribute('class','stagegrp');
   stg.innerHTML=stageSVG(R.roomWidth, R.stageLength, false);
+  if(!S.mapFull) stg.style.display='none';   // xem vùng ghế: không vẽ 佛座/講台 (bản in vẫn có)
   svg.appendChild(stg);
   if(S.mapGuides && !mapSelMode){                // kéo để đổi cỡ 佛座, 講台 và dời 講台
     const G=stageGeom(R.roomWidth, R.stageLength, false), W=R.roomWidth, SL=R.stageLength;
@@ -3495,7 +3509,19 @@ function doImport(replace){
   note.textContent = zh?`已匯入 ${v.length} 筆。`:`Đã nạp ${v.length} người.`;
   autoSeatCount(); renderReg(); upd();
 }
-$('#bPanel').onclick=()=>{ document.body.classList.toggle('nopanel'); setZoom(zoom); };
+function setPanel(hide,save){                    // ẩn/hiện bảng điều khiển bên trái, nhớ lựa chọn trên máy
+  document.body.classList.toggle('nopanel',hide);
+  const zh=S.lang==='zh', b=$('#bPanel');
+  const tip = hide ? (zh?'顯示控制面板':'Hiện bảng điều khiển') : (zh?'隱藏控制面板':'Ẩn bảng điều khiển');
+  b.dataset.tip=tip; b.setAttribute('aria-label',tip);
+  if(save){ try{ localStorage.setItem('ui.nopanel',hide?'1':'0'); }catch(e){} }
+}
+$('#bPanel').onclick=()=>setPanel(!document.body.classList.contains('nopanel'),true);
+$('#side').addEventListener('transitionend',e=>{     // xong hiệu ứng thì đo lại khung trang in và sơ đồ
+  if(e.target!==$('#side')||e.propertyName!=='margin-left') return;
+  setZoom(zoom); if(S.view==='map') renderMap();
+});
+try{ if(localStorage.getItem('ui.nopanel')==='1') setPanel(true,false); }catch(e){}
 $('#bRegImport').onclick=()=>doImport(false);
 $('#bRegReplace').onclick=()=>{
   if(!$('#regpaste').value.trim()){ doImport(true); return; }
@@ -3884,35 +3910,53 @@ document.getElementById('bUndo').onclick=()=>doUndo();
 const GS_URL = 'https://script.google.com/macros/s/AKfycbxop8HpFPD1xcZkWkk8IORsTSr0fvkaFaf8LR70SUn3izi0GMmlztD8iz_W0NsbQS8o/exec';   // ← dán link web app Apps Script (…/exec) vào giữa hai dấu nháy
 
 const TICK_MS = 4000, PULL_MS = 60000;
-const GS = { head:null, map:null, busy:false, lastPull:0, cacheSig:'' };
+const GS = { head:null, map:null, busy:false, lastPull:0, cacheSig:'', last:null };
 const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
 const token=()=>lsGet('gs.token')||'';
-const hhmm=()=>new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-function status(t,bad){
-  const el=$('#gsStatus'), sub=$('#gsSub'), dot=$('#gsDot'); if(!el) return;
-  const st=bad?'err':(/^Đang (tải|ghi|dùng)|Đang kết nối|Đã lưu mã/.test(t)&&!/^Đang dùng/.test(t)?'busy':(/^Đã (tải|ghi)/.test(t)?'ok':''));
-  let main=t, rest='';
-  if(!bad){ const parts=t.split(' · '); main=parts.shift(); rest=parts.join(' · '); }
-  else { const m=t.match(/^([^:]+):\s*(.*)$/); if(m){ main=m[1]; rest=m[2]; } }
-  el.textContent=main; sub.textContent=rest;
+const zh=()=>S.lang==='zh';
+const T=(vi,cn)=>zh()?cn:vi;                         // chữ theo ngôn ngữ đang chọn
+const hhmm=()=>new Date().toLocaleTimeString(zh()?'zh-TW':'vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
+const errMsg=e=>(e&&e.gsMsg)?e.gsMsg():String(e&&e.message||e);
+const GsErr=(vi,cn,extra)=>{ const e=new Error(vi); e.gsMsg=()=>T(vi,cn)+(extra?extra:''); return e; };
+const SERVER_ERR={'Sai mã truy cập':'存取碼錯誤','Sheet đang bận, thử lại sau':'試算表忙碌中，請稍後再試'};
+
+/* trạng thái: st = ''|'busy'|'ok'|'err'; main/sub là hàm để đổi ngôn ngữ vẫn hiện đúng */
+function show(st,main,sub){
+  GS.last={st,main,sub};
+  const el=$('#gsStatus'), sb=$('#gsSub'), dot=$('#gsDot'); if(!el) return;
+  el.textContent=main(); sb.textContent=sub?sub():'';
   el.dataset.s=st; dot.dataset.s=st;
   const pb=$('#bGsPull'), wb=$('#bGsPush'); if(pb){ pb.disabled=wb.disabled=(st==='busy'); }
 }
+function paintLabels(){                            // các chữ cố định của thẻ Google Sheet
+  const set=(sel,html)=>{ const e=$(sel); if(e) e.innerHTML=html; };
+  set('#bGsPull','<span>↓</span>'+T('Tải từ Sheet','從試算表載入'));
+  set('#bGsPush','<span>↑</span>'+T('Ghi số ghế','寫回座號'));
+  const k=$('#bGsToken'); if(k){ k.textContent=T('Mã…','存取碼…'); k.title=T('Mã truy cập','存取碼'); }
+  const n=$('#gsNote'); if(n) n.textContent=T('Số ghế tự ghi về Sheet vài giây sau khi xếp.','排好座位後，座號會在幾秒內自動寫回試算表。');
+}
+window.gsRelang=()=>{ paintLabels(); if(GS.last) show(GS.last.st,GS.last.main,GS.last.sub); };
 const norm=v=>{ const n=parseInt(String(v==null?'':v).replace(/\D/g,''),10); return isNaN(n)||n<1?null:n; };
 
 async function call(body){
-  if(!GS_URL) throw new Error('Chưa cài link Apps Script (GS_URL)');
-  if(!token()) throw new Error('Chưa nhập mã truy cập');
+  if(!GS_URL) throw GsErr('Chưa cài link Apps Script (GS_URL)','尚未設定 Apps Script 連結（GS_URL）');
+  if(!token()) throw GsErr('Chưa nhập mã truy cập','尚未輸入存取碼');
   const r=await fetch(GS_URL,{method:'POST',body:JSON.stringify(Object.assign({token:token()},body))});
   const txt=await r.text(); let d;
   try{ d=JSON.parse(txt); }
   catch(e){                                   // Google trả về trang HTML: lấy nội dung lỗi ra để biết nguyên nhân
     const doc=new DOMParser().parseFromString(txt,'text/html');
     const t=(doc.body?doc.body.innerText:'').replace(/\s+/g,' ').trim().slice(0,160);
-    throw new Error('Google trả về trang lỗi (HTTP '+r.status+'): '+(t||doc.title||'không rõ'));
+    throw GsErr('Google trả về trang lỗi','Google 回傳錯誤頁面',' (HTTP '+r.status+'): '+(t||doc.title||'?'));
   }
-  if(!d.ok) throw new Error(d.error||'Lỗi không rõ');
+  if(!d.ok){
+    const m=String(d.error||'');
+    if(SERVER_ERR[m]) throw GsErr(m,SERVER_ERR[m]);
+    const sh=m.match(/^Không thấy trang tính "(.*)"$/);
+    if(sh) throw GsErr(m,`找不到工作表「${sh[1]}」`);
+    throw GsErr(m||'Lỗi không rõ',m||'未知錯誤');
+  }
   return d;
 }
 
@@ -3925,12 +3969,12 @@ function fieldsOf(cells){
 }
 async function pull(manual){
   if(GS.busy) return; GS.busy=true;
-  if(manual) status('Đang tải từ Sheet…');
+  if(manual) show('busy',()=>T('Đang tải từ Sheet…','正在從試算表載入…'));
   try{
     const d=await call({action:'list'});
     const head=d.head.map((h,i)=>(i===d.seatCol||i===d.idCol)?'':h);
     const map=mapHeader(head);
-    if(!map) throw new Error('Dòng 1 của Sheet cần tiêu đề: Họ tên, Giới tính, GVCN…');
+    if(!map) throw GsErr('Dòng 1 của Sheet cần tiêu đề: Họ tên, Giới tính, GVCN…','試算表第 1 列需要標題：姓名、性別、導師…');
     GS.head=d.head; GS.map=map; GS.lastPull=Date.now();
 
     snap(); const before=JSON.stringify(S.people);
@@ -3953,13 +3997,19 @@ async function pull(manual){
 
     if(JSON.stringify(S.people)===before){ undo.pop(); }
     else { autoSeatCount(); renderReg(); upd(); }
-    let msg=`Đã tải lúc ${hhmm()} · ${S.people.length} người`;
-    if(add) msg+=` · thêm ${add}`;
-    if(gone) msg+=` · bỏ ${gone} (đã xoá trên Sheet)`;
-    if(clash) msg+=` · ${clash} số ghế trùng, cần xếp lại`;
-    status(msg);
-    if(manual&&(add||gone||clash)) toast(msg);
-  }catch(e){ status('Không tải được: '+e.message,true); if(manual) toast('Không tải được: '+e.message); }
+    const at=hhmm(), n=S.people.length;
+    const sub=()=>{ const a=[T(`${n} người`,`共 ${n} 人`)];
+      if(add) a.push(T(`thêm ${add}`,`新增 ${add}`));
+      if(gone) a.push(T(`bỏ ${gone} (đã xoá trên Sheet)`,`移除 ${gone}（試算表已刪除）`));
+      if(clash) a.push(T(`${clash} số ghế trùng, cần xếp lại`,`${clash} 個座號重複，需重新排位`));
+      return a.join(' · '); };
+    const main=()=>T(`Đã tải lúc ${at}`,`${at} 已載入`);
+    show('ok',main,sub);
+    if(manual&&(add||gone||clash)) toast(main()+' · '+sub());
+  }catch(e){
+    show('err',()=>T('Không tải được','無法載入'),()=>errMsg(e));
+    if(manual) toast(T('Không tải được: ','無法載入：')+errMsg(e));
+  }
   finally{ GS.busy=false; }
 }
 
@@ -3979,19 +4029,25 @@ function cellsFor(p){
 async function push(manual){
   if(GS.busy) return;
   const w=pendingWork();
-  if(!w.changes.length&&!w.added.length){ if(manual) toast('Không có thay đổi nào cần ghi.'); return; }
-  GS.busy=true; status(`Đang ghi ${w.changes.length+w.added.length} thay đổi…`);
+  if(!w.changes.length&&!w.added.length){ if(manual) toast(T('Không có thay đổi nào cần ghi.','沒有需要寫回的變更。')); return; }
+  GS.busy=true;
+  const cnt=w.changes.length+w.added.length;
+  show('busy',()=>T(`Đang ghi ${cnt} thay đổi…`,`正在寫回 ${cnt} 項變更…`));
   try{
     const d=await call({action:'save',
       changes:w.changes.map(c=>({id:c.id,seat:c.seat})),
       added:w.added.map(a=>({key:a.p.id,seat:a.seat,cells:cellsFor(a.p)}))});
     w.changes.forEach(c=>{ if(!d.missing.includes(c.id)) c.p.syncSeat=c.seat; });
     d.added.forEach(r=>{ const a=w.added.find(x=>x.p.id===r.key); if(a){ a.p.sid=r.id; a.p.syncSeat=a.seat; } });
-    let msg=`Đã ghi lúc ${hhmm()}`;
-    if(d.missing.length) msg+=` · ${d.missing.length} người không còn trên Sheet`;
-    status(msg);
-    if(manual) toast(msg);
-  }catch(e){ status('Chưa ghi được, sẽ thử lại: '+e.message,true); if(manual) toast('Chưa ghi được: '+e.message); }
+    const at=hhmm(), miss=d.missing.length;
+    const main=()=>T(`Đã ghi lúc ${at}`,`${at} 已寫回`);
+    const sub=miss?()=>T(`${miss} người không còn trên Sheet`,`${miss} 人已不在試算表`):null;
+    show('ok',main,sub);
+    if(manual) toast(main()+(sub?' · '+sub():''));
+  }catch(e){
+    show('err',()=>T('Chưa ghi được, sẽ thử lại','尚未寫回，稍後自動重試'),()=>errMsg(e));
+    if(manual) toast(T('Chưa ghi được: ','尚未寫回：')+errMsg(e));
+  }
   finally{ GS.busy=false; }
 }
 
@@ -4007,7 +4063,8 @@ function restoreCache(){
     S.people=arr.map(x=>newPerson(x));
     uid=Math.max(uid,...S.people.map(p=>+p.id||0))+1;
     autoSeatCount(); renderReg(); upd();
-    status(`Đang dùng bản lưu trên máy (${S.people.length} người).`);
+    const n=S.people.length;
+    show('',()=>T('Đang dùng bản lưu trên máy','使用本機暫存資料'),()=>T(`${n} người`,`共 ${n} 人`));
   }catch(e){}
 }
 
@@ -4021,16 +4078,17 @@ async function tick(){
 $('#bGsPull').onclick=()=>pull(true);
 $('#bGsPush').onclick=async()=>{ if(!GS.map) await pull(true); push(true); };
 $('#bGsToken').onclick=()=>{
-  const v=prompt('Nhập mã truy cập Google Sheet (lưu trên máy này):',token());
+  const v=prompt(T('Nhập mã truy cập Google Sheet (lưu trên máy này):','請輸入 Google 試算表存取碼（儲存在本機）：'),token());
   if(v===null) return;
-  lsSet('gs.token',v.trim()); status('Đã lưu mã. Đang kết nối…'); pull(true);
+  lsSet('gs.token',v.trim()); show('busy',()=>T('Đã lưu mã. Đang kết nối…','已儲存存取碼，連線中…')); pull(true);
 };
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ GS.lastPull=0; tick(); } });
 window.addEventListener('online',()=>tick());
 
+paintLabels();
 restoreCache();
-if(!GS_URL) status('Chưa cài link Apps Script trong mã nguồn (GS_URL).',true);
-else if(!token()) status('Chưa kết nối · Bấm "Mã…" để nhập mã truy cập');
+if(!GS_URL) show('err',()=>T('Chưa cài link Apps Script','尚未設定 Apps Script 連結'),()=>T('Sửa GS_URL trong mã nguồn','請在原始碼中設定 GS_URL'));
+else if(!token()) show('',()=>T('Chưa kết nối','尚未連線'),()=>T('Bấm "Mã…" để nhập mã truy cập','請按「存取碼…」輸入存取碼'));
 else tick();
 setInterval(tick,TICK_MS);
 })();

@@ -117,6 +117,42 @@ dl.keys dd{margin:0;color:#8a8a8e}
 #zoomval{font-size:12.5px;color:var(--muted);width:42px;text-align:center}
 #pagewarn{display:none;padding:9px 16px;background:#fff0ee;color:#8c241d;font-size:13px;line-height:1.4;border-bottom:.5px solid #f0d3cf}
 #pagewarn.on{display:block}
+/* khung nhập dữ liệu: một thẻ, ô dán + hai nút ở đáy */
+.imp-card{background:#fff;border-radius:12px;overflow:hidden}
+.imp-card #regpaste{display:block;width:100%;min-height:92px;height:92px;border:0;border-radius:0;background:transparent;
+  padding:11px 13px;font-size:12.5px;line-height:1.55;resize:vertical;outline:none;box-shadow:none}
+.imp-card #regpaste::placeholder{color:#b0b0b5;white-space:normal}
+.imp-card #regpaste:focus{background:#fbfbfd}
+.imp-actions{display:flex;border-top:.5px solid #e4e4ea}
+.act-actions{display:flex;border-top:.5px solid #e4e4ea}
+.act-actions .btn{flex:1;font:inherit;font-size:14px;font-weight:400;background:none!important;border:0;border-radius:0;
+  box-shadow:none!important;padding:11px 6px;color:var(--ink);cursor:pointer}
+.act-actions .btn.danger{color:#c0362c}
+.card .act-actions{border-top:0}
+#mapSubHost select{min-width:120px}
+.act-actions .btn+.btn{border-left:.5px solid #e4e4ea}
+.act-actions .btn:active{background:#f2f2f7!important}
+#p-room .card .row label{font-size:14px}
+#p-room .row label .sub{font-size:12px;color:#8a8a8e}
+#p-room .card .row{padding:9px 14px}
+#p-room #langpanel .ladd{padding:8px 14px}
+#p-room #langpanel .ladd .btn{box-shadow:none;background:none;color:var(--ink);padding:6px 4px 6px 8px;font-size:14px}
+#p-room #langpanel .lfoot{padding:0}
+#p-room #langpanel .lfoot .btn.lsel{width:100%;display:flex;align-items:center;gap:10px;border:0;border-radius:0;box-shadow:none;background:none;font:inherit;font-size:14px;font-weight:400;padding:11px 14px;color:var(--ink);text-align:left;cursor:pointer}
+#p-room #langpanel .lfoot .btn.lsel .ic{font-size:14px;width:16px;text-align:center;color:#8a8a8e}
+#p-room #langpanel .lfoot .btn.lsel .chev{margin-left:auto;font-size:18px;color:#c7c7cc;line-height:1}
+#p-room #langpanel .lfoot .btn.lsel:active{background:#f2f2f7}
+#p-room #langpanel .ltoggle{padding:9px 14px;border-bottom:.5px solid #e4e4ea}
+#p-room #langpanel .ltoggle label{font-size:14px}
+#p-room #langpanel .lfoot .btn.lsel.on{background:#fff0ee;color:#a8261e;font-weight:500}
+#p-room #langpanel .lfoot .btn.lsel.on .ic{color:#a8261e}
+#p-room #langpanel .lfoot .note{margin:0!important;padding:0 14px 11px 40px;font-size:12px;text-align:left}
+.imp-actions .btn{flex:1;font:inherit;font-size:14px;font-weight:400;background:none!important;border:0;border-radius:0;
+  box-shadow:none!important;padding:11px 6px;color:var(--ink);cursor:pointer}
+.imp-actions .btn+.btn{border-left:.5px solid #e4e4ea}
+.imp-actions .btn:active{background:#f2f2f7!important}
+#regpastenote:empty{display:none}
+body.v-reg #pagewarn,body.v-map #pagewarn{display:none!important}   /* cảnh báo bản in chỉ hiện ở tab Danh sách */
 .view{display:none}
 #regview,#mapview{font-family:var(--zhui),-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,
   'Kaiti TC','Kaiti SC','KaiTi','BiauKai','標楷體','Noto Serif TC',serif}
@@ -146,52 +182,52 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 
 /* bảng ghi danh */
 #regtable{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;
-  background:#fff;border-radius:12px;font-size:27px}
+  background:#fff;border-radius:12px;font-size:21.5px}
 #regtable th{position:relative}
 #regtable td,#regtable th{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .rz{position:absolute;top:0;right:-4px;width:9px;height:100%;cursor:col-resize;z-index:3}
 .rz:hover{background:rgba(10,132,255,.35)}
-#regtable th{background:#f2f2f7;color:#6b7280;font-weight:600;font-size:15px;text-transform:uppercase;
+#regtable th{background:#f2f2f7;color:#6b7280;font-weight:600;font-size:13px;text-transform:uppercase;
   letter-spacing:.04em;padding:9px 8px;text-align:left;position:sticky;top:0;z-index:2}
 #reghead{flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
 #regscroll{flex:1;min-height:0;overflow:auto}
-#regtable td{padding:6px 6px;border-top:.5px solid #ecedf1;vertical-align:middle}
+#regtable td{padding:5px 6px;border-top:.5px solid #ecedf1;vertical-align:middle}
 #regtable tr.seated td{background:#f6fbf7}
 #regtable input[type=text],#regtable input[data-num],#regtable select{
-  width:100%;background:transparent;border:0;border-radius:6px;padding:6px 8px;font-size:27px}
+  width:100%;background:transparent;border:0;border-radius:6px;padding:5px 7px;font-size:21.5px}
 #regtable input:hover,#regtable select:hover{background:#f2f2f7}
-#regtable .idx{color:#a8b0ba;font-size:20px;text-align:right;width:34px}
+#regtable .idx{color:#a8b0ba;font-size:16px;text-align:right;width:34px}
 #regtable .seatcell input{text-align:center;font-weight:650;color:#0a58d0;background:#eef4ff}
 #regtable .phcell{display:flex;align-items:center;gap:6px}
-#regtable .phcell input[data-num]{width:84px;text-align:center;background:#f2f2f7}
+#regtable .phcell input[data-num]{width:68px;text-align:center;background:#f2f2f7}
 #regtable .seatcell input[data-num]{-moz-appearance:textfield;appearance:textfield}
 #regtable .seatcell input[data-num]::-webkit-outer-spin-button,
 #regtable .seatcell input[data-num]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-#regtable .del{border:0;background:none;color:#c0c6cd;cursor:pointer;font-size:26px;line-height:1;padding:2px 6px}
+#regtable .del{border:0;background:none;color:#c0c6cd;cursor:pointer;font-size:21px;line-height:1;padding:2px 6px}
 #regtable .del:hover{color:var(--accent)}
-#regtable input[type=checkbox]{width:24px;height:24px;margin:0;cursor:pointer}
+#regtable input[type=checkbox]{width:20px;height:20px;margin:0;cursor:pointer}
 /* thanh lọc phía trên bảng: to tương ứng với chữ trong bảng */
-#reghead{gap:14px}
+#reghead{gap:11px}
 #reghead .regbar{gap:12px}
 #reghead .seg{padding:3px;border-radius:12px;gap:3px}
-#reghead .seg button{font-size:21px;padding:9px 20px;border-radius:9px}
-#reghead .regbar>input[type=text]{flex:0 0 320px!important;font-size:21px;padding:10px 14px;border-radius:12px}
-#reghead .count{font-size:18px}
-#reghead .quickbar{gap:10px}
-#reghead .fchip{font-size:21px;padding:8px 18px}
+#reghead .seg button{font-size:17px;padding:7px 16px;border-radius:8px}
+#reghead .regbar>input[type=text]{flex:0 0 260px!important;font-size:17px;padding:8px 12px;border-radius:10px}
+#reghead .count{font-size:14.5px}
+#reghead .quickbar{gap:8px}
+#reghead .fchip{font-size:17px;padding:6px 14px}
 #reghead .fchip.clear{margin-left:12px}
-#reghead .fsep{font-size:15px;margin-left:14px}
+#reghead .fsep{font-size:12.5px;margin-left:12px}
 /* cột danh sách bên trái sơ đồ: to hơn 50% */
-#mapwrap #maplist{flex:0 0 375px;padding:16px;border-radius:14px}
-#maplist h4{font-size:18px;margin:4px 0 12px}
+#mapwrap #maplist{flex:0 0 300px;padding:14px;border-radius:13px}
+#maplist h4{font-size:14.5px;margin:3px 0 10px}
 #maplist .seg{padding:3px;border-radius:12px;gap:3px;margin-bottom:14px!important}
-#maplist .seg button{font-size:19.5px;padding:8px 14px;border-radius:9px}
-#maplist #mapsearch{font-size:19.5px;padding:10px 12px;border-radius:10px;margin-bottom:12px!important}
-#maplist .quickbar{gap:8px!important;margin-bottom:14px!important}
-#maplist .fchip{font-size:17px!important;padding:6px 14px!important}
-#maplist .chip{font-size:19.5px;padding:10px 13px;border-radius:11px;margin-bottom:7px}
-#maplist .chip b{min-width:30px}
-#maplist .mapnote{font-size:18px}
+#maplist .seg button{font-size:15.5px;padding:6px 12px;border-radius:8px}
+#maplist #mapsearch{font-size:15.5px;padding:8px 10px;border-radius:9px;margin-bottom:10px!important}
+#maplist .quickbar{gap:6px!important;margin-bottom:12px!important}
+#maplist .fchip{font-size:13.5px!important;padding:5px 11px!important}
+#maplist .chip{font-size:15.5px;padding:8px 11px;border-radius:9px;margin-bottom:6px}
+#maplist .chip b{min-width:24px}
+#maplist .mapnote{font-size:14.5px}
 .regbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .regbar .count{font-size:13px;color:#8a8a8e}
 .quickbar{gap:6px;align-items:center}
@@ -229,7 +265,7 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 body.selmode #seatsvg{touch-action:none;cursor:crosshair}
 body.selmode #seatsvg .rn{cursor:pointer}
 #langpanel .lrow{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:.5px solid #e4e4ea;font-size:14px}
-#langpanel .lrow .dot{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+#langpanel .lrow .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
 #langpanel .lrow .nm{font-weight:600}
 #langpanel .lrow .rg{flex:1;font-size:12px;color:#8a8a8e;line-height:1.35;min-width:0}
 #langpanel .lrow .x{border:0;background:none;color:#c0c6cd;font-size:18px;cursor:pointer;padding:2px 6px}
@@ -245,9 +281,11 @@ body.selmode #seatsvg .rn{cursor:pointer}
 #langbar .hint{font-size:12.5px;color:#8a8a8e}
 #langbar .fchip{display:inline-flex;align-items:center;gap:6px}
 #langbar .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+#langbar .newlang{display:inline-flex;align-items:center;gap:6px}
+#langbar .newlang input{width:190px;font-size:13px;padding:6px 10px;border-radius:999px;background:#f2f2f7}
 #langlegend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:2px 2px 10px;margin-bottom:10px;border-bottom:.5px solid #e4e4ea;font-size:14px;color:#1b2c3c;flex:0 0 auto}
 #langlegend .li{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-#langlegend i{width:5px;height:18px;border-radius:3px;display:inline-block}
+#langlegend i{width:11px;height:11px;border-radius:50%;display:inline-block}
 #langlegend .rg{color:#6b7680}
 #langlegend .ct{font-size:12.5px;color:#6b7680;background:#f2f2f7;border-radius:10px;padding:1px 8px}
 #langlegend .ct.full{color:#1f7a3a;background:#e3f4e8}
@@ -267,15 +305,17 @@ body.selmode #seatsvg .rn{cursor:pointer}
 #seatsvg .gline:active .hit{stroke:rgba(10,132,255,.34)}
 #seatsvg .gline:hover line:not(.hit){stroke:#0a84ff}
 .mapnote{font-size:12.5px;color:#8a8a8e}
-#stage{flex:1;overflow:auto;padding:26px;display:flex;flex-direction:column;align-items:center;gap:22px}
-#sheetswrap{transform-origin:top center;display:none}
+#stage{flex:1;overflow:auto;padding:26px;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
+#sheetswrap{display:none;flex:0 0 auto;margin:0 auto}
+#sheets{transform-origin:top left;width:max-content}
 body.split #sheetswrap{display:block}
 #sheets{display:flex;flex-direction:column;gap:22px;align-items:center}
 .sheet{position:relative;background:#fff;box-shadow:0 1px 3px rgba(20,40,60,.16),0 12px 32px rgba(20,40,60,.13)}
 .sheetinner{position:absolute;overflow:hidden}
 .sheetframe{position:absolute;left:0;top:0;right:0;bottom:0;border:.25mm dashed #b3bfc9;pointer-events:none}
 .sheettag{position:absolute;left:0;right:0;text-align:center;font-size:3.2mm;color:#9aa6b0}
-#pagewrap{transform-origin:top center}
+#pagewrap{flex:0 0 auto;margin:0 auto}   /* khung giữ đúng kích thước sau khi phóng to → cuộn tới được cả hai mép */
+#page{transform-origin:top left}
 #page{position:relative;background:var(--paper);box-shadow:0 1px 3px rgba(20,40,60,.16),0 12px 32px rgba(20,40,60,.13);outline:none}
 
 .frame{position:absolute;border:.3mm solid #c9762a}
@@ -385,7 +425,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   .mhandle.h{height:7mm;margin-top:-3.5mm}
   .rz{width:24px;right:-12px}
   #seatsvg .gline .hit{stroke-width:34}
-  #regtable .del{padding:8px 12px;font-size:28px}
+  #regtable .del{padding:8px 12px;font-size:22px}
 }
 @media print{
   #side,#toolbar,#topbar,#marquee,#pagewarn,#toast{display:none!important}
@@ -416,6 +456,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   #main{display:block!important;height:auto!important;overflow:visible!important}
   #stage{padding:0!important;margin:0!important;overflow:visible!important;display:block!important;height:auto!important}
   #pagewrap{transform:none!important;height:auto!important;width:auto!important;margin:0!important}
+  #page,#sheets{transform:none!important}
+  #sheetswrap{width:auto!important;height:auto!important;margin:0!important}
   #page{box-shadow:none;margin:0;break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid}
   .cell.sel,.cell.cur{box-shadow:none}
   .cell.slot{outline:none!important;background:none!important}
@@ -425,9 +467,9 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   body.printguides .frame,body.printguides .secline,
   body.printguides .mline,body.printguides .vline{display:block}
   #pdfmask,#statmask{display:none!important}
-  #printarea .printlegend{display:flex;flex-wrap:wrap;justify-content:center;gap:1mm 6mm;margin:0 0 3mm;font-size:10pt;color:#000}
+  #printarea .printlegend{break-after:avoid;page-break-after:avoid;display:flex;flex-wrap:wrap;justify-content:center;gap:1mm 6mm;margin:0 0 3mm;font-size:10pt;color:#000}
   #printarea .printlegend .li{display:inline-flex;align-items:center;gap:1.5mm;white-space:nowrap}
-  #printarea .printlegend i{width:1.4mm;height:4mm;border-radius:.7mm;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printarea .printlegend i{width:3mm;height:3mm;border-radius:50%;display:inline-block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #printarea .printlegend .rg,#printarea .printlegend .ct{color:#444}
   #printarea .stattable{font-size:15px} #printarea .stattable th,#printarea .stattable td{padding:9px 6px}
 }
@@ -483,10 +525,12 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <section class="pane on" id="p-reg">
       <div class="grp">
         <h2>Nhập dữ liệu</h2>
-        <textarea id="regpaste" spellcheck="false" wrap="off"></textarea>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn primary" id="bRegImport">Nạp thêm vào danh sách</button>
-          <button class="btn" id="bRegReplace">Thay toàn bộ…</button>
+        <div class="imp-card">
+          <textarea id="regpaste" spellcheck="false" wrap="off" placeholder="Dán bảng từ Excel hoặc Google Sheet, gồm cả dòng tiêu đề"></textarea>
+          <div class="imp-actions">
+            <button class="btn" id="bRegImport">Nạp thêm</button>
+            <button class="btn" id="bRegReplace">Thay toàn bộ…</button>
+          </div>
         </div>
         <p class="note" id="regpastenote"></p>
       </div>
@@ -518,9 +562,13 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <section class="pane" id="p-room">
       <div class="grp">
         <h2>Xếp chỗ</h2>
-        <div class="row"><label>Xếp hết người chưa có số</label><button class="btn primary" id="bMapAuto" style="flex:0 0 auto">Xếp tự động</button></div>
-        <div class="row"><label>Bỏ số của mọi người</label><button class="btn danger" id="bMapClear" style="flex:0 0 auto">Bỏ hết…</button></div>
-        <div class="row"><label>Dưới tên hiển thị</label><span id="mapSubHost" style="flex:0 0 auto"></span></div>
+        <div class="card">
+          <div class="row"><label>Dưới tên hiển thị</label><span id="mapSubHost" style="flex:0 0 auto"></span></div>
+          <div class="act-actions">
+            <button class="btn" id="bMapAuto" title="Xếp hết người chưa có số">Xếp tự động</button>
+            <button class="btn danger" id="bMapClear" title="Bỏ số của mọi người">Bỏ hết số ghế…</button>
+          </div>
+        </div>
       </div>
       <div class="grp">
         <h2>Ghế theo ngôn ngữ</h2>
@@ -528,8 +576,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
       </div>
       <div class="grp">
         <h2>Khi in sơ đồ</h2>
-        <div class="row"><label>In kèm 佛座 và 講台</label><input type="checkbox" id="printStage" checked></div>
-        <div class="row" id="rowStageCompact"><label><span>Thu gọn khoảng sân khấu khi in</span><br><span style="font-size:12px;color:#8a8a8e">Tắt thì in đúng vị trí, kích thước đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
+        <div class="row"><label>In 佛座 và 講台</label><input type="checkbox" id="printStage" checked></div>
+        <div class="row" id="rowStageCompact"><label><span>Thu gọn sân khấu</span><br><span class="sub">Tắt: in đúng vị trí đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
         <div class="row"><label>In khung viền phòng</label><input type="checkbox" id="printRoom" checked></div>
       </div>
     </section>
@@ -852,6 +900,11 @@ function renderLangPanel(){                       // bảng điều khiển: dan
     };
     row.append(d,info,x); box.appendChild(row);
   });
+  const tg=document.createElement('div'); tg.className='row ltoggle';
+  const tl=document.createElement('label'); tl.textContent=zh?'座位上顯示語言':'Hiện ngôn ngữ trên ghế';
+  const tc=document.createElement('input'); tc.type='checkbox'; tc.checked=S.showSeatLang!==false;
+  tc.onchange=()=>{ S.showSeatLang=tc.checked; renderMap(); };
+  tg.append(tl,tc); box.appendChild(tg);
   const add=document.createElement('div'); add.className='ladd';
   const inp=document.createElement('input'); inp.type='text'; inp.spellcheck=false;
   inp.placeholder = zh?'新增語言，例：English':'Thêm ngôn ngữ, vd: English';
@@ -862,13 +915,14 @@ function renderLangPanel(){                       // bảng điều khiển: dan
   b.onclick=doAdd; inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); doAdd(); } });
   add.append(inp,b); box.appendChild(add);
   const foot=document.createElement('div'); foot.className='lfoot';
-  const bs=document.createElement('button'); bs.className='btn'+(mapSelMode?' primary':'');
-  bs.textContent = mapSelMode ? (zh?'完成選取':'Xong, tắt chọn ghế') : (zh?'選取座位來指定語言':'Chọn ghế để gán ngôn ngữ');
+  const bs=document.createElement('button'); bs.className='btn lsel'+(mapSelMode?' on':'');
+  bs.innerHTML = mapSelMode ? '<span class="ic">✓</span>'+(zh?'完成選取':'Xong, tắt chọn ghế')
+                           : '<span class="ic">⬚</span>'+(zh?'選取座位來指定語言':'Chọn ghế để gán ngôn ngữ')+'<span class="chev">›</span>';
   bs.onclick=()=>{ mapSelMode=!mapSelMode; mapSel.clear(); pickedId=null; renderMap(); };
   const note=document.createElement('p'); note.className='note';
   note.textContent = zh
-    ? '開啟後在座位圖上點選或拖曳框選座位，再按座位圖上方列中的語言名稱。'
-    : 'Bật lên, chạm hoặc kéo khung chọn ghế trên sơ đồ, rồi bấm tên ngôn ngữ ở thanh ngay trên sơ đồ.';
+    ? '在座位圖上點選或框選座位，再按語言名稱。'
+    : 'Chạm hoặc kéo chọn ghế trên sơ đồ, rồi bấm tên ngôn ngữ.';
   foot.append(bs,note); box.appendChild(foot);
 }
 function hasSeatLang(){ return ['m','f'].some(sx=>Object.values(seatLangOf(sx)).some(v=>langKey(v))); }
@@ -923,7 +977,7 @@ function subText(p){                              // nội dung dòng phụ theo
   }
 }
 S.nameAuto=true; S.regSort=null;
-S.colW={idx:46,seat:96,name:170,sex:115,gvcn:140,interp:110,doc:110,ph:130,del:52};
+S.colW={idx:40,seat:84,name:150,sex:100,gvcn:120,interp:112,doc:95,ph:115,del:46};
 S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.printStageCompact=false; S.printRoom=true; S.regQuick=[];
 S.people=[];
 S.qian=[]; S.kun=[];
@@ -987,8 +1041,8 @@ const I18N={
  'Mở ô nhập':'進入編輯','Gõ chữ':'直接輸入','Nhập đè lên ô đang chọn':'覆寫選取格',
  'Chép, cắt, dán':'複製、剪下、貼上','Xóa nội dung ô đã chọn':'清除選取格內容',
  'Chọn tất cả ô nhập được':'選取全部可編輯格',
- 'Bảng tên':'清書表格','Bố cục':'版面','Nạp thêm vào danh sách':'加入名單','Thay toàn bộ…':'全部取代…',
- 'Xoá dữ liệu':'清除資料','Xoá toàn bộ danh sách':'清空整份名單','Xoá hết…':'清空…','Bỏ hết…':'全部清除…',
+ 'Bảng tên':'清書表格','Bố cục':'版面','Nạp thêm vào danh sách':'加入名單','Nạp thêm':'加入名單','Thay toàn bộ…':'全部取代…',
+ 'Xoá dữ liệu':'清除資料','Xoá toàn bộ danh sách':'清空整份名單','Xoá hết…':'清空…','Bỏ hết…':'全部清除…','Bỏ hết số ghế…':'全部清除…','Thu gọn sân khấu':'壓縮舞台區','Tắt: in đúng vị trí đã chỉnh':'關閉則依調整後位置列印','In 佛座 và 講台':'列印佛座與講台',
  'Dưới tên hiển thị':'名下顯示','Khi in sơ đồ':'列印座位圖時','In kèm 佛座 và 講台':'列印時含佛座與講台',
  'Hàng và cột':'排與欄','Để 0 thì tự tính theo số ghế.':'設為 0 則依座位數自動計算。','Sân khấu':'舞台',
  '+ Thêm dòng':'+ 新增一列','Thống kê lớp':'班員統計','Tô màu':'著色','Ô trống':'空格',
@@ -1004,6 +1058,7 @@ function applyLang(){
     if(el.dataset.vi===undefined) el.dataset.vi=el.textContent.trim();
     el.textContent=L(el.dataset.vi);
   });
+  { const ta=$('#regpaste'); if(ta) ta.placeholder=S.lang==='zh'?'從 Excel 或 Google Sheet 貼上表格（含標題列）':'Dán bảng từ Excel hoặc Google Sheet, gồm cả dòng tiêu đề'; }
   { const vb=document.querySelector('#viewseg button[data-view=print]');   // tab thứ 3: tên riêng, không lẫn với 'Danh sách' khác
     if(vb){ vb.dataset.vi='Danh sách'; vb.textContent=S.lang==='zh'?'清書表格':'Danh sách'; } }
   $('#lang').value=S.lang;
@@ -2207,14 +2262,14 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
     const vb=[-pad, top-pad, W+2*pad, bottom-top+2*pad];
     c.setAttribute('viewBox',vb.join(' '));
     const r=(vb[2]/vb[3])||1;
-    const aw=197, ah=284;
+    const aw=190, ah=262;                 // chừa lề trình duyệt, để chú thích và sơ đồ nằm chung một trang
     let w=aw, h=aw/r;
     if(h>ah){ h=ah; w=ah*r; }
     c.setAttribute('style',`display:block;margin:0 auto;width:${w}mm;height:${h}mm;max-width:none`);
     const lg=$('#langlegend');
     if(lg){ const lc=lg.cloneNode(true); lc.removeAttribute('id'); lc.className='printlegend'; pa.appendChild(lc);
-      const lines=Math.ceil(lg.querySelectorAll('.li').length/3);   // bớt chiều cao sơ đồ cho chú thích
-      const k=Math.min(1,(ah-lines*7)/h); c.style.width=(w*k)+'mm'; c.style.height=(h*k)+'mm'; }
+      const lines=Math.ceil(lg.querySelectorAll('.li').length/2);   // bớt chiều cao sơ đồ cho chú thích
+      const k=Math.min(1,(ah-lines*8-3)/h); c.style.width=(w*k)+'mm'; c.style.height=(h*k)+'mm'; }
     pa.appendChild(c);
     document.body.classList.add('pmode');
   } else if(S.view==='reg'){
@@ -2314,11 +2369,13 @@ function refreshControls(){
 
 function setZoom(z){
   zoom=clamp(z,.25,3);
-  pagewrap.style.transform=`scale(${zoom})`;
-  const sw=$('#sheetswrap');
-  if(sw){ sw.style.transform=`scale(${zoom})`;
-    sw.style.height = S.splitPrint ? ($('#sheets').offsetHeight*zoom)+'px' : '0px'; }
+  page.style.transform=`scale(${zoom})`;
+  const sw=$('#sheetswrap'), sh=$('#sheets');
+  if(sw&&sh){ sh.style.transform=`scale(${zoom})`;
+    sw.style.width  = S.splitPrint ? (sh.offsetWidth*zoom)+'px' : '0px';
+    sw.style.height = S.splitPrint ? (sh.offsetHeight*zoom)+'px' : '0px'; }
   $('#zoomval').textContent=Math.round(zoom*100)+'%';
+  pagewrap.style.width=(S.pw*MM*zoom)+'px';
   pagewrap.style.height=(S.ph*MM*zoom)+'px';
 }
 function fit(){ setZoom(($('#stage').clientWidth-52)/(S.pw*MM)); }
@@ -2816,6 +2873,9 @@ function renderMap(){
   const box=$('#mapview'); if(!box) return;
   const zh=S.lang==='zh', R=S.room;
   renderLangPanel();
+  const oldSvgBox=box.querySelector('#mapsvgbox'), oldList=box.querySelector('#maplist');
+  const keepScroll={t:oldSvgBox?oldSvgBox.scrollTop:0,l:oldSvgBox?oldSvgBox.scrollLeft:0,
+                    lt:oldList?oldList.scrollTop:0};   // giữ nguyên chỗ đang xem sau khi vẽ lại
   const keepList = dragFreeze ? box.querySelector('#maplist') : null;
   if(keepList) keepList.remove();               // kéo đường chỉnh thì giữ nguyên cột danh sách
   box.innerHTML='';
@@ -3148,24 +3208,24 @@ function renderMap(){
       seat.dataset.seat=num; seat.dataset.sex=sex; seat.dataset.row=r;
       if(picked && picked.sex!==sex) seat.classList.add('off');
       if(mapSel.has(sex+':'+num)) seat.classList.add('sel');
-      const sLang=(seatLangOf(sex)[num]||'').trim();
-      const warn=p?mismatchMsg(p):'';
+      const sLang=S.showSeatLang===false?'':(seatLangOf(sex)[num]||'').trim();
+      const warn=(p&&S.showSeatLang!==false)?mismatchMsg(p):'';
       const nm=(p&&p.name)?p.name.toUpperCase():'';
-      const fs=(nm.length>14?7:(nm.length>9?8:9.5))*1.25*1.5;   // chữ trong ghế to hơn 50%
+      const fs=(nm.length>14?7:(nm.length>9?8:9.5))*1.25*1.2;   // chữ trong ghế to hơn 20%
       const estW=(t,f)=>[...t].reduce((a,c)=>a+(/[\u2e80-\u9fff\uf900-\ufaff\uff00-\uffef]/.test(c)?1:0.62),0)*f;
       const CW=R.chairWidth;
       seat.innerHTML=`<rect class="bg" width="${R.chairWidth}" height="${R.chairLength}" rx="6"
           fill="${p?(sex==='m'?'#d9e8ff':'#ffdeeb'):'#f7f8fa'}"
           stroke="${sex==='m'?'#8fb4e8':'#e8a7c2'}" stroke-width="1"/>
-        ${sLang?`<rect x="1.5" y="7" width="3" height="${R.chairLength-14}" rx="1.5" fill="${langColor(sLang)}"><title>${esc(sLang)}</title></rect>`:''}
-        ${warn?`<g><title>${esc(warn)}</title><circle cx="${CW-7.5}" cy="14" r="5.5" fill="#d0342c"/>
-          <text x="${CW-7.5}" y="17.2" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">!</text></g>`:''}
-        <text x="${R.chairWidth/2}" y="15" text-anchor="middle" font-size="13.5" font-weight="700" fill="#8d97a1">${num}</text>
-        ${nm?`<text x="${R.chairWidth/2}" y="33" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2c3c"
+        ${sLang?`<circle cx="${CW-7.5}" cy="7.5" r="4" fill="${langColor(sLang)}" stroke="#fff" stroke-width="1"><title>${esc(sLang)}</title></circle>`:''}
+        ${warn?`<g><title>${esc(warn)}</title><circle cx="7.5" cy="8" r="5" fill="#d0342c"/>
+          <text x="7.5" y="11.3" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">!</text></g>`:''}
+        <text x="${R.chairWidth/2}" y="14" text-anchor="middle" font-size="10.8" font-weight="700" fill="#8d97a1">${num}</text>
+        ${nm?`<text x="${R.chairWidth/2}" y="31" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#1b2c3c"
             ${estW(nm,fs)>R.chairWidth-8?`textLength="${R.chairWidth-8}" lengthAdjust="spacingAndGlyphs"`:''}>${nm}</text>`:''}
         ${(()=>{ const st=subText(p); if(!st) return '';
-          const fit=estW(st,13)>R.chairWidth-6 ? `textLength="${R.chairWidth-6}" lengthAdjust="spacingAndGlyphs"` : '';
-          return `<text x="${R.chairWidth/2}" y="46.5" text-anchor="middle" font-size="13" fill="#7b8590" ${fit}>${esc(st)}</text>`; })()}`;
+          const fit=estW(st,10.5)>R.chairWidth-6 ? `textLength="${R.chairWidth-6}" lengthAdjust="spacingAndGlyphs"` : '';
+          return `<text x="${R.chairWidth/2}" y="45" text-anchor="middle" font-size="10.5" fill="#7b8590" ${fit}>${esc(st)}</text>`; })()}`;
       seat.addEventListener('click',()=>{
         if(mapSelMode) return;                    // đang chọn ghế thì không xếp người
         if(p){ snap(); p.seat=null; pickedId=p.id; }
@@ -3292,7 +3352,21 @@ function renderMap(){
         b.append(d,document.createTextNode(v)); b.onclick=()=>assign(v); acts.appendChild(b);
       });
       const bn=document.createElement('button'); bn.className='fchip'; bn.textContent=zh?'＋ 新語言':'+ Ngôn ngữ mới';
-      bn.onclick=()=>{ const v=(prompt(zh?'語言名稱':'Tên ngôn ngữ')||'').trim(); if(v) assign(v); };
+      bn.onclick=()=>{                          // ô nhập ngay trên thanh, không dùng hộp thoại prompt
+        const box=document.createElement('span'); box.className='newlang';
+        const inp=document.createElement('input'); inp.type='text'; inp.spellcheck=false;
+        inp.placeholder=zh?'語言名稱，例：English':'Tên ngôn ngữ, vd: English';
+        const ok=document.createElement('button'); ok.className='fchip'; ok.style.fontWeight='600'; ok.textContent=zh?'指定':'Gán';
+        const no=document.createElement('button'); no.className='fchip'; no.textContent='×';
+        const go=()=>{ const v=inp.value.trim(); if(!v){ inp.focus(); return; }
+          if(!allLangs().list.some(x=>x.k===langKey(v))) S.langList=(S.langList||[]).concat([v]);
+          assign(v); };
+        ok.onclick=go; no.onclick=()=>paintBar();
+        inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go(); } else if(e.key==='Escape') paintBar(); });
+        ['pointerdown','mousedown','touchstart'].forEach(ev=>box.addEventListener(ev,e=>e.stopPropagation()));
+        acts.querySelectorAll('.hint').forEach(h=>h.remove());
+        box.append(inp,ok,no); bn.replaceWith(box); inp.focus();
+      };
       acts.appendChild(bn);
       const bx=document.createElement('button'); bx.className='fchip'; bx.textContent=zh?'取消指定':'Bỏ gán';
       bx.onclick=()=>assign(''); acts.appendChild(bx);
@@ -3348,7 +3422,7 @@ function renderMap(){
     svg.addEventListener('pointerup',finish);
     svg.addEventListener('pointercancel',finish);
   }
-  if(legend.length){                          // chú thích ngôn ngữ nằm trên đầu sơ đồ
+  if(legend.length && S.showSeatLang!==false){   // chú thích ngôn ngữ nằm trên đầu sơ đồ
     const lg=document.createElement('div'); lg.id='langlegend'; lg.setAttribute('translate','no');
     lg.innerHTML=legend.map(it=>{
       const tot=it.m.length+it.f.length;
@@ -3368,12 +3442,20 @@ function renderMap(){
   }
   wrap.appendChild(svgbox);
   box.appendChild(wrap);
-  if(dragFreeze) applyZoom();                 // đang kéo thì khỏi đo lại, tránh giật
-  else requestAnimationFrame(()=>{             // sơ đồ lấp hết chiều cao khung
-    const lgH=($('#langlegend')||{}).offsetHeight||0;
-    mapBaseH=svgbox.clientHeight-28-(lgH?lgH+10:0); baseH=mapBaseH;
-    applyZoom();
-  });
+  const restoreScroll=()=>{
+    svgbox.scrollTop=keepScroll.t; svgbox.scrollLeft=keepScroll.l;
+    if(list && list.scrollTop!==keepScroll.lt) list.scrollTop=keepScroll.lt;
+  };
+  if(dragFreeze){ applyZoom(); restoreScroll(); }   // đang kéo thì khỏi đo lại, tránh giật
+  else{
+    if(baseH) applyZoom();                     // đặt ngay kích thước cũ để không nhảy lên đầu
+    restoreScroll();
+    requestAnimationFrame(()=>{                // sơ đồ lấp hết chiều cao khung
+      const lgH=($('#langlegend')||{}).offsetHeight||0;
+      mapBaseH=svgbox.clientHeight-28-(lgH?lgH+10:0); baseH=mapBaseH;
+      applyZoom(); restoreScroll();
+    });
+  }
   svgbox.addEventListener('wheel',e=>{         // chụm hai ngón trên trackpad
     if(!(e.ctrlKey||e.metaKey)) return;
     e.preventDefault();

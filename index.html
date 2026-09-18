@@ -22,7 +22,7 @@ body{display:flex;flex-direction:column}
 #topbar{display:flex;align-items:stretch;gap:16px;padding:0 16px;background:#fff;
   border-bottom:.5px solid #d3d3d9;flex:0 0 auto}
 #topbar .spacer{flex:1}
-#topbar>#bPanel,#topbar>#lang{align-self:center}
+#topbar>#bPanel,#topbar>#lang,#topbar>#bAcct{align-self:center}
 #bPanel{padding:10px 15px;font-size:18px;line-height:1}
 #viewseg{flex:0 0 auto;padding:0;background:none;border-radius:0;gap:0;align-items:stretch}
 #viewseg button{flex:0 0 auto;background:none;border-radius:0;box-shadow:none;
@@ -162,6 +162,7 @@ dl.keys dd{margin:0;color:#8a8a8e}
   box-shadow:none!important;padding:11px 6px;color:var(--ink);cursor:pointer}
 .imp-actions .btn+.btn{border-left:.5px solid #e4e4ea}
 .imp-actions .btn:active{background:#f2f2f7!important}
+.imp-actions .btn.danger{color:var(--accent)}
 #regpastenote:empty{display:none}
 body.v-reg #pagewarn,body.v-map #pagewarn{display:none!important}   /* cảnh báo bản in chỉ hiện ở tab Danh sách */
 .view{display:none}
@@ -210,7 +211,24 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 #regtable .idx{color:#a8b0ba;font-size:16px;text-align:right;width:34px}
 #regtable .seatcell input{text-align:center;font-weight:650;color:#0a58d0;background:#eef4ff}
 #regtable .phcell{display:flex;align-items:center;gap:6px}
-#regtable .phcell input[data-num]{width:68px;text-align:center;background:#f2f2f7}
+#regtable .phstep{display:inline-flex;align-items:stretch;background:#f2f2f7;border-radius:9px;overflow:hidden;height:34px}
+#regtable .phstep button{width:24px;padding:0;border:0;background:none;cursor:pointer;
+  font:inherit;font-size:17px;line-height:1;color:#0a58d0;display:flex;align-items:center;justify-content:center}
+#regtable .phstep button:active{background:#e1e1e8}
+#regtable .phstep button:disabled{color:#c7c7cc;cursor:default;background:none}
+#regtable .phcell input[data-num]{width:32px;text-align:center;background:none;border:0;border-radius:0;
+  border-left:.5px solid #dfdfe5;border-right:.5px solid #dfdfe5}
+#regtable .phcell input[data-num].ro{background:none;color:#6b7280}
+/* chuột: bình thường chỉ thấy con số, rê vào dòng mới hiện dấu cộng trừ.
+   Máy cảm ứng không có trạng thái rê nên luôn hiện. */
+@media (hover:hover){
+  #regtable .phstep button{visibility:hidden;opacity:0;transition:opacity .13s ease}
+  #regtable .phcell input[data-num]{border-color:transparent;transition:border-color .13s ease}
+  #regtable tr:hover .phstep button,
+  #regtable .phstep:focus-within button{visibility:visible;opacity:1}
+  #regtable tr:hover .phcell input[data-num],
+  #regtable .phstep:focus-within input[data-num]{border-left-color:#dfdfe5;border-right-color:#dfdfe5}
+}
 #regtable .seatcell input[data-num]{-moz-appearance:textfield;appearance:textfield}
 #regtable .seatcell input[data-num]::-webkit-outer-spin-button,
 #regtable .seatcell input[data-num]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
@@ -226,6 +244,11 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 #selbar .sellab{font-weight:650;color:#0a58d0;font-size:15px;margin-right:4px}
 #selbar .fchip.danger{background:#ffe9e9;color:#b3261e}
 #selbar .fchip.danger:hover{background:#ffd7d7}
+/* ô không được sửa theo vai */
+#regtable input.ro,#regtable select.ro{background:#f6f6f8;color:#6b7280;cursor:default}
+#regtable input.ro:hover,#regtable select.ro:hover{background:#f6f6f8}
+body.role-viewer #regtable colgroup col:first-child{width:0}
+body.role-viewer #regtable .selth *,body.role-viewer #regtable .selcell *{display:none}
 /* thanh lọc phía trên bảng: to tương ứng với chữ trong bảng */
 #reghead{gap:11px}
 #reghead .regbar{gap:12px}
@@ -449,7 +472,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   #regtable input[type=checkbox]{width:24px;height:24px}
 }
 @media print{
-  #side,#toolbar,#topbar,#marquee,#pagewarn,#toast{display:none!important}
+  #side,#toolbar,#topbar,#marquee,#pagewarn,#toast,#acctMenu{display:none!important}
   html body.pmode #regview,html body.pmode #mapview,html body.pmode #stage{display:none!important}
   html body.pmode #printarea{display:block!important}
   body.nopanel #side{display:none!important}
@@ -498,25 +521,52 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   #printarea .stattable{font-size:15px} #printarea .stattable th,#printarea .stattable td{padding:9px 6px}
 }
 
-#gsGrp .gs-card{background:#fff;border-radius:12px;overflow:hidden}
-#gsGrp .gs-head{display:flex;align-items:center;gap:10px;padding:11px 12px 11px 14px}
-#gsGrp .gs-dot{flex:0 0 8px;height:8px;border-radius:50%;background:#c7c7cc}
-#gsGrp .gs-dot[data-s=ok]{background:#8fcf9c}
-#gsGrp .gs-dot[data-s=err]{background:#e8a09b}
-#gsGrp .gs-dot[data-s=busy]{background:#ff9f0a;animation:gsPulse 1s ease-in-out infinite}
 @keyframes gsPulse{50%{opacity:.35}}
-#gsGrp .gs-text{flex:1;min-width:0}
-#gsGrp .gs-main{font-size:14.5px;letter-spacing:-.012em;line-height:1.3;color:var(--ink)}
-#gsGrp .gs-main[data-s=err]{color:var(--ink);font-size:14px}
-#gsGrp .gs-sub{font-size:12.5px;color:#8a8a8e;line-height:1.35;margin-top:1px}
-#gsGrp .gs-sub:empty{display:none}
-#gsGrp .gs-key{flex:0 0 auto;font:inherit;font-size:12.5px;color:#8a8a8e;background:#f2f2f7;border:0;border-radius:8px;padding:5px 10px;cursor:pointer}
-#gsGrp .gs-actions{display:flex;border-top:.5px solid #e4e4ea}
-#gsGrp .gs-actions button{flex:1;font:inherit;font-size:14px;font-weight:400;letter-spacing:-.01em;background:none;border:0;padding:11px 6px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-#gsGrp .gs-actions button+button{border-left:.5px solid #e4e4ea}
-#gsGrp .gs-actions button:active{background:#f2f2f7}
-#gsGrp .gs-actions button span{font-size:13px;color:#8a8a8e}
-#gsGrp .gs-actions button:disabled{color:#c7c7cc}
+
+/* ---------- nút tài khoản trên thanh trên cùng ---------- */
+#bAcct{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:14.5px;letter-spacing:-.012em;
+  color:var(--ink);background:#f1f1f5;border:0;border-radius:999px;padding:5px 11px 5px 9px;cursor:pointer;
+  max-width:240px;white-space:nowrap;transition:background .15s ease}
+#bAcct:hover{background:#e8e8ee}
+#bAcct[aria-expanded="true"]{background:#e0e0e8}
+#bAcct .nm{overflow:hidden;text-overflow:ellipsis;font-weight:560}
+#bAcct.anon{background:var(--accent-soft);color:var(--accent)}
+#bAcct.anon .nm{font-weight:650}
+#acctDot{flex:0 0 7px;height:7px;border-radius:50%;background:#c7c7cc}
+#acctDot[data-s=ok]{background:#34c759}
+#acctDot[data-s=err]{background:#ff453a}
+#acctDot[data-s=busy]{background:#ff9f0a;animation:gsPulse 1s ease-in-out infinite}
+#bAcct.anon #acctDot{display:none}
+#acctRole{flex:0 0 auto;padding:1.5px 6px;border-radius:999px;background:#e4e4ea;color:#6b7280;
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;line-height:1.5}
+#acctRole[data-r="admin"]{background:#ffe6c7;color:#a35a00}
+#acctRole[data-r="staff"]{background:#d9ecff;color:#0a58d0}
+#acctRole[data-r="viewer"]{background:#e9e9ee;color:#6b7280}
+
+#acctMenu{position:fixed;z-index:120;width:272px;padding:5px;transform-origin:top right;
+  background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-radius:13px;box-shadow:0 10px 32px rgba(0,0,0,.17),0 0 0 .5px rgba(0,0,0,.07);
+  animation:amIn .14s cubic-bezier(.32,.72,0,1)}
+@keyframes amIn{from{opacity:0;transform:scale(.95) translateY(-5px)}}
+#acctMenu[hidden]{display:none}
+#acctMenu .am-head{padding:8px 10px 10px;margin-bottom:4px;border-bottom:.5px solid rgba(0,0,0,.08)}
+#acctMenu .am-line{font-size:13.5px;line-height:1.35;letter-spacing:-.01em}
+#amStatus{font-weight:590;color:var(--ink)}
+#amSub{color:#8a8a8e}
+#amSub:empty{display:none}
+#amSub::before{content:" · "}
+#amNote{font-size:11.5px;color:#a1a1a6;line-height:1.35;margin-top:3px}
+#amNote:empty{display:none}
+#acctMenu button{display:flex;width:100%;align-items:center;gap:10px;font:inherit;font-size:14px;
+  letter-spacing:-.012em;background:none;border:0;border-radius:8px;padding:8px 10px;color:var(--ink);
+  cursor:pointer;text-align:left}
+#acctMenu button:hover{background:rgba(0,0,0,.05)}
+#acctMenu button:active{background:rgba(0,0,0,.09)}
+#acctMenu button:disabled{color:#c2c2c7;background:none;cursor:default}
+#acctMenu button .ic{flex:0 0 15px;font-size:12.5px;color:#8a8a8e;text-align:center}
+#acctMenu button:disabled .ic{color:#c2c2c7}
+#acctMenu button.danger,#acctMenu button.danger .ic{color:#d0342c}
+#acctMenu .am-sep{height:.5px;background:rgba(0,0,0,.08);margin:4px 10px}
 </style>
 </head>
 <body class="guides v-reg">
@@ -529,7 +579,22 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <button data-view="print">Danh sách</button>
   </div>
   <span class="spacer"></span>
+  <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
+    <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
+  </button>
   <select id="lang" autocomplete="off"><option value="vi">Tiếng Việt</option><option value="zh">繁體中文</option></select>
+</div>
+
+<div id="acctMenu" role="menu" hidden>
+  <div class="am-head">
+    <div class="am-line"><span id="amStatus"></span><span id="amSub"></span></div>
+    <div id="amNote"></div>
+  </div>
+  <button id="amPull" role="menuitem"><span class="ic">↓</span><span class="lb">Tải từ Sheet</span></button>
+  <button id="amPush" role="menuitem"><span class="ic">↑</span><span class="lb">Ghi lên Sheet</span></button>
+  <div class="am-sep"></div>
+  <button id="amSwitch" role="menuitem"><span class="ic">⇄</span><span class="lb">Đổi người dùng</span></button>
+  <button id="amOut" class="danger" role="menuitem"><span class="ic">⏻</span><span class="lb">Đăng xuất</span></button>
 </div>
 
 <div id="app">
@@ -548,37 +613,20 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <!-- ============ ① GHI DANH ============ -->
     <section class="pane on" id="p-reg">
       <div class="grp">
-        <h2>Nhập dữ liệu</h2>
-        <div class="imp-card">
+        <h2>Dữ liệu danh sách</h2>
+        <div class="imp-card" id="regdata">
           <textarea id="regpaste" spellcheck="false" wrap="off" placeholder="Dán bảng từ Excel hoặc Google Sheet, gồm cả dòng tiêu đề"></textarea>
           <div class="imp-actions">
             <button class="btn" id="bRegImport">Nạp thêm</button>
             <button class="btn" id="bRegReplace">Thay toàn bộ…</button>
           </div>
+          <div class="imp-actions">
+            <button class="btn" id="bRegXls">Xuất Excel</button>
+            <button class="btn danger" id="bRegClear">Xoá hết…</button>
+          </div>
         </div>
         <p class="note" id="regpastenote"></p>
-      </div>
-      <div class="grp" id="gsGrp">
-        <h2>Google Sheet</h2>
-        <div class="gs-card">
-          <div class="gs-head">
-            <span class="gs-dot" id="gsDot"></span>
-            <div class="gs-text">
-              <div class="gs-main" id="gsStatus">Chưa kết nối</div>
-              <div class="gs-sub" id="gsSub"></div>
-            </div>
-            <button class="gs-key" id="bGsToken" title="Mã truy cập">Mã…</button>
-          </div>
-          <div class="gs-actions">
-            <button id="bGsPull"><span>↓</span>Tải từ Sheet</button>
-            <button id="bGsPush"><span>↑</span>Ghi số ghế</button>
-          </div>
-        </div>
-        <p class="note" id="gsNote">Số ghế tự ghi về Sheet vài giây sau khi xếp.</p>
-      </div>
-      <div class="grp danger">
-        <h2>Xoá dữ liệu</h2>
-        <div class="row"><label>Xoá toàn bộ danh sách</label><button class="btn danger" id="bRegClear" style="flex:0 0 auto">Xoá hết…</button></div>
+        <p class="note" id="gsNote">Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản, góc trên bên phải.</p>
       </div>
     </section>
 
@@ -775,12 +823,11 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <div id="filemenu">
       <button class="btn" id="bFile">Tệp ▾</button>
       <div id="filepop">
-        <button class="btn" id="bSave">Lưu .json</button>
-        <button class="btn" id="bOpen">Mở .json</button>
+        <button class="btn" id="bSave" title="Lưu cấu hình phòng, bố cục và danh sách vào một tệp">Lưu phiên (.json)</button>
+        <button class="btn" id="bOpen" title="Mở lại tệp phiên đã lưu">Mở phiên (.json)</button>
       </div>
     </div>
     <span class="sep"></span>
-    <button class="btn onlyreg" id="bRegXls">Xuất Excel</button>
     <button class="btn" id="bPrint">In</button>
     <button class="btn primary" id="bPdf">Lưu PDF</button>
     <input type="file" id="fileIn" accept=".json" hidden>
@@ -1046,6 +1093,9 @@ const I18N={
  'Chép':'複製','Cắt':'剪下','Dán':'貼上','Xóa nội dung':'清除內容',
  'Chèn người':'插入一人','Bỏ người':'刪除一人','Hoàn tác':'復原','Vừa khung':'符合視窗',
  'Lưu .json':'儲存 .json','Mở .json':'開啟 .json','In':'列印','Lưu PDF':'存成 PDF',
+ 'Lưu phiên (.json)':'儲存工作檔 (.json)','Mở phiên (.json)':'開啟工作檔 (.json)',
+ 'Dữ liệu danh sách':'名單資料','Xoá hết…':'清空…',
+ 'Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản, góc trên bên phải.':'名單存放於 Google 試算表。請用右上角的帳號按鈕登入與同步。',
  'Chọn tệp font':'選擇字型檔','Bỏ':'取消','Mở hộp thoại in':'開啟列印視窗',
  'Lưu thành PDF':'存成 PDF',
  'Ở mục Máy in, chọn Save as PDF hoặc Microsoft Print to PDF.':'印表機請選 Save as PDF 或 Microsoft Print to PDF。',
@@ -2152,6 +2202,35 @@ function downloadBlob(blob,name){
   a.download=name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);    // iPad cần thời gian để lưu tệp
 }
+/* mọi tệp Excel trong app đi qua đây: sheetXml + stylesXml -> .xlsx thật */
+const xlEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function xlsxBlob(sheetName,sheetXml,stylesXml){
+  const E=t=>new TextEncoder().encode(t);
+  return makeZip([
+    {name:'[Content_Types].xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+</Types>`)},
+    {name:'_rels/.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`)},
+    {name:'xl/workbook.xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheets><sheet name="${xlEsc(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>`)},
+    {name:'xl/_rels/workbook.xml.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`)},
+    {name:'xl/styles.xml',data:E(stylesXml)},
+    {name:'xl/worksheets/sheet1.xml',data:E(sheetXml)}
+  ]);
+}
 $('#statXls').onclick=()=>{                    // khung, chữ 標楷體, dòng 總計 tô vàng như bảng in
   const {list,tot}=statsData(), zh=S.lang==='zh';
   const x=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2197,32 +2276,7 @@ $('#statXls').onclick=()=>{                    // khung, chữ 標楷體, dòng 
 </cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>`;
-  const E=t=>new TextEncoder().encode(t);
-  const blob=makeZip([
-    {name:'[Content_Types].xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-<Default Extension="xml" ContentType="application/xml"/>
-<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
-<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
-<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
-</Types>`)},
-    {name:'_rels/.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
-</Relationships>`)},
-    {name:'xl/workbook.xml',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-<sheets><sheet name="班員統計表" sheetId="1" r:id="rId1"/></sheets></workbook>`)},
-    {name:'xl/_rels/workbook.xml.rels',data:E(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
-<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-</Relationships>`)},
-    {name:'xl/styles.xml',data:E(styles)},
-    {name:'xl/worksheets/sheet1.xml',data:E(sheet)}
-  ]);
-  downloadBlob(blob,'ban-vien-thong-ke.xlsx');
+  downloadBlob(xlsxBlob('班員統計表',sheet,styles),'ban-vien-thong-ke.xlsx');
 };
 $('#statCopy').onclick=()=>{
   const {list,tot}=statsData(), zh=S.lang==='zh';
@@ -2431,6 +2485,13 @@ document.querySelectorAll('.grp').forEach(g=>{
 /* ==================== hệ thống ghi danh ==================== */
 let uid=1;
 const regSel=new Set();                      // id những người đang được chọn trong bảng ghi danh
+window.APPROLE='local';                      // local (chưa đăng nhập) | admin | staff | viewer
+window.DELQ=[];                              // sid chờ xoá trên Sheet, chỉ admin mới gửi đi
+const roleNow=()=>window.APPROLE||'local';
+const mayInfo=()=>['local','admin'].includes(roleNow());        // sửa tên, giới tính, GVCN, phiên dịch, tài liệu
+const maySeat=()=>['local','admin','staff'].includes(roleNow());// gán số ghế, sửa số máy tạm giữ, thêm người
+const mayDel =()=>['local','admin'].includes(roleNow());        // xoá người khỏi danh sách
+function dropPerson(p){ if(p&&p.sid&&window.DELQ.indexOf(p.sid)<0) window.DELQ.push(p.sid); }
 function newPerson(o){
   return Object.assign({id:uid++,name:'',sex:'m',gvcn:'',interp:'',doc:'',ph:0,seat:null},o||{});
 }
@@ -2448,6 +2509,10 @@ function syncRoster(){                       // 清書表格 lấy dữ liệu t
 function upd(){ render(); renderMap(); }
 
 /* ---------- đọc danh sách dán vào ---------- */
+/* "姓名", "Họ tên"… lọt xuống vùng dữ liệu thì bỏ, đừng tính thành một người */
+function isHeadName(v){
+  return /^(姓名|họ(và)?tên|ho(va)?ten|fullname|name)$/i.test(String(v||'').replace(/\s+/g,''));
+}
 function detectSex(t){
   const x=(t||'').toLowerCase();
   if(/nữ|nu\b|female|女|坤|\bf\b/.test(x)) return 'f';
@@ -2477,17 +2542,20 @@ const COLKEY=[
   [/乾\s*\/?\s*坤|性別|性别|giới\s*tính|gioi\s*tinh|sex|gender/i,'sex'],
   [/姓\s*名|họ\s*(và\s*)?tên|ho\s*ten|full\s*name|^name$/i,'name'],
   [/理\s*經|理\s*经|代\s*號|代\s*号|班\s*導|班\s*导|gvcn|導師|导师|teacher/i,'gvcn'],
-  [/翻\s*譯|翻\s*译|語\s*言|语\s*言|聽\s*語|听\s*语|phiên\s*dịch|phien\s*dich|ngôn\s*ngữ\s*nghe|interp/i,'interp'],
+  [/翻\s*譯|翻\s*译|語\s*言|语\s*言|聽\s*語|听\s*语|phiên\s*dịch|phien\s*dich|ngôn\s*ngữ|ngon\s*ngu|interp/i,'interp'],
   [/資\s*料|资\s*料|教\s*材|tài\s*liệu|tai\s*lieu|課本|课本|material/i,'doc'],
   [/電\s*話|电\s*话|điện\s*thoại|dien\s*thoai|手機|手机|phone/i,'ph']
 ];
-function mapHeader(cells){
+function mapHeader(cells,loose){
   const m={}; let hit=0;
   cells.forEach((c,i)=>{
     const t=(c||'').replace(/\s+/g,' ').trim();
     if(!t) return;
     for(const [re,key] of COLKEY){ if(m[key]===undefined && re.test(t)){ m[key]=i; hit++; break; } }
   });
+  /* dán tay: phải chắc đây là dòng tiêu đề chứ không phải dòng dữ liệu, nên đòi 3 cột.
+     đọc từ Sheet: dòng 1 chắc chắn là tiêu đề, chỉ cần có cột Họ tên là đủ. */
+  if(loose) return m.name===undefined?null:m;
   return hit>=3?m:null;
 }
 function guessMap(rows){                     // không có dòng tiêu đề thì đoán theo nội dung
@@ -2516,7 +2584,7 @@ function parseReg(text){
     if(isNaN(ph)) ph=/^(x|v|có|co|有|✓|yes)$/i.test(praw)?1:0;
         return newPerson({name:get(r,'name'),sex:detectSex(get(r,'sex')),gvcn:get(r,'gvcn'),
       interp:get(r,'interp'),doc:get(r,'doc'),ph,seat:null});   // số ghế chỉ cho khi đã đến
-  }).filter(p=>p.name||p.gvcn);
+  }).filter(p=>(p.name||p.gvcn)&&!isHeadName(p.name));
 }
 
 /* ---------- bảng ghi danh ---------- */
@@ -2709,12 +2777,20 @@ function renderReg(){
       toast(zh?`已排 ${ok} 個座號。`:`Đã xếp số cho ${ok} người.`);
     });
     mk(zh?'清除座號':'Bỏ số ghế',()=>{ snap(); picked().forEach(p=>p.seat=null); fillRows(); upd(); });
-    mk(zh?'匯出 Excel':'Xuất Excel',()=>exportRegXls(picked()));
-    mk(zh?'刪除':'Xoá',()=>{
-      if(!askSure(`Xoá ${n} người đã chọn? Có thể bấm Hoàn tác để lấy lại.`,`確定刪除已選 ${n} 人？可按復原還原。`)) return;
-      snap(); S.people=S.people.filter(p=>!regSel.has(p.id));
-      regSel.clear(); lastPick=-1; buildQuick(); fillRows(); upd();
-    },'danger');
+    if(mayDel()){
+      mk(zh?`匯出已選 ${n} 人`:`Xuất ${n} người đã chọn`,()=>exportRegXls(picked()));
+      mk(zh?'刪除':'Xoá',()=>{
+        const onSheet=picked().filter(p=>p.sid).length;
+        const vi = onSheet ? `Xoá ${n} người đã chọn, trong đó ${onSheet} người bị xoá khỏi cả Google Sheet. Tiếp tục?`
+                           : `Xoá ${n} người đã chọn? Có thể bấm Hoàn tác để lấy lại.`;
+        const cn = onSheet ? `刪除已選 ${n} 人，其中 ${onSheet} 人將一併從試算表移除，確定繼續？`
+                           : `確定刪除已選 ${n} 人？可按復原還原。`;
+        if(!askSure(vi,cn)) return;
+        snap(); picked().forEach(dropPerson);
+        S.people=S.people.filter(p=>!regSel.has(p.id));
+        regSel.clear(); lastPick=-1; buildQuick(); fillRows(); upd();
+      },'danger');
+    }
     mk(zh?'取消選取':'Bỏ chọn',()=>{ regSel.clear(); lastPick=-1; syncSel(); },'clear');
   }
 
@@ -2739,6 +2815,7 @@ function renderReg(){
 
       const cSel=document.createElement('td'); cSel.className='selcell';
       const ckRow=document.createElement('input'); ckRow.type='checkbox'; ckRow.className='selck';
+      ckRow.disabled=!maySeat();
       ckRow.checked=regSel.has(p.id);
       const pos=shown-1;
       ckRow.addEventListener('click',ev=>{
@@ -2756,8 +2833,9 @@ function renderReg(){
       const tdSeat=document.createElement('td'); tdSeat.className='seatcell';
       const si=document.createElement('input'); si.type='text'; si.inputMode='numeric'; si.dataset.num=''; si.setAttribute('min','1');
       si.value=p.seat||''; si.placeholder='–';
+      if(!maySeat()){ si.readOnly=true; si.classList.add('ro'); }
       { const w=mismatchMsg(p); if(w){ si.classList.add('lwarn'); si.title=w; } }
-      si.addEventListener('focus',()=>showSeatPop(si,p));
+      si.addEventListener('focus',()=>{ if(maySeat()) showSeatPop(si,p); });
       si.addEventListener('blur',()=>setTimeout(hideSeatPop,120));
       si.addEventListener('input',()=>hideSeatPop());
       si.onchange=()=>{
@@ -2771,6 +2849,7 @@ function renderReg(){
         const td=document.createElement('td');
         const inp=document.createElement('input'); inp.type='text'; inp.value=p[key]||''; inp.spellcheck=false;
         if(w) td.style.width=w;
+        if(!mayInfo()){ inp.readOnly=true; inp.classList.add('ro'); }
         inp.addEventListener('input',()=>{ p[key]=inp.value; upd(); });
         td.appendChild(inp); return td;
       };
@@ -2780,6 +2859,7 @@ function renderReg(){
       const sel=document.createElement('select');
       sel.innerHTML=`<option value="m">${zh?'乾':'Nam'}</option><option value="f">${zh?'坤':'Nữ'}</option>`;
       sel.value=p.sex;
+      if(!mayInfo()){ sel.disabled=true; sel.classList.add('ro'); }
       sel.onchange=()=>{ p.sex=sel.value; p.seat=null; buildQuick(); fillRows(); upd(); };
       tdS.appendChild(sel); tr.appendChild(tdS);
 
@@ -2790,6 +2870,7 @@ function renderReg(){
         const inp=document.createElement('input'); inp.type='text'; inp.spellcheck=false;
         inp.setAttribute('list','dl-'+key);
         inp.value=(p[key]||'');
+        if(!mayInfo()){ inp.readOnly=true; inp.classList.add('ro'); }
         inp.addEventListener('input',()=>{ p[key]=inp.value; upd(); });
         inp.addEventListener('change',()=>{ fillDl(); buildQuick();
           if(key==='interp'){ const w=mismatchMsg(p); if(w) toast(w); fillRows(); upd(); } });
@@ -2801,18 +2882,41 @@ function renderReg(){
       const tdP=document.createElement('td'); tdP.style.width='104px';
       const wrap=document.createElement('div'); wrap.className='phcell';
       const ck=document.createElement('input'); ck.type='checkbox'; ck.checked=p.ph>0;
-      const num=document.createElement('input'); num.type='text'; num.inputMode='numeric'; num.dataset.num=''; num.setAttribute('min','1'); num.setAttribute('max','9');
-      num.value=p.ph||1; num.style.visibility=p.ph>0?'visible':'hidden';
-      ck.onchange=()=>{ p.ph=ck.checked?Math.max(1,+num.value||1):0;
-        num.style.visibility=ck.checked?'visible':'hidden'; num.value=p.ph||1; };
-      num.oninput=()=>{ p.ph=Math.max(1,+num.value||1); };
-      wrap.append(ck,num); tdP.appendChild(wrap); tr.appendChild(tdP);
+      const step=document.createElement('div'); step.className='phstep';
+      const num=document.createElement('input'); num.type='text'; num.inputMode='numeric'; num.dataset.num='';
+      num.setAttribute('min','1'); num.setAttribute('max','9'); num.value=p.ph||1;
+      const bump=d=>{ if(!maySeat()) return;
+        const v=Math.min(9,Math.max(1,(+num.value||1)+d));
+        num.value=v; p.ph=ck.checked?v:0; paintPh(); };
+      const mkStep=(t,d,lab)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=t;
+        b.tabIndex=-1; b.title=lab; b.onclick=()=>bump(d); return b; };
+      const bMinus=mkStep('−',-1,zh?'減一':'Bớt một'), bPlus=mkStep('+',1,zh?'加一':'Thêm một');
+      step.append(bMinus,num,bPlus);
+      function paintPh(){
+        step.style.visibility=ck.checked?'visible':'hidden';
+        const v=+num.value||1;
+        bMinus.disabled=!maySeat()||!ck.checked||v<=1;
+        bPlus.disabled =!maySeat()||!ck.checked||v>=9;
+      }
+      if(!maySeat()){ ck.disabled=true; num.readOnly=true; num.classList.add('ro'); }
+      ck.onchange=()=>{ p.ph=ck.checked?Math.max(1,+num.value||1):0; num.value=p.ph||1; paintPh(); };
+      num.oninput=()=>{ p.ph=Math.min(9,Math.max(1,+num.value||1)); paintPh(); };
+      num.onchange=()=>{ num.value=p.ph||1; paintPh(); };
+      paintPh();
+      wrap.append(ck,step); tdP.appendChild(wrap); tr.appendChild(tdP);
 
       const tdD=document.createElement('td'); tdD.style.width='34px';
-      const del=document.createElement('button'); del.className='del'; del.textContent='×';
-      del.title = zh?'刪除':'Xoá';
-      del.onclick=()=>{ snap(); S.people.splice(i,1); fillRows(); upd(); };
-      tdD.appendChild(del); tr.appendChild(tdD);
+      if(mayDel()){
+        const del=document.createElement('button'); del.className='del'; del.textContent='×';
+        del.title = zh?'刪除':'Xoá';
+        del.onclick=()=>{
+          if(p.sid&&!askSure('Xoá người này khỏi cả Google Sheet? Hoàn tác chỉ lấy lại được trên máy, không lấy lại được dòng trên Sheet.',
+                             '確定從 Google 試算表一併刪除？復原只能還原本機資料，無法還原試算表的列。')) return;
+          snap(); dropPerson(p); S.people.splice(i,1); fillRows(); upd();
+        };
+        tdD.appendChild(del);
+      }
+      tr.appendChild(tdD);
       tr.appendChild(document.createElement('td'));   // cột đệm ăn chỗ thừa
       tr.dataset.i=i;
       [...tr.querySelectorAll('input:not(.selck),select')].forEach((el,k)=>el.dataset.c=k);
@@ -3613,8 +3717,10 @@ try{ if(localStorage.getItem('ui.nopanel')==='1') setPanel(true,false); }catch(e
 $('#bRegImport').onclick=()=>doImport(false);
 $('#bRegReplace').onclick=()=>{
   if(!$('#regpaste').value.trim()){ doImport(true); return; }
-  if(S.people.length && !askSure(`Danh sách hiện có ${S.people.length} người sẽ bị thay bằng dữ liệu vừa dán. Tiếp tục?`,
-                                 `目前名單 ${S.people.length} 人將被取代，確定繼續？`)) return;
+  const onSheet=S.people.filter(p=>p.sid).length;
+  if(S.people.length && !askSure(`Danh sách hiện có ${S.people.length} người sẽ bị thay bằng dữ liệu vừa dán${onSheet?`, và ${onSheet} dòng trên Google Sheet sẽ bị xoá`:''}. Tiếp tục?`,
+                                 `目前名單 ${S.people.length} 人將被取代${onSheet?`，試算表上的 ${onSheet} 列也會被刪除`:''}，確定繼續？`)) return;
+  S.people.forEach(dropPerson); regSel.clear();
   doImport(true);
 };
 $('#bRegAdd').onclick=()=>{ snap(); S.people.push(newPerson()); renderReg(); upd(); };
@@ -3624,23 +3730,58 @@ function exportRegXls(list){
   if(!list||!list.length){ toast(zh?'沒有可匯出的資料。':'Không có dòng nào để xuất.'); return; }
   const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
                : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
-  const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const rows=list.map(q=>'<tr>'+[
-      q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
-      q.gvcn||'', q.interp||'', q.doc||'', q.ph||''
-    ].map(v=>`<td>${esc(v)}</td>`).join('')+'</tr>').join('');
-  const html='<html><head><meta charset="utf-8"></head><body><table border="1">'+
-    '<tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr>'+rows+'</table></body></html>';
-  const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='danh-sach-ghi-danh.xls'; a.click(); URL.revokeObjectURL(a.href);
+  const COLS='ABCDEFG'; let rn=0; const rowsXml=[];
+  const cellXml=(ci,v,st)=> (typeof v==='number')
+    ? `<c r="${COLS[ci]}${rn}" s="${st}"><v>${v}</v></c>`
+    : `<c r="${COLS[ci]}${rn}" s="${st}" t="inlineStr"><is><t>${xlEsc(v)}</t></is></c>`;
+  const addRow=(vals,st,ht)=>{ rn++; rowsXml.push(`<row r="${rn}" ht="${ht}" customHeight="1">`+
+    vals.map((v,i)=>cellXml(i,v,Array.isArray(st)?st[i]:st)).join('')+'</row>'); };
+  const BODY=[3,2,3,2,2,2,3];                    // cột nào canh giữa, cột nào canh trái
+  addRow(H,1,26);
+  list.forEach(q=>addRow([
+    q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
+    q.gvcn||'', q.interp||'', q.doc||'', q.ph||''
+  ],BODY,22));
+  const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
+<cols><col min="1" max="1" width="9" customWidth="1"/><col min="2" max="2" width="22" customWidth="1"/>
+<col min="3" max="3" width="10" customWidth="1"/><col min="4" max="4" width="16" customWidth="1"/>
+<col min="5" max="6" width="14" customWidth="1"/><col min="7" max="7" width="16" customWidth="1"/></cols>
+<sheetData>${rowsXml.join('')}</sheetData>
+<autoFilter ref="A1:G${rn}"/>
+<pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
+<pageSetup paperSize="9" orientation="portrait"/>
+</worksheet>`;
+  const FN=zh?'標楷體':'Calibri', CS=zh?'<charset val="136"/>':'';
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<fonts count="2">
+<font><sz val="12"/><name val="${FN}"/>${CS}</font>
+<font><b/><sz val="12"/><name val="${FN}"/>${CS}</font>
+</fonts>
+<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>
+<fill><patternFill patternType="solid"><fgColor rgb="FFF0F0F4"/><bgColor indexed="64"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border>
+<border><left style="thin"><color rgb="FFBFBFBF"/></left><right style="thin"><color rgb="FFBFBFBF"/></right><top style="thin"><color rgb="FFBFBFBF"/></top><bottom style="thin"><color rgb="FFBFBFBF"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="4">
+<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center"/></xf>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
+</cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
+</styleSheet>`;
+  downloadBlob(xlsxBlob(zh?'報名名冊':'Danh sach ghi danh',sheet,styles),'danh-sach-ghi-danh.xlsx');
 }
 function askSure(vi,zh){ return confirm(S.lang==='zh'?zh:vi); }
 $('#bRegClear').onclick=()=>{
   if(!S.people.length) return;
-  if(!askSure(`Xoá toàn bộ ${S.people.length} người trong danh sách? Có thể bấm Hoàn tác để lấy lại.`,
-              `確定清空名單共 ${S.people.length} 人？可按復原還原。`)) return;
-  snap(); S.people=[]; renderReg(); upd();
+  const onSheet=S.people.filter(p=>p.sid).length;
+  if(!askSure(`Xoá toàn bộ ${S.people.length} người trong danh sách${onSheet?`, trong đó ${onSheet} người bị xoá khỏi cả Google Sheet`:''}. Tiếp tục?`,
+              `確定清空名單共 ${S.people.length} 人${onSheet?`，其中 ${onSheet} 人將一併從試算表移除`:''}？`)) return;
+  snap(); S.people.forEach(dropPerson); S.people=[]; regSel.clear(); renderReg(); upd();
 };
 $('#bMapAuto').onclick=()=>{
   snap();
@@ -3995,107 +4136,224 @@ document.getElementById('bUndo').onclick=()=>doUndo();
 })();
 </script>
 <script>
-/* ==================== đồng bộ Google Sheet ==================== */
+/* ==================== đăng nhập + đồng bộ Google Sheet ==================== */
 (()=>{
-const GS_URL = 'https://script.google.com/macros/s/AKfycbxop8HpFPD1xcZkWkk8IORsTSr0fvkaFaf8LR70SUn3izi0GMmlztD8iz_W0NsbQS8o/exec';   // ← dán link web app Apps Script (…/exec) vào giữa hai dấu nháy
+const GS_URL = 'https://script.google.com/macros/s/AKfycbzGsSaHwoszuCTozm6ei2SErH5ndHwiTkvQkJL_Qb6y0hexv_Ah8PQZJDRRBCPs_2di/exec';   // ← dán link web app Apps Script (…/exec) vào giữa hai dấu nháy
 
-const TICK_MS = 4000, PULL_MS = 60000;
-const GS = { head:null, map:null, busy:false, lastPull:0, cacheSig:'', last:null };
-/* mã truy cập và danh sách chỉ nằm trong bộ nhớ của phiên làm việc:
+const TICK_MS=4000, VER_MS=10000, PULL_MS=60000, REQ_MS=20000;
+const GS = { head:null, map:null, busy:false, lastPull:0, lastVer:0, ver:'', last:null, since:0 };
+
+/* mã đăng nhập, phiên và vai chỉ nằm trong bộ nhớ của lần mở này:
    đóng tab hoặc tải lại trang là mất hết, máy không giữ lại gì */
-let TOKEN='';
-const token=()=>TOKEN;
+let SESS='', ME=null;
+const SKEY=Math.random().toString(36).slice(2,8);      // tiền tố khoá tạm cho dòng mới, mỗi phiên một kiểu
 try{ localStorage.removeItem('gs.token'); localStorage.removeItem('gs.people'); }catch(e){}
+
 const zh=()=>S.lang==='zh';
-const T=(vi,cn)=>zh()?cn:vi;                         // chữ theo ngôn ngữ đang chọn
+const T=(vi,cn)=>zh()?cn:vi;
 const hhmm=()=>new Date().toLocaleTimeString(zh()?'zh-TW':'vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
 const errMsg=e=>(e&&e.gsMsg)?e.gsMsg():String(e&&e.message||e);
 const GsErr=(vi,cn,extra)=>{ const e=new Error(vi); e.gsMsg=()=>T(vi,cn)+(extra?extra:''); return e; };
-const SERVER_ERR={'Sai mã truy cập':'存取碼錯誤','Sheet đang bận, thử lại sau':'試算表忙碌中，請稍後再試'};
+const SERVER_ERR={
+  'Sai mã truy cập':'存取碼錯誤',
+  'Sheet đang bận, thử lại sau':'試算表忙碌中，請稍後再試',
+  'Chưa nhập mã':'尚未輸入代碼',
+  'Mã đã bị khoá':'此代碼已停用',
+  'Mã đã hết hạn':'此代碼已過期',
+  'Sai mã quá nhiều lần, thử lại sau 10 phút':'錯誤次數過多，請 10 分鐘後再試',
+  'Phiên đã hết hạn, đăng nhập lại':'工作階段已逾時，請重新登入',
+  'Máy khác đã đăng nhập bằng mã này':'此代碼已在其他裝置登入'
+};
+const KILL=/Phiên đã hết hạn|Máy khác đã đăng nhập|không được phép/;
 
-/* trạng thái: st = ''|'busy'|'ok'|'err'; main/sub là hàm để đổi ngôn ngữ vẫn hiện đúng */
+/* ---------- trạng thái trên thẻ Google Sheet ---------- */
 function show(st,main,sub){
   GS.last={st,main,sub};
-  const el=$('#gsStatus'), sb=$('#gsSub'), dot=$('#gsDot'); if(!el) return;
-  el.textContent=main(); sb.textContent=sub?sub():'';
-  el.dataset.s=st; dot.dataset.s=st;
-  const pb=$('#bGsPull'), wb=$('#bGsPush'); if(pb){ pb.disabled=wb.disabled=(st==='busy'); }
+  const txt=main(), sb=sub?sub():'';
+  const set=(sel,v)=>{ const e=$(sel); if(e) e.textContent=v; };
+  set('#amStatus',txt); set('#amSub',sb);
+  const ad=$('#acctDot'); if(ad) ad.dataset.s=st;
+  const mp=$('#amPull'), mw=$('#amPush');
+  if(mp) mp.disabled=(st==='busy');
+  if(mw) mw.disabled=(st==='busy');
 }
-function paintLabels(){                            // các chữ cố định của thẻ Google Sheet
-  const set=(sel,html)=>{ const e=$(sel); if(e) e.innerHTML=html; };
-  set('#bGsPull','<span>↓</span>'+T('Tải từ Sheet','從試算表載入'));
-  set('#bGsPush','<span>↑</span>'+T('Ghi số ghế','寫回座號'));
-  const k=$('#bGsToken'); if(k){ k.textContent=T('Mã…','存取碼…'); k.title=T('Mã truy cập','存取碼'); }
-  const n=$('#gsNote'); if(n) n.textContent=T('Số ghế tự ghi về Sheet vài giây sau khi xếp. Mã truy cập và danh sách không lưu trên máy: đóng web là mất.',
-                                              '排好座位後，座號會在幾秒內自動寫回試算表。存取碼與名單不會存在本機，關閉網頁即清除。');
+function paintLabels(){
+  const a=$('#bAcct'), an=$('#acctName');
+  if(an){
+    an.textContent = ME ? ME.name : T('Đăng nhập','登入');
+    a.classList.toggle('anon',!ME);
+    a.title = ME ? T('Tài khoản và đồng bộ Google Sheet','帳號與試算表同步')
+                 : T('Đăng nhập bằng mã được cấp','使用發給您的代碼登入');
+  }
+  const r=$('#acctRole');
+  if(r){ r.style.display=ME?'':'none'; if(ME){ r.textContent=ME.role; r.dataset.r=ME.role; } }
+  const lb=(sel,t)=>{ const e=$(sel); if(e) e.querySelector('.lb').textContent=t; };
+  lb('#amPull',T('Tải từ Sheet','從試算表載入'));
+  lb('#amPush',T('Ghi lên Sheet','寫回試算表'));
+  lb('#amSwitch',ME?T('Đổi người dùng','更換使用者'):T('Đăng nhập','登入'));
+  lb('#amOut',T('Đăng xuất','登出'));
+  const out=$('#amOut'); if(out) out.style.display=ME?'':'none';
+  const note=$('#amNote');
+  if(note) note.textContent = ME
+    ? T('Không lưu gì trên máy này, đóng web là mất.','本機不留資料，關閉網頁即清除。')
+    : '';
 }
 window.gsRelang=()=>{ paintLabels(); if(GS.last) show(GS.last.st,GS.last.main,GS.last.sub); };
 const norm=v=>{ const n=parseInt(String(v==null?'':v).replace(/\D/g,''),10); return isNaN(n)||n<1?null:n; };
 
+/* ---------- gọi máy chủ, có hạn chờ ---------- */
 async function call(body){
   if(!GS_URL) throw GsErr('Chưa cài link Apps Script (GS_URL)','尚未設定 Apps Script 連結（GS_URL）');
-  if(!token()) throw GsErr('Chưa nhập mã truy cập','尚未輸入存取碼');
-  const r=await fetch(GS_URL,{method:'POST',body:JSON.stringify(Object.assign({token:token()},body))});
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),REQ_MS);
+  let r;
+  try{
+    r=await fetch(GS_URL,{method:'POST',signal:ctl.signal,
+      body:JSON.stringify(Object.assign({sess:SESS},body))});
+  }catch(e){
+    throw (e&&e.name==='AbortError')
+      ? GsErr('Máy chủ không trả lời trong 20 giây','伺服器 20 秒未回應')
+      : GsErr('Không gọi được máy chủ','無法連線到伺服器');
+  }finally{ clearTimeout(timer); }
+
   const txt=await r.text(); let d;
   try{ d=JSON.parse(txt); }
-  catch(e){                                   // Google trả về trang HTML: lấy nội dung lỗi ra để biết nguyên nhân
+  catch(e){
     const doc=new DOMParser().parseFromString(txt,'text/html');
     const t=(doc.body?doc.body.innerText:'').replace(/\s+/g,' ').trim().slice(0,160);
     throw GsErr('Google trả về trang lỗi','Google 回傳錯誤頁面',' (HTTP '+r.status+'): '+(t||doc.title||'?'));
   }
   if(!d.ok){
     const m=String(d.error||'');
-    if(SERVER_ERR[m]) throw GsErr(m,SERVER_ERR[m]);
-    const sh=m.match(/^Không thấy trang tính "(.*)"$/);
-    if(sh) throw GsErr(m,`找不到工作表「${sh[1]}」`);
-    throw GsErr(m||'Lỗi không rõ',m||'未知錯誤');
+    const err = SERVER_ERR[m] ? GsErr(m,SERVER_ERR[m])
+      : (m.match(/^Không thấy trang tính "(.*)"$/) ? GsErr(m,`找不到工作表「${RegExp.$1}」`) : GsErr(m||'Lỗi không rõ',m||'未知錯誤'));
+    if(KILL.test(m)) err.kill=m;
+    throw err;
   }
   return d;
 }
 
-/* ---- đọc Sheet, gộp vào danh sách, giữ số ghế đang chờ ghi ---- */
+/* ---------- vai ---------- */
+const mayWrite=()=>!!SESS&&!!ME&&(ME.role==='admin'||ME.role==='staff');
+function setRole(r){
+  window.APPROLE=r;
+  document.body.classList.remove('role-local','role-admin','role-staff','role-viewer');
+  document.body.classList.add('role-'+r);
+  applyRole(r);
+  renderReg();
+}
+function applyRole(r){
+  const admin=(r==='local'||r==='admin'), staff=(r==='staff'), seat=admin||staff;
+  const put=(sel,on)=>document.querySelectorAll(sel).forEach(e=>{ e.style.display = on?'':'none'; });
+  const dataCard=$('#regdata');
+  if(dataCard) dataCard.style.display = admin?'':'none';             // dán, xuất Excel, xoá hết
+  const langGrp=document.querySelector('#langpanel')&&document.querySelector('#langpanel').closest('.grp');
+  if(langGrp) langGrp.style.display = admin?'':'none';               // ghế theo ngôn ngữ
+  put('#filemenu',admin);
+  put('#bRegXls',admin);
+  put('#bRegAdd',seat);
+  put('#bUndo',seat);
+  put('#amPush',seat);
+  put('#bMapAuto',seat);
+  put('#bMapClear',seat);
+  put('#tabs button[data-p="p-room"]',seat);
+  ['p-roomset','p-page','p-head','p-font'].forEach(id=>put(`#tabs button[data-p="${id}"]`,admin));
+  const cur=document.querySelector('#tabs button.on');
+  if(cur&&cur.style.display==='none'){ const b=document.querySelector('#tabs button[data-p="p-reg"]'); if(b) b.click(); }
+}
+function killSession(msg){
+  SESS=''; ME=null; setRole('viewer'); paintLabels();
+  toast(T('Mất quyền ghi: ','已失去寫入權限：')+msg);
+}
+
+/* ---------- đăng xuất ---------- */
+function logout(){
+  const w=pendingWork();
+  const n=w.changes.length+w.edits.length+w.added.length+w.del.length;
+  if(n&&!confirm(T(`Còn ${n} thay đổi chưa ghi lên Sheet. Đăng xuất và bỏ luôn?`,
+                   `還有 ${n} 項變更尚未寫回試算表，仍要登出並捨棄嗎？`))) return;
+  SESS=''; ME=null; GS.map=null; GS.head=null; GS.ver=''; GS.lastPull=0; GS.lastVer=0;
+  setRole('local'); paintLabels();
+  show('',()=>T('Chưa đăng nhập','尚未登入'),()=>T('Bấm "Đăng nhập" để nhập mã','請按「登入」輸入代碼'));
+}
+
+/* ---------- đăng nhập ---------- */
+async function login(){
+  const code=prompt(T('Nhập mã đăng nhập (chỉ dùng cho lần mở này, không lưu trên máy):',
+                      '請輸入登入碼（僅用於本次，不儲存在本機）：'),'');
+  if(!code||!code.trim()) return;
+  show('busy',()=>T('Đang kiểm tra mã…','正在驗證代碼…'));
+  try{
+    const d=await call({action:'login',code:code.trim()});
+    SESS=d.sess; ME={name:d.name,role:d.role};
+    GS.ver=d.ver||''; GS.map=null; GS.lastPull=0; GS.lastVer=0;
+    setRole(d.role); paintLabels();
+    if(d.replaced) toast(T('Mã này vừa được dùng ở máy khác, máy đó đã chuyển sang chỉ xem.',
+                           '此代碼剛在其他裝置登入，該裝置已轉為唯讀。'));
+    show('busy',()=>T('Đã đăng nhập. Đang tải danh sách…','已登入，正在載入名單…'));
+    pull(true);
+  }catch(e){
+    show('err',()=>T('Không đăng nhập được','登入失敗'),()=>errMsg(e));
+    toast(errMsg(e));
+  }
+}
+
+/* ---------- đọc Sheet, gộp vào danh sách ---------- */
 function fieldsOf(cells){
   const m=GS.map, get=k=>m[k]===undefined?'':String(cells[m[k]]||'').replace(/\s+/g,' ').trim();
   const praw=get('ph'); let ph=parseInt(praw.replace(/\D/g,''),10);
   if(isNaN(ph)) ph=/^(x|v|có|co|有|✓|yes)$/i.test(praw)?1:0;
   return {name:get('name'),sex:detectSex(get('sex')),gvcn:get('gvcn'),interp:get('interp'),doc:get('doc'),ph};
 }
+const sigF=f=>JSON.stringify([f.name||'',f.sex,f.gvcn||'',f.interp||'',f.doc||'',+f.ph||0]);
+const sigOf=p=>sigF(p);
+const fieldsFor=p=>({name:p.name||'',sex:p.sex==='f'?'Nữ':'Nam',gvcn:p.gvcn||'',
+                     interp:p.interp||'',doc:p.doc||'',ph:p.ph||''});
+
 async function pull(manual){
-  if(GS.busy) return; GS.busy=true;
+  if(GS.busy||!SESS) return; GS.busy=true;
   if(manual) show('busy',()=>T('Đang tải từ Sheet…','正在從試算表載入…'));
   try{
     const d=await call({action:'list'});
     const head=d.head.map((h,i)=>(i===d.seatCol||i===d.idCol)?'':h);
-    const map=mapHeader(head);
-    if(!map) throw GsErr('Dòng 1 của Sheet cần tiêu đề: Họ tên, Giới tính, GVCN…','試算表第 1 列需要標題：姓名、性別、導師…');
-    GS.head=d.head; GS.map=map; GS.lastPull=Date.now();
+    const map=mapHeader(head,true);
+    if(!map){
+      const got=head.filter(Boolean).join(' | ')||'(trống)';
+      throw GsErr('Dòng 1 của Sheet chưa có cột Họ tên','試算表第 1 列找不到姓名欄',' — '+got);
+    }
+    GS.head=d.head; GS.map=map; GS.lastPull=Date.now(); GS.ver=d.ver||GS.ver;
+    if(d.role&&ME&&d.role!==ME.role){ ME.role=d.role; setRole(d.role); paintLabels(); }
 
     snap(); const before=JSON.stringify(S.people);
     const bySid=new Map(S.people.filter(p=>p.sid).map(p=>[p.sid,p]));
     const keyOf=(name,sex)=>(name||'').replace(/\s+/g,' ').trim().toLowerCase()+'|'+sex;
-    const loose=new Map();                       // người đang có trong danh sách mà chưa gắn với dòng nào trên Sheet
+    const loose=new Map();
     S.people.filter(p=>!p.sid&&(p.name||'').trim()).forEach(p=>{
       const k=keyOf(p.name,p.sex); if(!loose.has(k)) loose.set(k,p);
     });
     const seen=new Set(), seatQ=[]; let add=0, join=0;
     d.rows.forEach(r=>{
-      const f=fieldsOf(r.cells); if(!f.name&&!f.gvcn) return;
+      const f=fieldsOf(r.cells);
+      if((!f.name&&!f.gvcn)||isHeadName(f.name)) return;    // dòng tiêu đề thừa trên Sheet
       seen.add(r.id);
       const sheetSeat=norm(r.seat);
       let p=bySid.get(r.id);
       if(!p){
-        const dup=loose.get(keyOf(f.name,f.sex));      // trùng tên đã có sẵn thì nhập vào dòng cũ, không thêm bản thứ hai
+        const dup=loose.get(keyOf(f.name,f.sex));
         if(dup){
           loose.delete(keyOf(f.name,f.sex));
           const pending=(dup.seat||null)!==(dup.syncSeat||null);
-          Object.assign(dup,f); dup.sid=r.id; dup.syncSeat=sheetSeat; join++;
+          Object.assign(dup,f); dup.sid=r.id; dup.syncSeat=sheetSeat; dup.syncF=sigF(f); join++;
           if(!pending){ dup.seat=null; seatQ.push([dup,sheetSeat]); }
           return;
         }
-        p=newPerson(Object.assign(f,{sid:r.id,seat:null,syncSeat:sheetSeat})); S.people.push(p); add++; seatQ.push([p,sheetSeat]); return;
+        p=newPerson(Object.assign({},f,{sid:r.id,seat:null,syncSeat:sheetSeat,syncF:sigF(f)}));
+        S.people.push(p); add++; seatQ.push([p,sheetSeat]); return;
       }
       const pending=(p.seat||null)!==(p.syncSeat||null);
-      Object.assign(p,f); p.syncSeat=sheetSeat;
+      const edited=p.syncF!==undefined&&sigOf(p)!==p.syncF;      // đang sửa dở, chưa ghi lên
+      if(!edited){ Object.assign(p,f); p.syncF=sigF(f); }
+      p.syncSeat=sheetSeat;
       if(!pending){ p.seat=null; seatQ.push([p,sheetSeat]); }
     });
     const gone=S.people.filter(p=>p.sid&&!seen.has(p.sid)).length;
@@ -4116,81 +4374,118 @@ async function pull(manual){
     show('ok',main,sub);
     if(manual&&(add||gone||clash||join)) toast(main()+' · '+sub());
   }catch(e){
-    show('err',()=>T('Không tải được','無法載入'),()=>errMsg(e));
-    if(manual) toast(T('Không tải được: ','無法載入：')+errMsg(e));
+    if(e.kill) killSession(errMsg(e));
+    else{
+      show('err',()=>T('Không tải được','無法載入'),()=>errMsg(e));
+      if(manual) toast(T('Không tải được: ','無法載入：')+errMsg(e));
+    }
   }
   finally{ GS.busy=false; }
 }
 
-/* ---- ghi số ghế về Sheet ---- */
+/* ---------- ghi lên Sheet ---------- */
 function pendingWork(){
-  const changes=S.people.filter(p=>p.sid&&(p.seat||null)!==(p.syncSeat||null)).map(p=>({p,id:p.sid,seat:p.seat||null}));
-  const added=GS.map?S.people.filter(p=>!p.sid&&p.seat&&(p.name||'').trim()).map(p=>({p,seat:p.seat})):[];
-  return {changes,added};
-}
-function cellsFor(p){
-  const a=new Array(GS.head.length).fill(''), m=GS.map;
-  const put=(k,v)=>{ if(m[k]!==undefined) a[m[k]]=v; };
-  put('name',p.name||''); put('sex',p.sex==='f'?'Nữ':'Nam'); put('gvcn',p.gvcn||'');
-  put('interp',p.interp||''); put('doc',p.doc||''); put('ph',p.ph||'');
-  return a;
+  const changes=S.people.filter(p=>p.sid&&(p.seat||null)!==(p.syncSeat||null))
+                        .map(p=>({p,id:p.sid,seat:p.seat||null}));
+  const edits=S.people.filter(p=>p.sid&&p.syncF!==undefined&&sigOf(p)!==p.syncF)
+                      .map(p=>({p,id:p.sid,fields:fieldsFor(p),sig:sigOf(p)}));
+  const added=GS.map?S.people.filter(p=>!p.sid&&(p.name||'').trim())
+                             .map(p=>({p,key:SKEY+'-'+p.id,seat:p.seat||null,fields:fieldsFor(p)})):[];
+  const del=(ME&&ME.role==='admin')?window.DELQ.slice(0,200):[];
+  return {changes,edits,added,del};
 }
 async function push(manual){
-  if(GS.busy) return;
+  if(GS.busy||!mayWrite()) return;
   const w=pendingWork();
-  if(!w.changes.length&&!w.added.length){ if(manual) toast(T('Không có thay đổi nào cần ghi.','沒有需要寫回的變更。')); return; }
+  const cnt=w.changes.length+w.edits.length+w.added.length+w.del.length;
+  if(!cnt){ if(manual) toast(T('Không có thay đổi nào cần ghi.','沒有需要寫回的變更。')); return; }
   GS.busy=true;
-  const cnt=w.changes.length+w.added.length;
   show('busy',()=>T(`Đang ghi ${cnt} thay đổi…`,`正在寫回 ${cnt} 項變更…`));
   try{
     const d=await call({action:'save',
       changes:w.changes.map(c=>({id:c.id,seat:c.seat})),
-      added:w.added.map(a=>({key:a.p.id,seat:a.seat,cells:cellsFor(a.p)}))});
+      edits:  w.edits.map(e=>({id:e.id,fields:e.fields})),
+      added:  w.added.map(a=>({key:a.key,seat:a.seat,fields:a.fields})),
+      del:    w.del});
     w.changes.forEach(c=>{ if(!d.missing.includes(c.id)) c.p.syncSeat=c.seat; });
-    d.added.forEach(r=>{ const a=w.added.find(x=>x.p.id===r.key); if(a){ a.p.sid=r.id; a.p.syncSeat=a.seat; } });
+    w.edits.forEach(e=>{ if(!d.missing.includes(e.id)) e.p.syncF=e.sig; });
+    (d.added||[]).forEach(r=>{
+      const a=w.added.find(x=>x.key===r.key);
+      if(a){ a.p.sid=r.id; a.p.syncSeat=a.seat; a.p.syncF=sigOf(a.p); }
+    });
+    w.del.forEach(id=>{ const i=window.DELQ.indexOf(id); if(i>=0) window.DELQ.splice(i,1); });
+    GS.ver=d.ver||GS.ver;
     const at=hhmm(), miss=d.missing.length;
     const main=()=>T(`Đã ghi lúc ${at}`,`${at} 已寫回`);
     const sub=miss?()=>T(`${miss} người không còn trên Sheet`,`${miss} 人已不在試算表`):null;
     show('ok',main,sub);
     if(manual) toast(main()+(sub?' · '+sub():''));
   }catch(e){
-    show('err',()=>T('Chưa ghi được, sẽ thử lại','尚未寫回，稍後自動重試'),()=>errMsg(e));
-    if(manual) toast(T('Chưa ghi được: ','尚未寫回：')+errMsg(e));
+    if(e.kill) killSession(errMsg(e));
+    else{
+      show('err',()=>T('Chưa ghi được, sẽ thử lại','尚未寫回，稍後自動重試'),()=>errMsg(e));
+      if(manual) toast(T('Chưa ghi được: ','尚未寫回：')+errMsg(e));
+    }
   }
   finally{ GS.busy=false; }
 }
 
-/* nhắc trước khi đóng nếu còn số ghế chưa ghi về Sheet (vì máy không giữ bản sao) */
+/* nhắc trước khi đóng nếu còn thay đổi chưa ghi (vì máy không giữ bản sao) */
 window.addEventListener('beforeunload',e=>{
   if(!S.people.length) return;
   const w=pendingWork();
-  if(GS.map&&!w.changes.length&&!w.added.length) return;    // đã ghi hết về Sheet thì cứ đóng
+  if(GS.map&&!w.changes.length&&!w.edits.length&&!w.added.length&&!w.del.length) return;
   e.preventDefault(); e.returnValue='';
 });
 
+/* ---------- nhịp đồng bộ ---------- */
 async function tick(){
-  if(!GS_URL||!token()||GS.busy||!navigator.onLine) return;
-  if(!GS.map||Date.now()-GS.lastPull>PULL_MS) await pull(false);
+  if(!GS_URL||!SESS||GS.busy||!navigator.onLine) return;
+  const now=Date.now();
+  if(!GS.map||now-GS.lastPull>PULL_MS) await pull(false);
+  else if(now-GS.lastVer>VER_MS){
+    GS.lastVer=now;
+    try{
+      const d=await call({action:'ver'});
+      if(d.ver&&d.ver!==GS.ver) await pull(false);
+    }catch(e){ if(e.kill) killSession(errMsg(e)); }
+  }
   await push(false);
 }
 
-$('#bGsPull').onclick=()=>pull(true);
-$('#bGsPush').onclick=async()=>{ if(!GS.map) await pull(true); push(true); };
-$('#bGsToken').onclick=()=>{
-  const v=prompt(T('Nhập mã truy cập Google Sheet (chỉ dùng cho phiên này, không lưu trên máy):',
-                   '請輸入 Google 試算表存取碼（僅用於本次，不儲存在本機）：'),token());
-  if(v===null) return;
-  TOKEN=v.trim();
-  if(!TOKEN){ show('',()=>T('Chưa kết nối','尚未連線'),()=>T('Bấm "Mã…" để nhập mã truy cập','請按「存取碼…」輸入存取碼')); return; }
-  show('busy',()=>T('Đang kết nối…','連線中…')); pull(true);
+/* ---------- menu tài khoản trên thanh trên cùng ---------- */
+const acct=$('#bAcct'), menu=$('#acctMenu');
+function menuOpen(){
+  const r=acct.getBoundingClientRect();
+  menu.hidden=false;
+  const w=menu.offsetWidth;
+  menu.style.top=(r.bottom+8)+'px';
+  menu.style.left=Math.max(8,Math.min(r.right-w,innerWidth-w-8))+'px';
+  acct.setAttribute('aria-expanded','true');
+}
+function menuClose(){ menu.hidden=true; acct.setAttribute('aria-expanded','false'); }
+const menuShown=()=>!menu.hidden;
+acct.onclick=e=>{
+  e.stopPropagation();
+  if(menuShown()){ menuClose(); return; }
+  if(!SESS){ login(); return; }        // chưa đăng nhập thì bấm là hỏi mã luôn
+  menuOpen();
 };
+menu.addEventListener('click',e=>e.stopPropagation());
+document.addEventListener('click',()=>{ if(menuShown()) menuClose(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&menuShown()) menuClose(); });
+addEventListener('resize',()=>{ if(menuShown()) menuClose(); });
+$('#amPull').onclick=()=>{ menuClose(); pull(true); };
+$('#amPush').onclick=async()=>{ menuClose(); if(!GS.map) await pull(true); push(true); };
+$('#amSwitch').onclick=()=>{ menuClose(); login(); };
+$('#amOut').onclick=()=>{ menuClose(); logout(); };
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ GS.lastPull=0; tick(); } });
 window.addEventListener('online',()=>tick());
 
+setRole('local');
 paintLabels();
 if(!GS_URL) show('err',()=>T('Chưa cài link Apps Script','尚未設定 Apps Script 連結'),()=>T('Sửa GS_URL trong mã nguồn','請在原始碼中設定 GS_URL'));
-else if(!token()) show('',()=>T('Chưa kết nối','尚未連線'),()=>T('Bấm "Mã…" để nhập mã truy cập','請按「存取碼…」輸入存取碼'));
-else tick();
+else show('',()=>T('Chưa đăng nhập','尚未登入'),()=>T('Bấm "Đăng nhập" để nhập mã','請按「登入」輸入代碼'));
 setInterval(tick,TICK_MS);
 })();
 </script>

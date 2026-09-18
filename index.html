@@ -217,6 +217,15 @@ body.v-reg .onlyreg,body.v-map .onlymap,body.v-print .onlyprint{display:inline-b
 #regtable .del{border:0;background:none;color:#c0c6cd;cursor:pointer;font-size:21px;line-height:1;padding:2px 6px}
 #regtable .del:hover{color:var(--accent)}
 #regtable input[type=checkbox]{width:20px;height:20px;margin:0;cursor:pointer}
+/* cột chọn nhiều + thanh thao tác hàng loạt */
+#regtable .selth,#regtable .selcell{text-align:center;padding-left:4px;padding-right:4px}
+#regtable .selth{cursor:default}
+#regtable tr.sel td{background:#eef4ff}
+#regtable tr.sel.seated td{background:#e8f1fb}
+#selbar{background:#eef4ff;border-radius:11px;padding:7px 12px}
+#selbar .sellab{font-weight:650;color:#0a58d0;font-size:15px;margin-right:4px}
+#selbar .fchip.danger{background:#ffe9e9;color:#b3261e}
+#selbar .fchip.danger:hover{background:#ffd7d7}
 /* thanh lọc phía trên bảng: to tương ứng với chữ trong bảng */
 #reghead{gap:11px}
 #reghead .regbar{gap:12px}
@@ -437,6 +446,7 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   .rz{width:24px;right:-12px}
   #seatsvg .gline .hit{stroke-width:34}
   #regtable .del{padding:8px 12px;font-size:22px}
+  #regtable input[type=checkbox]{width:24px;height:24px}
 }
 @media print{
   #side,#toolbar,#topbar,#marquee,#pagewarn,#toast{display:none!important}
@@ -447,7 +457,10 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
   body.v-reg #regview{display:block!important;padding:0;overflow:visible}
   #regscroll{overflow:visible!important;height:auto!important}
   body.v-map #mapview{display:block!important;padding:0;overflow:visible}
-  #regpaste,#regpastebar,#maplist,.mapnote,.regbar .btn{display:none!important}
+  #regpaste,#regpastebar,#maplist,.mapnote,.regbar .btn,#selbar{display:none!important}
+  #regtable colgroup col:first-child{width:0!important}
+  #regtable .selth,#regtable .selcell{padding:0!important}
+  #regtable .selth *,#regtable .selcell *{display:none!important}
   body.v-map #mapview{display:block!important;padding:0!important;overflow:visible!important;height:auto!important}
   body.v-map #mapwrap{display:block!important;height:auto!important;min-height:0!important}
   body.v-map #mapsvgbox{display:block!important;overflow:visible!important;padding:0!important;
@@ -988,7 +1001,7 @@ function subText(p){                              // nội dung dòng phụ theo
   }
 }
 S.nameAuto=true; S.regSort=null;
-S.colW={idx:40,seat:84,name:150,sex:100,gvcn:120,interp:112,doc:95,ph:115,del:46};
+S.colW={sel:44,idx:40,seat:84,name:150,sex:100,gvcn:120,interp:112,doc:95,ph:115,del:46};
 S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.printStageCompact=false; S.printRoom=true; S.regQuick=[];
 S.people=[];
 S.qian=[]; S.kun=[];
@@ -2417,6 +2430,7 @@ document.querySelectorAll('.grp').forEach(g=>{
 
 /* ==================== hệ thống ghi danh ==================== */
 let uid=1;
+const regSel=new Set();                      // id những người đang được chọn trong bảng ghi danh
 function newPerson(o){
   return Object.assign({id:uid++,name:'',sex:'m',gvcn:'',interp:'',doc:'',ph:0,seat:null},o||{});
 }
@@ -2529,6 +2543,9 @@ function renderReg(){
   head.appendChild(bar);
   const quick=document.createElement('div'); quick.className='regbar quickbar';
   head.appendChild(quick);
+  const selbar=document.createElement('div'); selbar.className='regbar'; selbar.id='selbar';
+  selbar.style.display='none';
+  head.appendChild(selbar);
   box.appendChild(head);
   const scroll=document.createElement('div'); scroll.id='regscroll';
   box.appendChild(scroll);
@@ -2545,11 +2562,15 @@ function renderReg(){
 
   const tb=document.createElement('table'); tb.id='regtable';
   const arrow = S.regSort==='seat' ? ' ▲' : (S.regSort==='-seat' ? ' ▼' : '');
-  const H = zh ? ['','座號'+arrow,'姓名','性別','經理代號','翻譯','教材','電話','','']
-               : ['','Số ghế'+arrow,'Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','',''];
+  const H = zh ? ['','','座號'+arrow,'姓名','性別','經理代號','翻譯','教材','電話','','']
+               : ['','','Số ghế'+arrow,'Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','',''];
   tb.innerHTML='<thead><tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr></thead>';
-  const COLS=['idx','seat','name','sex','gvcn','interp','doc','ph','del','pad'];
-  const thSeat=tb.querySelectorAll('thead th')[1];
+  const COLS=['sel','idx','seat','name','sex','gvcn','interp','doc','ph','del','pad'];
+  const thSel=tb.querySelectorAll('thead th')[0]; thSel.className='selth';
+  const ckAll=document.createElement('input'); ckAll.type='checkbox'; ckAll.className='selck';
+  ckAll.title = zh?'全選／取消目前顯示的列':'Chọn / bỏ chọn tất cả dòng đang hiện';
+  thSel.appendChild(ckAll);
+  const thSeat=tb.querySelectorAll('thead th')[2];
   thSeat.style.cursor='pointer';
   thSeat.title = zh?'點一下換排序':'Bấm để đổi cách sắp xếp';
   thSeat.addEventListener('click',e=>{
@@ -2558,11 +2579,12 @@ function renderReg(){
     renderReg();
   });
   const cg=document.createElement('colgroup');
+  if(!S.colW.sel) S.colW.sel=44;                 // tệp .json cũ chưa có cột chọn
   COLS.forEach(k=>{ const c=document.createElement('col');
     if(k!=='pad') c.style.width=(S.colW[k]||100)+'px'; cg.appendChild(c); });
   tb.insertBefore(cg,tb.firstChild);
   [...tb.querySelectorAll('thead th')].forEach((th,i)=>{   // kéo mép để đổi bề ngang cột
-    if(i>=COLS.length-2) return;
+    if(i===0||i>=COLS.length-2) return;
     const rz=document.createElement('span'); rz.className='rz';
     rz.addEventListener('mousedown',e=>{
       e.preventDefault(); e.stopPropagation();
@@ -2650,8 +2672,57 @@ function renderReg(){
     }
     quick.style.display=quick.children.length?'flex':'none';
   }
+  /* ---- chọn nhiều dòng cùng lúc ---- */
+  let visible=[], lastPick=-1;
+  const picked=()=>S.people.filter(p=>regSel.has(p.id));
+  function syncSel(){
+    [...body.rows].forEach(tr=>{
+      const p=S.people[+tr.dataset.i], c=tr.querySelector('.selck');
+      if(!p||!c) return;
+      c.checked=regSel.has(p.id); tr.classList.toggle('sel',c.checked);
+    });
+    const n=visible.filter(p=>regSel.has(p.id)).length;
+    ckAll.checked = visible.length>0 && n===visible.length;
+    ckAll.indeterminate = n>0 && n<visible.length;
+    paintSel();
+  }
+  ckAll.onchange=()=>{
+    visible.forEach(p=>{ if(ckAll.checked) regSel.add(p.id); else regSel.delete(p.id); });
+    lastPick=-1; syncSel();
+  };
+  function paintSel(){
+    const n=regSel.size;
+    selbar.innerHTML='';
+    if(!n){ selbar.style.display='none'; return; }
+    selbar.style.display='flex';
+    const lab=document.createElement('span'); lab.className='sellab';
+    lab.textContent = zh?`已選 ${n} 人`:`Đã chọn ${n} người`;
+    selbar.appendChild(lab);
+    const mk=(t,fn,cls)=>{ const b=document.createElement('button'); b.className='fchip'+(cls?' '+cls:'');
+      b.textContent=t; b.onclick=fn; selbar.appendChild(b); };
+    mk(zh?'自動排座號':'Xếp số tự động',()=>{
+      snap();
+      const todo=picked().filter(p=>!p.seat);
+      todo.sort((a,b)=>(langKey(b.interp)?1:0)-(langKey(a.interp)?1:0));
+      let ok=0; todo.forEach(p=>{ const k=autoSeatFor(p); if(k){ p.seat=k; ok++; } });
+      fillRows(); upd();
+      toast(zh?`已排 ${ok} 個座號。`:`Đã xếp số cho ${ok} người.`);
+    });
+    mk(zh?'清除座號':'Bỏ số ghế',()=>{ snap(); picked().forEach(p=>p.seat=null); fillRows(); upd(); });
+    mk(zh?'匯出 Excel':'Xuất Excel',()=>exportRegXls(picked()));
+    mk(zh?'刪除':'Xoá',()=>{
+      if(!askSure(`Xoá ${n} người đã chọn? Có thể bấm Hoàn tác để lấy lại.`,`確定刪除已選 ${n} 人？可按復原還原。`)) return;
+      snap(); S.people=S.people.filter(p=>!regSel.has(p.id));
+      regSel.clear(); lastPick=-1; buildQuick(); fillRows(); upd();
+    },'danger');
+    mk(zh?'取消選取':'Bỏ chọn',()=>{ regSel.clear(); lastPick=-1; syncSel(); },'clear');
+  }
+
   function fillRows(){
     body.innerHTML='';
+    const ids=new Set(S.people.map(p=>p.id));
+    [...regSel].forEach(id=>{ if(!ids.has(id)) regSel.delete(id); });   // ai đã bị xoá thì bỏ khỏi vùng chọn
+    visible=[];
     let shown=0;
     let order=S.people.map((p,i)=>({p,i}));
     if(S.regSort){                              // sắp theo số ghế
@@ -2661,8 +2732,24 @@ function renderReg(){
     order.forEach(({p,i})=>{
       if(!show(p)) return;
       shown++;
+      visible.push(p);
       const tr=document.createElement('tr');
       if(p.seat) tr.className='seated';
+      if(regSel.has(p.id)) tr.classList.add('sel');
+
+      const cSel=document.createElement('td'); cSel.className='selcell';
+      const ckRow=document.createElement('input'); ckRow.type='checkbox'; ckRow.className='selck';
+      ckRow.checked=regSel.has(p.id);
+      const pos=shown-1;
+      ckRow.addEventListener('click',ev=>{
+        const on=ckRow.checked;
+        if(ev.shiftKey&&lastPick>=0&&lastPick<visible.length){      // giữ Shift để chọn cả một đoạn
+          const a=Math.min(lastPick,pos), b=Math.max(lastPick,pos);
+          for(let j=a;j<=b;j++){ const q=visible[j]; if(!q) continue; if(on) regSel.add(q.id); else regSel.delete(q.id); }
+        } else { if(on) regSel.add(p.id); else regSel.delete(p.id); }
+        lastPick=pos; syncSel();
+      });
+      cSel.appendChild(ckRow); tr.appendChild(cSel);
 
       const c0=document.createElement('td'); c0.className='idx'; c0.textContent=shown; tr.appendChild(c0);
 
@@ -2728,10 +2815,11 @@ function renderReg(){
       tdD.appendChild(del); tr.appendChild(tdD);
       tr.appendChild(document.createElement('td'));   // cột đệm ăn chỗ thừa
       tr.dataset.i=i;
-      [...tr.querySelectorAll('input,select')].forEach((el,k)=>el.dataset.c=k);
+      [...tr.querySelectorAll('input:not(.selck),select')].forEach((el,k)=>el.dataset.c=k);
 
       body.appendChild(tr);
     });
+    syncSel();
 
     const nm=S.people.filter(p=>p.sex==='m').length, nf=S.people.filter(p=>p.sex==='f').length;
     const seated=S.people.filter(p=>p.seat).length;
@@ -3530,12 +3618,14 @@ $('#bRegReplace').onclick=()=>{
   doImport(true);
 };
 $('#bRegAdd').onclick=()=>{ snap(); S.people.push(newPerson()); renderReg(); upd(); };
-$('#bRegXls').onclick=()=>{
+$('#bRegXls').onclick=()=>exportRegXls(S.people);
+function exportRegXls(list){
   const zh=S.lang==='zh';
+  if(!list||!list.length){ toast(zh?'沒有可匯出的資料。':'Không có dòng nào để xuất.'); return; }
   const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
                : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
   const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const rows=S.people.map(q=>'<tr>'+[
+  const rows=list.map(q=>'<tr>'+[
       q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
       q.gvcn||'', q.interp||'', q.doc||'', q.ph||''
     ].map(v=>`<td>${esc(v)}</td>`).join('')+'</tr>').join('');
@@ -3544,7 +3634,7 @@ $('#bRegXls').onclick=()=>{
   const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='danh-sach-ghi-danh.xls'; a.click(); URL.revokeObjectURL(a.href);
-};
+}
 function askSure(vi,zh){ return confirm(S.lang==='zh'?zh:vi); }
 $('#bRegClear').onclick=()=>{
   if(!S.people.length) return;
@@ -3911,9 +4001,11 @@ const GS_URL = 'https://script.google.com/macros/s/AKfycbxop8HpFPD1xcZkWkk8IORsT
 
 const TICK_MS = 4000, PULL_MS = 60000;
 const GS = { head:null, map:null, busy:false, lastPull:0, cacheSig:'', last:null };
-const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
-const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
-const token=()=>lsGet('gs.token')||'';
+/* mã truy cập và danh sách chỉ nằm trong bộ nhớ của phiên làm việc:
+   đóng tab hoặc tải lại trang là mất hết, máy không giữ lại gì */
+let TOKEN='';
+const token=()=>TOKEN;
+try{ localStorage.removeItem('gs.token'); localStorage.removeItem('gs.people'); }catch(e){}
 const zh=()=>S.lang==='zh';
 const T=(vi,cn)=>zh()?cn:vi;                         // chữ theo ngôn ngữ đang chọn
 const hhmm=()=>new Date().toLocaleTimeString(zh()?'zh-TW':'vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
@@ -3934,7 +4026,8 @@ function paintLabels(){                            // các chữ cố định c�
   set('#bGsPull','<span>↓</span>'+T('Tải từ Sheet','從試算表載入'));
   set('#bGsPush','<span>↑</span>'+T('Ghi số ghế','寫回座號'));
   const k=$('#bGsToken'); if(k){ k.textContent=T('Mã…','存取碼…'); k.title=T('Mã truy cập','存取碼'); }
-  const n=$('#gsNote'); if(n) n.textContent=T('Số ghế tự ghi về Sheet vài giây sau khi xếp.','排好座位後，座號會在幾秒內自動寫回試算表。');
+  const n=$('#gsNote'); if(n) n.textContent=T('Số ghế tự ghi về Sheet vài giây sau khi xếp. Mã truy cập và danh sách không lưu trên máy: đóng web là mất.',
+                                              '排好座位後，座號會在幾秒內自動寫回試算表。存取碼與名單不會存在本機，關閉網頁即清除。');
 }
 window.gsRelang=()=>{ paintLabels(); if(GS.last) show(GS.last.st,GS.last.main,GS.last.sub); };
 const norm=v=>{ const n=parseInt(String(v==null?'':v).replace(/\D/g,''),10); return isNaN(n)||n<1?null:n; };
@@ -3979,13 +4072,28 @@ async function pull(manual){
 
     snap(); const before=JSON.stringify(S.people);
     const bySid=new Map(S.people.filter(p=>p.sid).map(p=>[p.sid,p]));
-    const seen=new Set(), seatQ=[]; let add=0;
+    const keyOf=(name,sex)=>(name||'').replace(/\s+/g,' ').trim().toLowerCase()+'|'+sex;
+    const loose=new Map();                       // người đang có trong danh sách mà chưa gắn với dòng nào trên Sheet
+    S.people.filter(p=>!p.sid&&(p.name||'').trim()).forEach(p=>{
+      const k=keyOf(p.name,p.sex); if(!loose.has(k)) loose.set(k,p);
+    });
+    const seen=new Set(), seatQ=[]; let add=0, join=0;
     d.rows.forEach(r=>{
       const f=fieldsOf(r.cells); if(!f.name&&!f.gvcn) return;
       seen.add(r.id);
       const sheetSeat=norm(r.seat);
       let p=bySid.get(r.id);
-      if(!p){ p=newPerson(Object.assign(f,{sid:r.id,seat:null,syncSeat:sheetSeat})); S.people.push(p); add++; seatQ.push([p,sheetSeat]); return; }
+      if(!p){
+        const dup=loose.get(keyOf(f.name,f.sex));      // trùng tên đã có sẵn thì nhập vào dòng cũ, không thêm bản thứ hai
+        if(dup){
+          loose.delete(keyOf(f.name,f.sex));
+          const pending=(dup.seat||null)!==(dup.syncSeat||null);
+          Object.assign(dup,f); dup.sid=r.id; dup.syncSeat=sheetSeat; join++;
+          if(!pending){ dup.seat=null; seatQ.push([dup,sheetSeat]); }
+          return;
+        }
+        p=newPerson(Object.assign(f,{sid:r.id,seat:null,syncSeat:sheetSeat})); S.people.push(p); add++; seatQ.push([p,sheetSeat]); return;
+      }
       const pending=(p.seat||null)!==(p.syncSeat||null);
       Object.assign(p,f); p.syncSeat=sheetSeat;
       if(!pending){ p.seat=null; seatQ.push([p,sheetSeat]); }
@@ -4000,12 +4108,13 @@ async function pull(manual){
     const at=hhmm(), n=S.people.length;
     const sub=()=>{ const a=[T(`${n} người`,`共 ${n} 人`)];
       if(add) a.push(T(`thêm ${add}`,`新增 ${add}`));
+      if(join) a.push(T(`gộp ${join} trùng tên`,`合併 ${join} 筆同名`));
       if(gone) a.push(T(`bỏ ${gone} (đã xoá trên Sheet)`,`移除 ${gone}（試算表已刪除）`));
       if(clash) a.push(T(`${clash} số ghế trùng, cần xếp lại`,`${clash} 個座號重複，需重新排位`));
       return a.join(' · '); };
     const main=()=>T(`Đã tải lúc ${at}`,`${at} 已載入`);
     show('ok',main,sub);
-    if(manual&&(add||gone||clash)) toast(main()+' · '+sub());
+    if(manual&&(add||gone||clash||join)) toast(main()+' · '+sub());
   }catch(e){
     show('err',()=>T('Không tải được','無法載入'),()=>errMsg(e));
     if(manual) toast(T('Không tải được: ','無法載入：')+errMsg(e));
@@ -4051,25 +4160,15 @@ async function push(manual){
   finally{ GS.busy=false; }
 }
 
-/* ---- lưu tạm trên máy: tải lại trang hoặc mất mạng vẫn còn dữ liệu ---- */
-function saveCache(){
-  const sig=JSON.stringify(S.people);
-  if(sig!==GS.cacheSig){ GS.cacheSig=sig; lsSet('gs.people',sig); }
-}
-function restoreCache(){
-  if(S.people.length) return;
-  try{
-    const arr=JSON.parse(lsGet('gs.people')||'[]'); if(!arr.length) return;
-    S.people=arr.map(x=>newPerson(x));
-    uid=Math.max(uid,...S.people.map(p=>+p.id||0))+1;
-    autoSeatCount(); renderReg(); upd();
-    const n=S.people.length;
-    show('',()=>T('Đang dùng bản lưu trên máy','使用本機暫存資料'),()=>T(`${n} người`,`共 ${n} 人`));
-  }catch(e){}
-}
+/* nhắc trước khi đóng nếu còn số ghế chưa ghi về Sheet (vì máy không giữ bản sao) */
+window.addEventListener('beforeunload',e=>{
+  if(!S.people.length) return;
+  const w=pendingWork();
+  if(GS.map&&!w.changes.length&&!w.added.length) return;    // đã ghi hết về Sheet thì cứ đóng
+  e.preventDefault(); e.returnValue='';
+});
 
 async function tick(){
-  saveCache();
   if(!GS_URL||!token()||GS.busy||!navigator.onLine) return;
   if(!GS.map||Date.now()-GS.lastPull>PULL_MS) await pull(false);
   await push(false);
@@ -4078,15 +4177,17 @@ async function tick(){
 $('#bGsPull').onclick=()=>pull(true);
 $('#bGsPush').onclick=async()=>{ if(!GS.map) await pull(true); push(true); };
 $('#bGsToken').onclick=()=>{
-  const v=prompt(T('Nhập mã truy cập Google Sheet (lưu trên máy này):','請輸入 Google 試算表存取碼（儲存在本機）：'),token());
+  const v=prompt(T('Nhập mã truy cập Google Sheet (chỉ dùng cho phiên này, không lưu trên máy):',
+                   '請輸入 Google 試算表存取碼（僅用於本次，不儲存在本機）：'),token());
   if(v===null) return;
-  lsSet('gs.token',v.trim()); show('busy',()=>T('Đã lưu mã. Đang kết nối…','已儲存存取碼，連線中…')); pull(true);
+  TOKEN=v.trim();
+  if(!TOKEN){ show('',()=>T('Chưa kết nối','尚未連線'),()=>T('Bấm "Mã…" để nhập mã truy cập','請按「存取碼…」輸入存取碼')); return; }
+  show('busy',()=>T('Đang kết nối…','連線中…')); pull(true);
 };
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ GS.lastPull=0; tick(); } });
 window.addEventListener('online',()=>tick());
 
 paintLabels();
-restoreCache();
 if(!GS_URL) show('err',()=>T('Chưa cài link Apps Script','尚未設定 Apps Script 連結'),()=>T('Sửa GS_URL trong mã nguồn','請在原始碼中設定 GS_URL'));
 else if(!token()) show('',()=>T('Chưa kết nối','尚未連線'),()=>T('Bấm "Mã…" để nhập mã truy cập','請按「存取碼…」輸入存取碼'));
 else tick();

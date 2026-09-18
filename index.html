@@ -567,6 +567,45 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 #acctMenu button:disabled .ic{color:#c2c2c7}
 #acctMenu button.danger,#acctMenu button.danger .ic{color:#d0342c}
 #acctMenu .am-sep{height:.5px;background:rgba(0,0,0,.08);margin:4px 10px}
+
+/* ---------- cột danh sách sơ đồ: kéo chỉnh chiều ngang & thu gọn ---------- */
+#mapwrap{gap:7px}
+#mapwrap #maplist{flex:0 0 var(--mlw,300px);min-width:0;overflow-x:hidden}
+#maplist .mlhead{display:flex;align-items:center;gap:6px;margin:-2px 0 8px;min-height:28px}
+#maplist .mlhead .sp{flex:1}
+#mlToggle{flex:0 0 auto;width:30px;height:28px;border:0;border-radius:8px;background:#f2f2f7;
+  color:#6b7280;font:inherit;font-size:15px;line-height:1;cursor:pointer;padding:0}
+#mlToggle:hover{background:#e6e6ec;color:var(--ink)}
+#maplist .mlbadge{display:none;font-size:12px;font-weight:700;color:#8a8a8e}
+#mapsplit{flex:0 0 3px;align-self:stretch;position:relative;cursor:col-resize;touch-action:none;
+  border-radius:3px;background:transparent}
+#mapsplit::after{content:'';position:absolute;top:0;bottom:0;left:-9px;right:-9px}
+#mapsplit::before{content:'';position:absolute;top:50%;left:0;width:3px;height:52px;margin-top:-26px;
+  border-radius:3px;background:#dcdce3;transition:background .15s}
+#mapsplit:hover::before,#mapsplit.on::before{background:var(--accent);height:84px;margin-top:-42px}
+#mapsplit.on{background:transparent}
+body.mlresizing{cursor:col-resize;user-select:none;-webkit-user-select:none}
+body.mlresizing #maplist .chip{pointer-events:none}
+body.mlmin #mapwrap #maplist{flex:0 0 46px;padding:10px 8px;overflow:hidden}
+body.mlmin #maplist>*:not(.mlhead){display:none!important}
+body.mlmin #maplist .mlhead{flex-direction:column;gap:8px;margin:0}
+body.mlmin #maplist .mlhead .sp{display:none}
+body.mlmin #maplist .mlbadge{display:block}
+body.mlmin #mapsplit{display:none}
+@media (any-pointer:coarse){
+  #mlToggle{width:36px;height:34px;font-size:17px}
+  #mapsplit{flex:0 0 5px}
+  #mapsplit::after{left:-14px;right:-14px}
+}
+@media print{ #mapsplit{display:none!important} }
+
+/* ---------- phóng to / thu nhỏ bảng danh sách ---------- */
+#regscroll #regtable{zoom:var(--regz,1)}
+#regzoomval{font-size:12.5px;color:#6b7280;min-width:42px;text-align:center;cursor:ns-resize;
+  user-select:none;-webkit-user-select:none;font-variant-numeric:tabular-nums}
+#regzoomval:hover{color:var(--ink)}
+#regtools .btn{padding:7px 11px}
+@media print{ #regscroll #regtable{zoom:1!important} }
 </style>
 </head>
 <body class="guides v-reg">
@@ -807,6 +846,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
     <div id="regtools" class="onlyreg">
       <button class="btn" id="bRegAdd">+ Thêm dòng</button>
       <button class="btn" id="bStats">Thống kê lớp</button>
+      <span class="sep"></span>
+      <button class="btn" id="bRegZoomOut">−</button><span id="regzoomval">100%</span><button class="btn" id="bRegZoomIn">+</button>
     </div>
     <div id="maptools" class="onlymap"></div>
     <div id="printtools" class="onlyprint">
@@ -1136,6 +1177,7 @@ function applyLang(){
   { const vb=document.querySelector('#viewseg button[data-view=print]');   // tab thứ 3: tên riêng, không lẫn với 'Danh sách' khác
     if(vb){ vb.dataset.vi='Danh sách'; vb.textContent=S.lang==='zh'?'清書表格':'Danh sách'; } }
   setPanel(document.body.classList.contains('nopanel'),false);
+  paintRegZoom();
   if(window.gsRelang) window.gsRelang();
   $('#lang').value=S.lang;
   refreshFonts(); buildHeadList(); syncBulk(); render(); renderMap(); setView(S.view);
@@ -2587,6 +2629,38 @@ function parseReg(text){
   }).filter(p=>(p.name||p.gvcn)&&!isHeadName(p.name));
 }
 
+/* ---------- phóng to / thu nhỏ bảng danh sách ---------- */
+let regZoom=1;
+try{ const v=parseFloat(localStorage.getItem('ui.regzoom')); if(v>0) regZoom=v; }catch(e){}
+function setRegZoom(z,save){
+  regZoom=clamp(+(+z).toFixed(3),0.5,3);
+  document.documentElement.style.setProperty('--regz',regZoom);
+  const v=$('#regzoomval'); if(v) v.textContent=Math.round(regZoom*100)+'%';
+  if(save){ try{ localStorage.setItem('ui.regzoom',String(regZoom)); }catch(e){} }
+}
+function stepRegZoom(d){ setRegZoom(regZoom*Math.pow(1.1,d),true); }
+function paintRegZoom(){
+  const zh=S.lang==='zh', v=$('#regzoomval');
+  const bo=$('#bRegZoomOut'), bi=$('#bRegZoomIn');
+  if(bo) bo.title=zh?'縮小表格':'Thu nhỏ bảng';
+  if(bi) bi.title=zh?'放大表格':'Phóng to bảng';
+  if(v) v.title=zh?'滾輪調整大小，雙擊還原 100%':'Lăn chuột để chỉnh cỡ · nháy đúp về 100%';
+}
+function bindRegZoom(){
+  const bo=$('#bRegZoomOut'), bi=$('#bRegZoomIn'), v=$('#regzoomval');
+  if(bo) bo.onclick=()=>stepRegZoom(-2);
+  if(bi) bi.onclick=()=>stepRegZoom(2);
+  if(v){
+    v.ondblclick=()=>setRegZoom(1,true);
+    v.addEventListener('wheel',e=>{             // lăn chuột ngay trên con số
+      e.preventDefault();
+      stepRegZoom(e.deltaY>0?-1:1);
+    },{passive:false});
+  }
+  paintRegZoom(); setRegZoom(regZoom,false);
+}
+bindRegZoom();
+
 /* ---------- bảng ghi danh ---------- */
 function renderReg(){
   const box=$('#regview'); if(!box) return;
@@ -2617,6 +2691,15 @@ function renderReg(){
   box.appendChild(head);
   const scroll=document.createElement('div'); scroll.id='regscroll';
   box.appendChild(scroll);
+  scroll.addEventListener('wheel',e=>{           // Ctrl/⌘ + lăn chuột, hoặc chụm hai ngón trên trackpad
+    if(!(e.ctrlKey||e.metaKey)) return;
+    e.preventDefault();
+    setRegZoom(regZoom*Math.exp(-clamp(e.deltaY,-30,30)*0.006),true);
+  },{passive:false});
+  let gz0=1;                                     // chụm hai ngón trên iPad
+  scroll.addEventListener('gesturestart',e=>{ e.preventDefault(); gz0=regZoom; },{passive:false});
+  scroll.addEventListener('gesturechange',e=>{ e.preventDefault(); setRegZoom(gz0*e.scale,false); },{passive:false});
+  scroll.addEventListener('gestureend',e=>{ e.preventDefault(); setRegZoom(regZoom,true); },{passive:false});
 
   const dls={};
   ['interp','doc'].forEach(k=>{ const dl=document.createElement('datalist'); dl.id='dl-'+k; box.appendChild(dl); dls[k]=dl; });
@@ -2657,9 +2740,9 @@ function renderReg(){
     rz.addEventListener('mousedown',e=>{
       e.preventDefault(); e.stopPropagation();
       const key=COLS[i], col=cg.children[i];
-      const sx=e.clientX, w0=col.offsetWidth||S.colW[key]||100;
+      const sx=e.clientX, w0=S.colW[key]||col.offsetWidth||100;
       if(key==='name') S.nameAuto=false;        // đã chỉnh tay thì thôi tự giãn
-      const mv=ev=>{ const w=Math.max(36,w0+ev.clientX-sx); col.style.width=w+'px'; S.colW[key]=w; };
+      const mv=ev=>{ const w=Math.max(36,Math.round(w0+(ev.clientX-sx)/regZoom)); col.style.width=w+'px'; S.colW[key]=w; };
       const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.body.style.cursor=''; };
       document.body.style.cursor='col-resize';
       document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
@@ -3033,6 +3116,27 @@ function bestLayout(m,f){
   return best;
 }
 let pickedId=null, dragFreeze=null, mapBaseH=0, mapApplyZoom=null;
+
+/* ----- cột danh sách bên trái sơ đồ: nhớ chiều ngang và trạng thái thu gọn ----- */
+const ML_DEF=300;
+let mapListW=ML_DEF;
+try{ const v=parseFloat(localStorage.getItem('ui.maplistw')); if(v>0) mapListW=v; }catch(e){}
+function setMapListW(w,save){
+  const wrap=document.getElementById('mapwrap');
+  const room=wrap? wrap.clientWidth-290 : 640;     // chừa chỗ cho sơ đồ
+  mapListW=Math.round(clamp(w,170,Math.max(200,Math.min(700,room))));
+  document.documentElement.style.setProperty('--mlw',mapListW+'px');
+  if(save){ try{ localStorage.setItem('ui.maplistw',String(mapListW)); }catch(e){} }
+}
+function setMapListMin(on,save){
+  document.body.classList.toggle('mlmin',!!on);
+  if(save){ try{ localStorage.setItem('ui.maplistmin',on?'1':'0'); }catch(e){} }
+  const b=document.getElementById('mlToggle'); if(b&&b._sync) b._sync();
+  if(mapApplyZoom) requestAnimationFrame(()=>mapApplyZoom());
+}
+document.documentElement.style.setProperty('--mlw',mapListW+'px');
+try{ if(localStorage.getItem('ui.maplistmin')==='1') document.body.classList.add('mlmin'); }catch(e){}
+addEventListener('resize',()=>{ if(!document.body.classList.contains('mlmin')) setMapListW(mapListW,false); });
 const STAGE_DEF={altarW:300,altarH:50,podiumW:200,podiumH:150};
 function ensureStage(){ Object.keys(STAGE_DEF).forEach(k=>{ if(!(+S.room[k]>0)) S.room[k]=STAGE_DEF[k]; }); }
 function stageGeom(W, H, small){               // vị trí 佛座 và 講台, luôn tách rời nhau
@@ -3089,6 +3193,22 @@ function renderMap(){
   let list = dragFreeze ? keepList : null;
   if(!list){
     list=document.createElement('div'); list.id='maplist';
+
+    const mlh=document.createElement('div'); mlh.className='mlhead';
+    const bMin=document.createElement('button'); bMin.id='mlToggle'; bMin.type='button';
+    bMin._sync=()=>{
+      const on=document.body.classList.contains('mlmin');
+      bMin.textContent = on ? '»' : '«';
+      const t = on ? (zh?'展開名單':'Mở rộng danh sách') : (zh?'收合名單':'Thu gọn danh sách');
+      bMin.title=t; bMin.setAttribute('aria-label',t);
+    };
+    bMin.onclick=()=>setMapListMin(!document.body.classList.contains('mlmin'),true);
+    bMin._sync();
+    const mlsp=document.createElement('span'); mlsp.className='sp';
+    const mlbd=document.createElement('span'); mlbd.className='mlbadge';
+    mlh.append(bMin,mlsp,mlbd);
+    list.appendChild(mlh);
+
     const segm=document.createElement('div'); segm.className='seg'; segm.style.marginBottom='10px';
     [['no',zh?'未掛號':'Chưa xếp'],['all',zh?'全部':'Tất cả']].forEach(([k,t])=>{
       const b=document.createElement('button'); b.textContent=t;
@@ -3169,6 +3289,8 @@ function renderMap(){
     const h=document.createElement('h4');
     h.textContent=(zh?'名單 ':'Danh sách ')+`(${arr.length})`;
     list.appendChild(h);
+    mlbd.textContent=arr.length;                 // số hiện trên dải khi thu gọn
+    mlbd.title=h.textContent;
     arr.forEach(p=>{
       const b=document.createElement('button');
       b.className='chip '+p.sex+(p.seat?' done':'')+(pickedId===p.id?' on':'');
@@ -3199,6 +3321,37 @@ function renderMap(){
     }
   }
   wrap.appendChild(list);
+
+  const split=document.createElement('div'); split.id='mapsplit';
+  split.setAttribute('role','separator'); split.setAttribute('aria-orientation','vertical');
+  split.tabIndex=0;
+  split.title = zh?'拖曳調整名單寬度，雙擊還原':'Kéo để chỉnh chiều ngang · nháy đúp để đặt lại';
+  split.addEventListener('pointerdown',e=>{
+    if(e.button) return;
+    e.preventDefault();
+    const x0=e.clientX, w0=list.getBoundingClientRect().width;
+    split.classList.add('on'); document.body.classList.add('mlresizing');
+    try{ split.setPointerCapture(e.pointerId); }catch(_){}
+    const move=ev=>setMapListW(w0+(ev.clientX-x0),false);
+    const up=()=>{
+      split.classList.remove('on'); document.body.classList.remove('mlresizing');
+      split.removeEventListener('pointermove',move);
+      split.removeEventListener('pointerup',up);
+      split.removeEventListener('pointercancel',up);
+      setMapListW(mapListW,true);
+      if(mapApplyZoom) mapApplyZoom();
+    };
+    split.addEventListener('pointermove',move);
+    split.addEventListener('pointerup',up);
+    split.addEventListener('pointercancel',up);
+  });
+  split.addEventListener('dblclick',()=>setMapListW(ML_DEF,true));
+  split.addEventListener('keydown',e=>{          // bàn phím: mũi tên trái/phải
+    const d = e.key==='ArrowLeft' ? -20 : e.key==='ArrowRight' ? 20 : 0;
+    if(!d) return;
+    e.preventDefault(); setMapListW(mapListW+d,true);
+  });
+  wrap.appendChild(split);
 
   const svgbox=document.createElement('div'); svgbox.id='mapsvgbox';
   let baseH=mapBaseH;

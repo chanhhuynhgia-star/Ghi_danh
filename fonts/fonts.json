@@ -1,0 +1,9 @@
+{
+  "v": "1",
+  "fonts": [
+    { "name": "Kai shu",      "file": "kaishu.ttf" },
+    { "name": "Yan kai",  "file": "yankai.ttf" }
+  ],
+  "zh": "Kai",
+  "zhBold": "Yan kai"
+}

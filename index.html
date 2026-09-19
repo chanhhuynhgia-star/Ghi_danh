@@ -606,6 +606,29 @@ body.mlmin #mapsplit{display:none}
 #regzoomval:hover{color:var(--ink)}
 #regtools .btn{padding:7px 11px}
 @media print{ #regscroll #regtable{zoom:1!important} }
+
+/* ---------- chọn phiên đã lưu trong một thư mục ---------- */
+#fmask{position:fixed;inset:0;z-index:62;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
+#fmask.on{display:flex}
+#fbox{background:#fff;border-radius:16px;padding:20px 22px 16px;width:460px;max-width:92vw;
+  box-shadow:0 20px 60px rgba(20,40,60,.3)}
+#fbox h3{margin:0 0 4px;font-size:19px;font-weight:650;letter-spacing:-.02em}
+#fdir{font-size:12.5px;color:#8a8a8e;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#flist{max-height:46vh;overflow:auto;margin-bottom:14px}
+#flist .frow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;
+  border-radius:10px;padding:9px 10px;font:inherit;text-align:left;cursor:pointer}
+#flist .frow:hover{background:#f2f2f7}
+#flist .frow .fn{flex:1;min-width:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#flist .frow.cur .fn{font-weight:650;color:var(--accent)}
+#flist .frow .ft{font-size:12px;color:#8a8a8e;flex:0 0 auto;font-variant-numeric:tabular-nums}
+#flist .fdel{flex:0 0 auto;border:0;background:none;color:#c0c6cd;font-size:19px;line-height:1;
+  padding:0 4px;cursor:pointer;border-radius:6px}
+#flist .fdel:hover{color:var(--accent);background:#fff0ee}
+#flist .fnone{font-size:14px;color:#8a8a8e;padding:14px 4px}
+#fbox .btnrow{display:flex;align-items:center;gap:8px}
+#fcur{font-size:11.5px;color:#8a8a8e;padding:4px 10px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#fcur:empty{display:none}
+@media print{ #fmask{display:none!important} }
 </style>
 </head>
 <body class="guides v-reg">
@@ -864,7 +887,9 @@ body.mlmin #mapsplit{display:none}
     <div id="filemenu">
       <button class="btn" id="bFile">Tệp ▾</button>
       <div id="filepop">
+        <div id="fcur"></div>
         <button class="btn" id="bSave" title="Lưu cấu hình phòng, bố cục và danh sách vào một tệp">Lưu phiên (.json)</button>
+        <button class="btn" id="bSaveAs">Lưu thành…</button>
         <button class="btn" id="bOpen" title="Mở lại tệp phiên đã lưu">Mở phiên (.json)</button>
       </div>
     </div>
@@ -914,6 +939,19 @@ body.mlmin #mapsplit{display:none}
   <div class="btnrow">
     <button class="btn" id="pdfCancel">Bỏ</button>
     <button class="btn primary" id="pdfGo">Mở hộp thoại in</button>
+  </div>
+</div></div>
+
+
+<div id="fmask"><div id="fbox">
+  <h3 id="ftitle">Mở phiên đã lưu</h3>
+  <div id="fdir"></div>
+  <div id="flist"></div>
+  <div class="btnrow">
+    <button class="btn" id="fPickDir">Đổi thư mục…</button>
+    <button class="btn" id="fLocal">Mở từ máy…</button>
+    <span style="flex:1"></span>
+    <button class="btn" id="fCancel">Đóng</button>
   </div>
 </div></div>
 
@@ -1089,7 +1127,7 @@ function subText(p){                              // nội dung dòng phụ theo
   }
 }
 S.nameAuto=true; S.regSort=null;
-S.colW={sel:44,idx:40,seat:84,name:150,sex:100,gvcn:120,interp:112,doc:95,ph:115,del:46};
+S.colW={sel:44,idx:40,seat:84,name:150,sex:100,gvcn:120,interp:112,doc:95,ph:115,team:86,note:170,del:46};
 S.view='reg'; S.regFilter='all'; S.regSearch=''; S.mapFilter='no'; S.mapZoom=1; S.mapQuick=[]; S.mapSearch=''; S.mapFull=false; S.printStage=true; S.printStageCompact=false; S.printRoom=true; S.regQuick=[];
 S.people=[];
 S.qian=[]; S.kun=[];
@@ -1134,7 +1172,7 @@ const I18N={
  'Chép':'複製','Cắt':'剪下','Dán':'貼上','Xóa nội dung':'清除內容',
  'Chèn người':'插入一人','Bỏ người':'刪除一人','Hoàn tác':'復原','Vừa khung':'符合視窗',
  'Lưu .json':'儲存 .json','Mở .json':'開啟 .json','In':'列印','Lưu PDF':'存成 PDF',
- 'Lưu phiên (.json)':'儲存工作檔 (.json)','Mở phiên (.json)':'開啟工作檔 (.json)',
+ 'Lưu phiên (.json)':'儲存工作檔 (.json)','Mở phiên (.json)':'開啟工作檔 (.json)','Lưu thành…':'另存新檔…',
  'Dữ liệu danh sách':'名單資料','Xoá hết…':'清空…',
  'Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản, góc trên bên phải.':'名單存放於 Google 試算表。請用右上角的帳號按鈕登入與同步。',
  'Chọn tệp font':'選擇字型檔','Bỏ':'取消','Mở hộp thoại in':'開啟列印視窗',
@@ -1177,7 +1215,7 @@ function applyLang(){
   { const vb=document.querySelector('#viewseg button[data-view=print]');   // tab thứ 3: tên riêng, không lẫn với 'Danh sách' khác
     if(vb){ vb.dataset.vi='Danh sách'; vb.textContent=S.lang==='zh'?'清書表格':'Danh sách'; } }
   setPanel(document.body.classList.contains('nopanel'),false);
-  paintRegZoom();
+  paintRegZoom(); paintFileMenu();
   if(window.gsRelang) window.gsRelang();
   $('#lang').value=S.lang;
   refreshFonts(); buildHeadList(); syncBulk(); render(); renderMap(); setView(S.view);
@@ -1630,6 +1668,8 @@ function buildSheets(){
     inner.style.cssText=`left:${ox}mm;top:${oy}mm;width:${p.w}mm;height:${S.ph}mm`;
     const cl=page.cloneNode(true);
     cl.removeAttribute('id'); cl.removeAttribute('tabindex');
+    cl.style.transform='none';                  // bản sao mang theo scale() của mức phóng, phải bỏ
+    cl.style.transformOrigin='top left';
     cl.querySelectorAll('.mhandle,.inline-edit,#marquee').forEach(e=>e.remove());
     cl.style.position='absolute'; cl.style.left=(-p.x)+'mm'; cl.style.top='0';
     cl.style.boxShadow='none';
@@ -2396,15 +2436,21 @@ function fitForPrint(){                       // dựng riêng một vùng in ch
     document.body.classList.add('pmode');
   } else if(S.view==='reg'){
     const t=document.createElement('table'); t.className='ptable';
+    const hasTeam=S.people.some(q=>(q.team||'').trim());   // chưa dùng tới thì khỏi in cho đỡ chật
+    const hasNote=S.people.some(q=>(q.note||'').trim());
     const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
                  : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
+    if(hasTeam) H.push(zh?'組別':'Tổ');
+    if(hasNote) H.push(zh?'備註':'Ghi chú');
     t.innerHTML='<thead><tr>'+H.map(x=>`<th>${x}</th>`).join('')+'</tr></thead>';
     const tb=document.createElement('tbody');
     S.people.forEach(q=>{
       const tr=document.createElement('tr');
-      [q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
-       q.gvcn||'', q.interp||'', q.doc||'', q.ph?String(q.ph):''
-      ].forEach(v=>{ const td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
+      const row=[q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
+       q.gvcn||'', q.interp||'', q.doc||'', q.ph?String(q.ph):''];
+      if(hasTeam) row.push(q.team||'');
+      if(hasNote) row.push(q.note||'');
+      row.forEach(v=>{ const td=document.createElement('td'); td.textContent=v; tr.appendChild(td); });
       tb.appendChild(tr);
     });
     t.appendChild(tb); pa.appendChild(t);
@@ -2440,30 +2486,184 @@ $('#pdfGo').onclick=()=>{
   document.title='danh-sach-can-khon';
   setTimeout(()=>{ window.print(); document.title=t; },60);
 };
-$('#bSave').onclick=()=>{
+/* ---------- phiên làm việc: lưu và mở trong một thư mục cố định ---------- */
+const fsOK = typeof window.showDirectoryPicker==='function';
+let dirH=null, curFile='', dirRead=false;
+const IDB_DB='ghidanh', IDB_ST='fs';
+function idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(IDB_DB,1);
+    r.onupgradeneeded=()=>{ if(!r.result.objectStoreNames.contains(IDB_ST)) r.result.createObjectStore(IDB_ST); };
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+  });
+}
+async function idbGet(k){
+  try{ const db=await idbOpen();
+    return await new Promise((res,rej)=>{ const q=db.transaction(IDB_ST,'readonly').objectStore(IDB_ST).get(k);
+      q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error); });
+  }catch(e){ return null; }
+}
+async function idbSet(k,v){
+  try{ const db=await idbOpen();
+    await new Promise((res,rej)=>{ const q=db.transaction(IDB_ST,'readwrite').objectStore(IDB_ST).put(v,k);
+      q.onsuccess=()=>res(); q.onerror=()=>rej(q.error); });
+  }catch(e){}
+}
+async function getDir(ask){                      // lấy thư mục đã nhớ, xin lại quyền khi cần
+  if(!fsOK) return null;
+  if(!dirH && !dirRead){ dirRead=true; dirH=await idbGet('dir'); }
+  if(!dirH) return ask ? await pickDir() : null;
+  const opt={mode:'readwrite'};
+  let st='denied';
+  try{ st=await dirH.queryPermission(opt); }catch(e){}
+  if(st==='granted') return dirH;
+  if(!ask) return null;
+  try{ st=await dirH.requestPermission(opt); }catch(e){}
+  if(st==='granted') return dirH;
+  return await pickDir();
+}
+async function pickDir(){
+  try{
+    const h=await window.showDirectoryPicker({id:'ghidanh',mode:'readwrite',startIn:'documents'});
+    dirH=h; curFile=''; await idbSet('dir',h); paintFileMenu(); return h;
+  }catch(e){ return null; }
+}
+function paintFileMenu(){
+  const zh=S.lang==='zh';
+  const c=$('#fcur'); if(c) c.textContent = curFile ? (zh?'目前：':'Đang mở: ')+curFile : '';
+  const sa=$('#bSaveAs'); if(sa) sa.style.display = fsOK ? '' : 'none';
+  const pd=$('#fPickDir'); if(pd) pd.textContent = zh?'更換資料夾…':'Đổi thư mục…';
+  const lc=$('#fLocal');   if(lc) lc.textContent = zh?'從電腦開啟…':'Mở từ máy…';
+  const cc=$('#fCancel');  if(cc) cc.textContent = zh?'關閉':'Đóng';
+  const tt=$('#ftitle');   if(tt) tt.textContent = zh?'開啟已儲存的工作檔':'Mở phiên đã lưu';
+}
+const fmask=$('#fmask');
+const fmtT=ms=>{
+  if(!ms) return '';
+  const d=new Date(ms), p=n=>String(n).padStart(2,'0');
+  return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+async function listJson(){
+  const out=[];
+  try{
+    for await (const [name,h] of dirH.entries()){
+      if(h.kind!=='file' || !/\.json$/i.test(name)) continue;
+      let t=0; try{ t=(await h.getFile()).lastModified; }catch(e){}
+      out.push({name,h,t});
+    }
+  }catch(e){}
+  out.sort((a,b)=>b.t-a.t);
+  return out;
+}
+async function showFileList(){
+  const zh=S.lang==='zh';
+  paintFileMenu();
+  const box=$('#flist'); box.innerHTML='';
+  $('#fdir').textContent = dirH ? (zh?'資料夾：':'Thư mục: ')+dirH.name : '';
+  fmask.classList.add('on');
+  const arr=await listJson();
+  box.innerHTML='';
+  if(!arr.length){
+    const p=document.createElement('p'); p.className='fnone';
+    p.textContent = zh?'這個資料夾還沒有 .json 工作檔。':'Thư mục này chưa có tệp .json nào.';
+    box.appendChild(p); return;
+  }
+  arr.forEach(en=>{
+    const row=document.createElement('div'); row.className='frow'+(en.name===curFile?' cur':'');
+    const n=document.createElement('span'); n.className='fn'; n.textContent=en.name.replace(/\.json$/i,'');
+    const t=document.createElement('span'); t.className='ft'; t.textContent=fmtT(en.t);
+    row.append(n,t);
+    row.onclick=ev=>{ if(ev.target.classList.contains('fdel')) return; openEntry(en); };
+    const del=document.createElement('button'); del.className='fdel'; del.textContent='×';
+    del.title = zh?'刪除這個檔案':'Xoá tệp này';
+    del.onclick=async ev=>{
+      ev.stopPropagation();
+      if(!askSure(`Xoá tệp ${en.name}?`,`確定刪除 ${en.name}？`)) return;
+      try{ await dirH.removeEntry(en.name); if(curFile===en.name) curFile='';
+        paintFileMenu(); showFileList();
+      }catch(e){ toast(zh?'刪不掉這個檔案。':'Không xoá được tệp này.'); }
+    };
+    row.appendChild(del);
+    box.appendChild(row);
+  });
+}
+async function openEntry(en){
+  const zh=S.lang==='zh';
+  try{
+    const d=JSON.parse(await (await en.h.getFile()).text());
+    applySession(d);
+    curFile=en.name; paintFileMenu();
+    fmask.classList.remove('on');
+    toast((zh?'已開啟 ':'Đã mở ')+en.name);
+  }catch(e){ alert(zh?'這個檔案讀不出來。':'Tệp không đọc được.'); }
+}
+async function saveTo(name){
+  const zh=S.lang==='zh';
+  try{
+    const h=await dirH.getFileHandle(name,{create:true});
+    const w=await h.createWritable();
+    await w.write(JSON.stringify(S,null,2)); await w.close();
+    curFile=name; paintFileMenu();
+    toast((zh?'已存入 ':'Đã lưu vào ')+name);
+  }catch(e){ toast(zh?'寫不進這個資料夾。':'Không ghi được vào thư mục.'); }
+}
+function defName(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  return `phien-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function downloadSession(){                      // Safari và máy không hỗ trợ: tải về như cũ
   const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='khung-luoi.json'; a.click(); URL.revokeObjectURL(a.href);
+  a.download=curFile||'khung-luoi.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+async function saveAs(){
+  const zh=S.lang==='zh';
+  if(!await getDir(true)){ downloadSession(); return; }
+  let n=prompt(zh?'檔名：':'Đặt tên tệp:', (curFile||defName()+'.json').replace(/\.json$/i,''));
+  if(n===null) return;
+  n=n.trim().replace(/[\/\\:*?"<>|]/g,'-');
+  if(!n) return;
+  await saveTo(/\.json$/i.test(n)?n:n+'.json');
+}
+$('#bSave').onclick=async()=>{
+  $('#filepop').classList.remove('on');
+  if(!fsOK){ downloadSession(); return; }
+  if(curFile && await getDir(true)) saveTo(curFile);
+  else saveAs();
 };
-$('#bOpen').onclick=()=>$('#fileIn').click();
+$('#bSaveAs').onclick=()=>{ $('#filepop').classList.remove('on'); saveAs(); };
+$('#bOpen').onclick=async()=>{
+  $('#filepop').classList.remove('on');
+  if(!fsOK){ $('#fileIn').click(); return; }
+  if(!await getDir(true)){ $('#fileIn').click(); return; }
+  showFileList();
+};
+$('#fPickDir').onclick=async()=>{ if(await pickDir()) showFileList(); };
+$('#fLocal').onclick=()=>{ fmask.classList.remove('on'); $('#fileIn').click(); };
+$('#fCancel').onclick=()=>fmask.classList.remove('on');
+fmask.onclick=e=>{ if(e.target===fmask) fmask.classList.remove('on'); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&fmask.classList.contains('on')) fmask.classList.remove('on'); });
+paintFileMenu();
+
+function applySession(d){                        // nạp nội dung một phiên vào màn hình
+  Object.assign(S,d);
+  S.people=(d.people||[]).map(x=>newPerson(x));
+  S.seats=d.seats||S.seats; S.room=Object.assign({},S.room,d.room||{});
+  if(Array.isArray(S.cps)) S.cps=+S.cps[0]||7;
+  if(S.cpsHead){ S.cps1=S.cps1||S.cpsHead; S.cps2=S.cps2||S.cpsHead; }
+  if(!S.cps1) S.cps1=S.cps; if(!S.cps2) S.cps2=S.cps;
+  if(d.headerExtra!==undefined && d.headerCols===undefined) S.headerCols=2+d.headerExtra;
+  setTop(S.marginTop);
+  if(d.marginCols!==undefined && d.marginRight===undefined){ S.marginRight=d.marginCols; S.marginLeft=d.marginCols; }
+  S.marginRight=clamp(Math.round(S.marginRight/2)*2,0,12); S.marginLeft=clamp(Math.round(S.marginLeft/2)*2,0,12);
+  refreshControls(); refreshRoom(); buildHeadList(); renderReg(); setView(S.view||'reg'); render(); renderMap(); fit();
+}
 $('#fileIn').onchange=e=>{
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader();
   r.onload=()=>{
-    try{
-      const d=JSON.parse(r.result);
-      Object.assign(S,d);
-      S.people=(d.people||[]).map(x=>newPerson(x));
-      S.seats=d.seats||S.seats; S.room=Object.assign({},S.room,d.room||{});
-      if(Array.isArray(S.cps)) S.cps=+S.cps[0]||7;
-      if(S.cpsHead){ S.cps1=S.cps1||S.cpsHead; S.cps2=S.cps2||S.cpsHead; }
-      if(!S.cps1) S.cps1=S.cps; if(!S.cps2) S.cps2=S.cps;
-      if(d.headerExtra!==undefined && d.headerCols===undefined) S.headerCols=2+d.headerExtra;
-      setTop(S.marginTop);
-      if(d.marginCols!==undefined && d.marginRight===undefined){ S.marginRight=d.marginCols; S.marginLeft=d.marginCols; }
-      S.marginRight=clamp(Math.round(S.marginRight/2)*2,0,12); S.marginLeft=clamp(Math.round(S.marginLeft/2)*2,0,12);
-      refreshControls(); refreshRoom(); buildHeadList(); renderReg(); setView(S.view||'reg'); render(); renderMap(); fit();
-    }catch(err){ alert('Tệp không đọc được.'); }
+    try{ applySession(JSON.parse(r.result)); curFile=''; paintFileMenu(); }
+    catch(err){ alert('Tệp không đọc được.'); }
   };
   r.readAsText(f); e.target.value='';
 };
@@ -2535,7 +2735,7 @@ const maySeat=()=>['local','admin','staff'].includes(roleNow());// gán số gh�
 const mayDel =()=>['local','admin'].includes(roleNow());        // xoá người khỏi danh sách
 function dropPerson(p){ if(p&&p.sid&&window.DELQ.indexOf(p.sid)<0) window.DELQ.push(p.sid); }
 function newPerson(o){
-  return Object.assign({id:uid++,name:'',sex:'m',gvcn:'',interp:'',doc:'',ph:0,seat:null},o||{});
+  return Object.assign({id:uid++,name:'',sex:'m',gvcn:'',interp:'',doc:'',ph:0,team:'',note:'',seat:null},o||{});
 }
 const atSeat=(sex,k)=>S.people.find(p=>p.sex===sex&&p.seat===k);
 
@@ -2586,7 +2786,9 @@ const COLKEY=[
   [/理\s*經|理\s*经|代\s*號|代\s*号|班\s*導|班\s*导|gvcn|導師|导师|teacher/i,'gvcn'],
   [/翻\s*譯|翻\s*译|語\s*言|语\s*言|聽\s*語|听\s*语|phiên\s*dịch|phien\s*dich|ngôn\s*ngữ|ngon\s*ngu|interp/i,'interp'],
   [/資\s*料|资\s*料|教\s*材|tài\s*liệu|tai\s*lieu|課本|课本|material/i,'doc'],
-  [/電\s*話|电\s*话|điện\s*thoại|dien\s*thoai|手機|手机|phone/i,'ph']
+  [/電\s*話|电\s*话|điện\s*thoại|dien\s*thoai|手機|手机|phone/i,'ph'],
+  [/組\s*別|组\s*别|小\s*組|小\s*组|^組$|^组$|tổ|^to$|nhóm|nhom|group|team/i,'team'],
+  [/備\s*註|备\s*注|ghi\s*chú|ghi\s*chu|note|remark/i,'note']
 ];
 function mapHeader(cells,loose){
   const m={}; let hit=0;
@@ -2610,7 +2812,7 @@ function guessMap(rows){                     // không có dòng tiêu đề th�
   for(let i=0;i<nc;i++){ if(i===m.seat) continue; const v=col(i);
     if(v.length&&v.filter(isSex).length>=v.length*0.8){ m.sex=i; break; } }
   const rest=[]; for(let i=0;i<nc;i++) if(i!==m.seat&&i!==m.sex) rest.push(i);
-  ['name','gvcn','interp','doc','ph'].forEach((k,j)=>{ if(rest[j]!==undefined) m[k]=rest[j]; });
+  ['name','gvcn','interp','doc','ph','team','note'].forEach((k,j)=>{ if(rest[j]!==undefined) m[k]=rest[j]; });
   return m;
 }
 function parseReg(text){
@@ -2625,7 +2827,8 @@ function parseReg(text){
     let ph=parseInt(praw.replace(/\D/g,''),10);
     if(isNaN(ph)) ph=/^(x|v|có|co|有|✓|yes)$/i.test(praw)?1:0;
         return newPerson({name:get(r,'name'),sex:detectSex(get(r,'sex')),gvcn:get(r,'gvcn'),
-      interp:get(r,'interp'),doc:get(r,'doc'),ph,seat:null});   // số ghế chỉ cho khi đã đến
+      interp:get(r,'interp'),doc:get(r,'doc'),ph,team:get(r,'team'),note:get(r,'note'),
+      seat:null});   // số ghế chỉ cho khi đã đến
   }).filter(p=>(p.name||p.gvcn)&&!isHeadName(p.name));
 }
 
@@ -2702,9 +2905,9 @@ function renderReg(){
   scroll.addEventListener('gestureend',e=>{ e.preventDefault(); setRegZoom(regZoom,true); },{passive:false});
 
   const dls={};
-  ['interp','doc'].forEach(k=>{ const dl=document.createElement('datalist'); dl.id='dl-'+k; box.appendChild(dl); dls[k]=dl; });
+  ['interp','doc','team'].forEach(k=>{ const dl=document.createElement('datalist'); dl.id='dl-'+k; box.appendChild(dl); dls[k]=dl; });
   function fillDl(){
-    ['interp','doc'].forEach(k=>{
+    ['interp','doc','team'].forEach(k=>{
       dls[k].innerHTML='';
       [...new Set(S.people.map(q=>(q[k]||'').trim()).filter(Boolean))].sort()
         .forEach(v=>{ const o=document.createElement('option'); o.value=v; dls[k].appendChild(o); });
@@ -2713,10 +2916,10 @@ function renderReg(){
 
   const tb=document.createElement('table'); tb.id='regtable';
   const arrow = S.regSort==='seat' ? ' ▲' : (S.regSort==='-seat' ? ' ▼' : '');
-  const H = zh ? ['','','座號'+arrow,'姓名','性別','經理代號','翻譯','教材','電話','','']
-               : ['','','Số ghế'+arrow,'Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','',''];
+  const H = zh ? ['','','座號'+arrow,'姓名','性別','經理代號','翻譯','教材','電話','組別','備註','','']
+               : ['','','Số ghế'+arrow,'Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','Tổ','Ghi chú','',''];
   tb.innerHTML='<thead><tr>'+H.map(h=>`<th>${h}</th>`).join('')+'</tr></thead>';
-  const COLS=['sel','idx','seat','name','sex','gvcn','interp','doc','ph','del','pad'];
+  const COLS=['sel','idx','seat','name','sex','gvcn','interp','doc','ph','team','note','del','pad'];
   const thSel=tb.querySelectorAll('thead th')[0]; thSel.className='selth';
   const ckAll=document.createElement('input'); ckAll.type='checkbox'; ckAll.className='selck';
   ckAll.title = zh?'全選／取消目前顯示的列':'Chọn / bỏ chọn tất cả dòng đang hiện';
@@ -2731,6 +2934,8 @@ function renderReg(){
   });
   const cg=document.createElement('colgroup');
   if(!S.colW.sel) S.colW.sel=44;                 // tệp .json cũ chưa có cột chọn
+  if(!S.colW.team) S.colW.team=86;               // tệp cũ chưa có cột Tổ
+  if(!S.colW.note) S.colW.note=170;              // tệp cũ chưa có cột Ghi chú
   COLS.forEach(k=>{ const c=document.createElement('col');
     if(k!=='pad') c.style.width=(S.colW[k]||100)+'px'; cg.appendChild(c); });
   tb.insertBefore(cg,tb.firstChild);
@@ -2759,7 +2964,7 @@ function renderReg(){
     if(S.regFilter==='no'&&p.seat) return false;
     if(S.regFilter==='yes'&&!p.seat) return false;
     if(S.regSearch){
-      const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+      const hay=((p.name||'')+' '+(p.gvcn||'')+' '+(p.team||'')+' '+(p.note||'')).toLowerCase();
       if(!hay.includes(S.regSearch)) return false;
     }
     if(S.regQuick.length){                      // cùng cột là hoặc, khác cột là và
@@ -2790,7 +2995,7 @@ function renderReg(){
       if(S.regFilter==='no'&&p.seat) return false;
       if(S.regFilter==='yes'&&!p.seat) return false;
       if(S.regSearch){
-        const hay=((p.name||'')+' '+(p.gvcn||'')).toLowerCase();
+        const hay=((p.name||'')+' '+(p.gvcn||'')+' '+(p.team||'')+' '+(p.note||'')).toLowerCase();
         if(!hay.includes(S.regSearch)) return false;
       }
       const byF={};
@@ -2806,7 +3011,8 @@ function renderReg(){
     const onSex=v=>S.regQuick.some(q=>q.f==='sex'&&q.v===v);
     if(nm||onSex('m')) mk('sex','m',(zh?'乾':'Nam')+' '+nm);
     if(nf||onSex('f')) mk('sex','f',(zh?'坤':'Nữ')+' '+nf);
-    [['gvcn',zh?'經理代號':'GVCN'],['interp',zh?'翻譯':'Phiên dịch'],['doc',zh?'教材':'Tài liệu']].forEach(([f,lab])=>{
+    [['gvcn',zh?'經理代號':'GVCN'],['interp',zh?'翻譯':'Phiên dịch'],['doc',zh?'教材':'Tài liệu'],
+     ['team',zh?'組別':'Tổ']].forEach(([f,lab])=>{
       const set=new Set(pool(f).map(p=>(p[f]||'').trim()).filter(Boolean));
       S.regQuick.filter(q=>q.f===f).forEach(q=>set.add(q.v));
       const vals=[...set].sort();
@@ -2987,6 +3193,9 @@ function renderReg(){
       num.onchange=()=>{ num.value=p.ph||1; paintPh(); };
       paintPh();
       wrap.append(ck,step); tdP.appendChild(wrap); tr.appendChild(tdP);
+
+      tr.appendChild(mkList('team'));             // Tổ: gõ tay, có gợi ý các tổ đã có
+      tr.appendChild(mkText('note'));             // Ghi chú
 
       const tdD=document.createElement('td'); tdD.style.width='34px';
       if(mayDel()){
@@ -3881,28 +4090,29 @@ $('#bRegXls').onclick=()=>exportRegXls(S.people);
 function exportRegXls(list){
   const zh=S.lang==='zh';
   if(!list||!list.length){ toast(zh?'沒有可匯出的資料。':'Không có dòng nào để xuất.'); return; }
-  const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話']
-               : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại'];
-  const COLS='ABCDEFG'; let rn=0; const rowsXml=[];
+  const H = zh ? ['座號','姓名','性別','經理代號','翻譯','教材','電話','組別','備註']
+               : ['Số ghế','Họ tên','Giới tính','GVCN','Phiên dịch','Tài liệu','Điện thoại','Tổ','Ghi chú'];
+  const COLS='ABCDEFGHI'; let rn=0; const rowsXml=[];
   const cellXml=(ci,v,st)=> (typeof v==='number')
     ? `<c r="${COLS[ci]}${rn}" s="${st}"><v>${v}</v></c>`
     : `<c r="${COLS[ci]}${rn}" s="${st}" t="inlineStr"><is><t>${xlEsc(v)}</t></is></c>`;
   const addRow=(vals,st,ht)=>{ rn++; rowsXml.push(`<row r="${rn}" ht="${ht}" customHeight="1">`+
     vals.map((v,i)=>cellXml(i,v,Array.isArray(st)?st[i]:st)).join('')+'</row>'); };
-  const BODY=[3,2,3,2,2,2,3];                    // cột nào canh giữa, cột nào canh trái
+  const BODY=[3,2,3,2,2,2,3,3,2];                // cột nào canh giữa, cột nào canh trái
   addRow(H,1,26);
   list.forEach(q=>addRow([
     q.seat||'', q.name||'', (q.sex==='m'?(zh?'乾':'Nam'):(zh?'坤':'Nữ')),
-    q.gvcn||'', q.interp||'', q.doc||'', q.ph||''
+    q.gvcn||'', q.interp||'', q.doc||'', q.ph||'', q.team||'', q.note||''
   ],BODY,22));
   const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 <sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>
 <cols><col min="1" max="1" width="9" customWidth="1"/><col min="2" max="2" width="22" customWidth="1"/>
 <col min="3" max="3" width="10" customWidth="1"/><col min="4" max="4" width="16" customWidth="1"/>
-<col min="5" max="6" width="14" customWidth="1"/><col min="7" max="7" width="16" customWidth="1"/></cols>
+<col min="5" max="6" width="14" customWidth="1"/><col min="7" max="7" width="16" customWidth="1"/>
+<col min="8" max="8" width="10" customWidth="1"/><col min="9" max="9" width="28" customWidth="1"/></cols>
 <sheetData>${rowsXml.join('')}</sheetData>
-<autoFilter ref="A1:G${rn}"/>
+<autoFilter ref="A1:I${rn}"/>
 <pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>
 <pageSetup paperSize="9" orientation="portrait"/>
 </worksheet>`;

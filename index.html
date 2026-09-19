@@ -119,7 +119,9 @@ dl.keys dd{margin:0;color:#8a8a8e}
 #headlist .hdel:disabled{visibility:hidden}
 @media (any-pointer:coarse){#headlist .hdel{padding:8px 10px;font-size:20px}}
 #fontlist{font-size:12.5px;color:#8a8a8e;margin-top:10px;line-height:1.9}
-#fontlist span{display:inline-block;background:#fff;border-radius:7px;padding:3px 9px;margin:0 5px 4px 0;color:#000}
+#fontlist span{display:inline-flex;align-items:center;gap:5px;background:#fff;border-radius:7px;padding:3px 5px 3px 9px;margin:0 5px 4px 0;color:#000}
+#fontlist span button{border:0;background:none;color:#b8bfc7;font-size:15px;line-height:1;padding:0 3px;cursor:pointer;border-radius:5px}
+#fontlist span button:hover{color:var(--accent);background:#fff0ee}
 
 #main{flex:1;display:flex;flex-direction:column;min-width:0}
 #toolbar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#f7f7f9;border-bottom:.5px solid #d3d3d9;flex-wrap:wrap}
@@ -568,6 +570,8 @@ body.fills .cell.stat{background:var(--c-stat);color:#fff}
 #acctMenu button.danger,#acctMenu button.danger .ic{color:#d0342c}
 #acctMenu .am-sep{height:.5px;background:rgba(0,0,0,.08);margin:4px 10px}
 
+#seatsvg text{font-synthesis:none;-webkit-font-synthesis:none}
+
 /* ---------- cột danh sách sơ đồ: kéo chỉnh chiều ngang & thu gọn ---------- */
 #mapwrap{gap:7px}
 #mapwrap #maplist{flex:0 0 var(--mlw,300px);min-width:0;overflow-x:hidden}
@@ -847,6 +851,7 @@ body.mlmin #mapsplit{display:none}
       <div class="grp">
         <h2>Font</h2>
         <div class="row"><label>Chữ Hán</label><select id="fontZh"></select></div>
+        <div class="row"><label>Nét đậm chữ Hán</label><select id="fontZhBold"></select></div>
         <div class="row"><label>Chữ Việt</label><select id="fontVi"></select></div>
         <div class="row"><label>Chiều cao chữ Việt</label>
           <input type="text" inputmode="numeric" data-num autocomplete="off" id="viPct" min="20" max="100" step="1"><span class="unit">%</span></div>
@@ -974,16 +979,17 @@ const BUILTIN_VI = [
   ["Tahoma","Tahoma, Verdana, sans-serif"]
 ];
 const userFonts = [];
+const repoFonts = [];            // font đi kèm trang, không cho gỡ vì tải lại là có
 const userFontBufs = {};
 const ZH_RANGE='U+2E80-2FDF, U+3000-303F, U+3100-31FF, U+3200-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF, U+20000-2FA1F';
-let uiZhFace=null, uiZhN=0;
+let uiZhFace=null, uiZhN=0, uiZhFam='', zhBoldFaces=[];
 
 const S = {
   pw:353, ph:250, framePad:0,
   cps:7, cps1:7, cps2:7, foldPad:0.8, marginRight:2, marginLeft:2, marginTop:2.2, marginBottom:1.1,
   headerCols:8, indentFrom:5,
   numH:1, autoNameH:false, nameH:3.6,
-  fontZh:BUILTIN_ZH[1][1], fontVi:BUILTIN_VI[0][1], viPct:50,
+  fontZh:BUILTIN_ZH[1][1], fontZhBold:'', fontVi:BUILTIN_VI[0][1], viPct:50,
   balance:true, vAlign:'top', gapIn:0.6, gapOut:1.8, colGapPct:12,
   lang:'vi',
   splitPrint:false, sheetW:210, sheetH:297,
@@ -1166,7 +1172,7 @@ const I18N={
  'Tô màu ô theo loại':'依類別著色','Hiện ô trống còn thừa':'顯示多餘空格',
  'Số cột khoảng 1':'第一段欄數','Số cột khoảng 2':'第二段欄數','Số cột khoảng 3, 4, 5':'第三至五段欄數',
  'Tổng số cột tiêu đề':'表頭總欄數','0 là không cột nào thụt':'0 表示各欄都不降','Thụt nửa chữ từ cột':'自第幾欄起降半字',
- 'Chữ Hán':'漢字','Chữ Việt':'越南文','Chiều cao chữ Việt':'越南文字高',
+ 'Chữ Hán':'漢字','Nét đậm chữ Hán':'漢字粗體','Bỏ font này':'移除這個字型','Chữ Việt':'越南文','Chiều cao chữ Việt':'越南文字高',
  'chữ':'字','cột':'欄','mm':'公釐',
  'Tự động':'自動','Tự đặt':'自訂','Dưới':'下方','Giữa hàng':'行間','NAM':'乾','NỮ':'坤',
  'Chép':'複製','Cắt':'剪下','Dán':'貼上','Xóa nội dung':'清除內容',
@@ -2020,17 +2026,54 @@ function applyUiZh(){                           // chữ Hán ở bảng điều
       document.fonts.add(uiZhFace);
       uiZhFace.load().catch(()=>{});
       root.setProperty('--zhui','"'+fam+'"');
+      uiZhFam=fam; applyZhBold();
       return;
     }catch(e){}
   }
   root.setProperty('--zhui','"__zhui_none__"');
+  uiZhFam=''; applyZhBold();
+}
+function applyZhBold(){          // nạp tệp font đậm thành nét đậm thật của chính họ font đang dùng
+  zhBoldFaces.forEach(f=>{ try{ document.fonts.delete(f); }catch(e){} });
+  zhBoldFaces=[];
+  const bn=userFonts.find(x=>JSON.stringify(x)===S.fontZhBold);
+  if(!bn||!userFontBufs[bn]) return;
+  const rn=userFonts.find(x=>JSON.stringify(x)===S.fontZh);
+  const jobs=[];
+  if(rn) jobs.push([rn,null]);                 // dùng cho khung in
+  if(uiZhFam) jobs.push([uiZhFam,ZH_RANGE]);   // dùng cho sơ đồ, thanh trên, bảng danh sách
+  jobs.forEach(([fam,range])=>{
+    try{
+      const d={weight:'700'}; if(range) d.unicodeRange=range;
+      const f=new FontFace(fam,userFontBufs[bn].slice(0),d);
+      document.fonts.add(f); f.load().catch(()=>{}); zhBoldFaces.push(f);
+    }catch(e){}
+  });
 }
 function refreshFonts(){
   fontOptions($('#fontZh'),BUILTIN_ZH,S.fontZh);
   fontOptions($('#fontVi'),BUILTIN_VI,S.fontVi);
-  $('#fontlist').innerHTML = userFonts.length
-    ? userFonts.map(n=>`<span>${n}</span>`).join('')
-    : L('Chưa nạp font nào.');
+  { const sb=$('#fontZhBold'), zh=S.lang==='zh';
+    sb.innerHTML='';
+    const o0=document.createElement('option'); o0.value=''; o0.textContent=zh?'不使用':'Không dùng';
+    sb.appendChild(o0);
+    userFonts.forEach(n=>{ const o=document.createElement('option');
+      o.value=JSON.stringify(n); o.textContent=n; sb.appendChild(o); });
+    sb.value=S.fontZhBold;
+    if(sb.value!==S.fontZhBold){ S.fontZhBold=''; sb.value=''; }
+  }
+  const fl=$('#fontlist'); fl.innerHTML='';
+  if(!userFonts.length) fl.textContent=L('Chưa nạp font nào.');
+  else userFonts.forEach(n=>{
+    const sp=document.createElement('span'); sp.textContent=n;
+    if(!repoFonts.includes(n)){
+      const x=document.createElement('button'); x.type='button'; x.textContent='×';
+      x.title=L('Bỏ font này');
+      x.onclick=()=>dropFont(n);
+      sp.appendChild(x);
+    }
+    fl.appendChild(sp);
+  });
   applyUiZh();
 }
 $('#bFont').onclick=()=>$('#fontFile').click();
@@ -2043,18 +2086,112 @@ $('#fontFile').onchange=async e=>{
       const ff=new FontFace(name,buf);
       await ff.load(); document.fonts.add(ff);
       userFonts.push(name); userFontBufs[name]=buf.slice(0);
+      keepFont(name,buf.slice(0));             // giữ lại cho những lần mở sau
     }catch(err){ alert('Không đọc được font '+f.name); }
   }
   e.target.value='';
-  refreshFonts(); render();
+  refreshFonts(); render(); renderMap();
 };
+/* ---- font đã nạp được giữ trong máy, lần sau mở trang là có sẵn ---- */
+async function keepFont(name,buf){
+  try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
+  await idbSet('font:'+name,buf);
+  await idbSet('fonts',userFonts.slice());
+}
+async function dropFont(name){
+  if(repoFonts.includes(name)) return;
+  if(!askSure('Bỏ font '+name+' khỏi danh sách đã nạp?','確定移除字型 '+name+'？')) return;
+  const i=userFonts.indexOf(name); if(i>=0) userFonts.splice(i,1);
+  delete userFontBufs[name];
+  const tag=JSON.stringify(name);
+  if(S.fontZh===tag) S.fontZh=BUILTIN_ZH[1][1];
+  if(S.fontZhBold===tag) S.fontZhBold='';
+  if(S.fontVi===tag) S.fontVi=BUILTIN_VI[0][1];
+  try{ await idbDel('font:'+name); await idbSet('fonts',userFonts.slice()); }catch(e){}
+  keepFontPick(); refreshFonts(); render(); renderMap();
+}
+function keepFontPick(){                       // nhớ luôn font đang chọn
+  try{
+    localStorage.setItem('ui.fontZh',S.fontZh);
+    localStorage.setItem('ui.fontZhBold',S.fontZhBold||'');
+    localStorage.setItem('ui.fontVi',S.fontVi);
+  }catch(e){}
+}
+/* ---- font để sẵn cạnh trang (thư mục fonts/ trên GitHub): mọi máy tự có ---- */
+async function loadRepoFonts(){
+  let man=null;
+  try{
+    const r=await fetch('fonts/fonts.json',{cache:'no-cache'});
+    if(!r.ok) return;
+    man=await r.json();
+  }catch(e){ return; }                          // không có tệp kê khai thì thôi
+  const list=Array.isArray(man)?man:(man&&man.fonts)||[];
+  const ver=String((man&&man.v)||'1');
+  for(const it of list){
+    if(!it||!it.file) continue;
+    const name=(it.name||it.file).replace(/\.[^.]+$/,'');
+    if(!name||userFonts.includes(name)) continue;
+    const key='rfont:'+ver+':'+it.file;
+    let buf=null;
+    try{ buf=await idbGet(key); }catch(e){}
+    if(!buf){
+      try{
+        const r=await fetch('fonts/'+it.file);
+        if(!r.ok) continue;
+        buf=await r.arrayBuffer();
+        idbSet(key,buf.slice(0));               // lần sau lấy từ máy, khỏi tải lại
+      }catch(e){ continue; }
+    }
+    try{
+      const ff=new FontFace(name,buf.slice(0));
+      await ff.load(); document.fonts.add(ff);
+      userFonts.push(name); userFontBufs[name]=buf.slice(0); repoFonts.push(name);
+    }catch(e){}
+  }
+  if(man && !Array.isArray(man)){               // font mặc định do tệp kê khai chỉ định
+    const tag=v=>(v&&userFonts.includes(v))?JSON.stringify(v):null;
+    let saved={};
+    try{ saved={z:localStorage.getItem('ui.fontZh'),b:localStorage.getItem('ui.fontZhBold'),v:localStorage.getItem('ui.fontVi')}; }catch(e){}
+    const z=tag(man.zh), b=tag(man.zhBold), v=tag(man.vi);
+    if(z && saved.z===null) S.fontZh=z;          // người dùng chưa tự chọn thì mới áp
+    if(b && saved.b===null) S.fontZhBold=b;
+    if(v && saved.v===null) S.fontVi=v;
+  }
+}
+async function restoreFonts(){
+  await loadRepoFonts();
+  let names=null;
+  try{ names=await idbGet('fonts'); }catch(e){}
+  if(Array.isArray(names)){
+    for(const n of names){
+      if(userFonts.includes(n)) continue;
+      const buf=await idbGet('font:'+n);
+      if(!buf) continue;
+      try{
+        const ff=new FontFace(n,buf.slice(0));
+        await ff.load(); document.fonts.add(ff);
+        userFonts.push(n); userFontBufs[n]=buf.slice(0);
+      }catch(e){}
+    }
+  }
+  try{
+    const has=v=>!v ? false : (userFonts.some(n=>JSON.stringify(n)===v) ||
+      BUILTIN_ZH.concat(BUILTIN_VI).some(([,x])=>x===v));
+    const z=localStorage.getItem('ui.fontZh'), b=localStorage.getItem('ui.fontZhBold'), v=localStorage.getItem('ui.fontVi');
+    if(has(z)) S.fontZh=z;
+    if(has(b)) S.fontZhBold=b; else if(b==='') S.fontZhBold='';
+    if(has(v)) S.fontVi=v;
+  }catch(e){}
+  refreshFonts(); render(); renderMap();
+}
 document.querySelectorAll('[data-va]').forEach(btn=>btn.onclick=()=>{
   S.vAlign=btn.dataset.va;
   document.querySelectorAll('[data-va]').forEach(x=>x.classList.toggle('on',x===btn));
   render();
 });
-$('#fontZh').onchange=()=>{S.fontZh=$('#fontZh').value;$('#fontZh').style.fontFamily=S.fontZh;applyUiZh();render();};
-$('#fontVi').onchange=()=>{S.fontVi=$('#fontVi').value;$('#fontVi').style.fontFamily=S.fontVi;render();};
+$('#fontZh').onchange=()=>{S.fontZh=$('#fontZh').value;$('#fontZh').style.fontFamily=S.fontZh;applyUiZh();keepFontPick();render();renderMap();};
+$('#fontVi').onchange=()=>{S.fontVi=$('#fontVi').value;$('#fontVi').style.fontFamily=S.fontVi;keepFontPick();render();};
+$('#fontZhBold').onchange=()=>{ S.fontZhBold=$('#fontZhBold').value; applyZhBold(); keepFontPick(); render(); renderMap(); };
 
 /* ---------------------------------------------------- bảng điều khiển */
 function bindEven(id,key){                      // lề đi theo bước 2 để mỗi khoảng còn số cột lẻ
@@ -2506,6 +2643,12 @@ async function idbGet(k){
 async function idbSet(k,v){
   try{ const db=await idbOpen();
     await new Promise((res,rej)=>{ const q=db.transaction(IDB_ST,'readwrite').objectStore(IDB_ST).put(v,k);
+      q.onsuccess=()=>res(); q.onerror=()=>rej(q.error); });
+  }catch(e){}
+}
+async function idbDel(k){
+  try{ const db=await idbOpen();
+    await new Promise((res,rej)=>{ const q=db.transaction(IDB_ST,'readwrite').objectStore(IDB_ST).delete(k);
       q.onsuccess=()=>res(); q.onerror=()=>rej(q.error); });
   }catch(e){}
 }
@@ -4331,6 +4474,7 @@ function regArrowNav(e,body){
 refreshFonts(); applyLang(); buildHeadList(); refreshControls(); refreshRoom();
 renderReg(); setView('reg'); render(); renderMap(); fit();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>render());
+restoreFonts();                                  // font đã nạp lần trước, lấy lại từ máy
 </script>
 
 <script>

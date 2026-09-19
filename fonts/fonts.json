@@ -1,9 +1,9 @@
 {
   "v": "1",
   "fonts": [
-    { "name": "Kai shu",      "file": "kaishu.ttf" },
-    { "name": "Yan kai",  "file": "yankai.ttf" }
+    { "name": "楷書", "file": "kaishu.woff2" },
+    { "name": "顏楷", "file": "yankai.woff2" }
   ],
-  "zh": "Kai",
-  "zhBold": "Yan kai"
+  "zh": "楷書",
+  "zhBold": "顏楷"
 }

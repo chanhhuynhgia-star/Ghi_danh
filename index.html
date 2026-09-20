@@ -22,7 +22,7 @@ body{display:flex;flex-direction:column}
 #topbar{display:flex;align-items:stretch;gap:16px;padding:0 16px;background:#fff;
   border-bottom:.5px solid #d3d3d9;flex:0 0 auto}
 #topbar .spacer{flex:1}
-#topbar>#bPanel,#topbar>#lang,#topbar>#bAcct{align-self:center}
+#topbar>#bPanel,#topbar>#lang,#topbar>#bAcct,#topbar>#bSet{align-self:center}
 #bPanel{padding:10px 15px;font-size:18px;line-height:1}
 #viewseg{flex:0 0 auto;padding:0;background:none;border-radius:0;gap:0;align-items:stretch}
 #viewseg button{flex:0 0 auto;background:none;border-radius:0;box-shadow:none;
@@ -49,7 +49,7 @@ body.nopanel #bPanel .chev{transform:scaleX(-1)}
 #brand{display:none}
 #brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .brandrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#lang{width:auto;font-size:12.5px;padding:4px;background:#e8e8ee}
+#lang{width:auto;font-size:16px;line-height:1;padding:5px 2px 5px 7px;background:#e8e8ee}
 #brand p{margin:2px 0 0;font-size:13px;color:#8a8a8e}
 #tabs{display:flex;gap:2px;margin:14px 16px 0;padding:2px;background:#e4e4ea;border-radius:9px}
 #tabs button{flex:1;padding:8px 1px;border:0;background:none;font:inherit;font-size:14px;color:#5c6470;cursor:pointer;border-radius:8px;letter-spacing:-.01em;white-space:nowrap}
@@ -179,6 +179,8 @@ body:not(.v-print) #stage{display:none}
 body.v-map #maptools{display:flex;align-items:center;gap:7px;margin-left:10px}
 body.v-reg #regtools{display:flex;align-items:center;gap:7px}
 #printtools .btn,#maptools .btn{padding:7px 11px}
+#bPrint{display:inline-flex;align-items:center;justify-content:center;padding:6px 12px}
+#bPrint svg{display:block}
 #filemenu{position:relative}
 #filepop{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:#fff;border-radius:11px;
   padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.16);flex-direction:column;gap:4px;min-width:130px}
@@ -611,6 +613,24 @@ body.mlmin #mapsplit{display:none}
 #regtools .btn{padding:7px 11px}
 @media print{ #regscroll #regtable{zoom:1!important} }
 
+/* ---------- hộp Cài đặt: gom các thiết lập ban đầu ---------- */
+#bSet{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:0;
+  border-radius:999px;background:none;color:#4a5560;cursor:pointer;padding:0}
+#bSet:hover{background:#e8e8ee;color:#1f2328}
+#bSet svg{display:block}
+#setmask{position:fixed;inset:0;z-index:64;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
+#setmask.on{display:flex}
+#setbox{background:#f2f2f7;border-radius:16px;width:540px;max-width:94vw;max-height:88vh;
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(20,40,60,.3)}
+#sethead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 0;flex:0 0 auto}
+#sethead h3{margin:0;font-size:19px;font-weight:650;letter-spacing:-.02em}
+#settabs{margin:12px 18px 0;flex:0 0 auto}
+#setpanes{flex:1;overflow-y:auto;padding:18px 18px 24px}
+.spane{display:none}
+.spane.on{display:block}
+#setpanes .grp:last-child{margin-bottom:0}
+@media print{ #setmask{display:none!important} }
+
 /* ---------- chọn phiên đã lưu trong một thư mục ---------- */
 #fmask{position:fixed;inset:0;z-index:62;background:rgba(20,30,40,.34);display:none;align-items:center;justify-content:center}
 #fmask.on{display:flex}
@@ -633,6 +653,69 @@ body.mlmin #mapsplit{display:none}
 #fcur{font-size:11.5px;color:#8a8a8e;padding:4px 10px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #fcur:empty{display:none}
 @media print{ #fmask{display:none!important} }
+
+/* ================= NGUYỆN VĂN 愿文 ================= */
+body.v-klu #kluview{display:flex}
+#kluview{flex:1;overflow:auto;flex-direction:column;align-items:stretch;gap:14px;padding:26px 30px 30px}
+#klWrap{position:relative;display:flex;justify-content:center;min-width:100%;width:max-content;margin:0 auto}
+#klSheetBox{position:relative;width:100%;max-width:980px;flex:0 0 auto}
+#klReadout{align-self:center}
+#p-kltext .btn:disabled{opacity:.38;cursor:default;box-shadow:none}
+#p-kltext .btn:disabled:hover{background:#fff}
+#klSheet{background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.09),0 14px 34px rgba(0,0,0,.12)}
+#klSheet svg{display:block;width:100%;height:auto}
+#klSheet svg .hit{fill:#000;fill-opacity:0;cursor:text}
+#klSheet svg .hit:hover{fill-opacity:.04}
+#klSheet svg .ghost{fill:none;stroke:#0a84ff;stroke-opacity:.16;stroke-width:.25}
+#klSheet svg .sel{fill:#0a84ff;fill-opacity:.13}
+#klSheet svg .caret{fill:none;stroke:#0a84ff;stroke-width:.5}
+#klSheet svg .sqmark{fill:#0a84ff;fill-opacity:.55}
+#klIme{position:absolute;left:0;top:0;width:24px;height:24px;opacity:.01;border:0;padding:0;margin:0;
+  background:transparent;font-size:16px;z-index:3;border-radius:0}
+#klGuides{position:absolute;inset:0;pointer-events:none;z-index:4;touch-action:none}
+#klGuides .klline{position:absolute;left:0;right:0;border-top:1px dashed #c3ced8}
+#klGuides .klh{position:absolute;left:0;right:0;height:14px;margin-top:-7px;cursor:row-resize;pointer-events:auto}
+#klGuides .klh::before{content:'';position:absolute;left:0;right:0;top:6px;border-top:1.6px dashed #0a84ff;opacity:.55}
+#klGuides .klh:hover{background:rgba(10,132,255,.14)}
+#klGuides .klh:active{background:rgba(10,132,255,.28)}
+#klGuides .klh:hover::before,#klGuides .klh:active::before{opacity:1}
+#klGuides .klh i{position:absolute;right:8px;top:-10px;font-style:normal;font-size:10.5px;line-height:1;
+  color:#fff;background:#0a84ff;border-radius:5px;padding:3.5px 7px;opacity:0;transition:opacity .12s;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+#klGuides .klh:hover i,#klGuides .klh:active i{opacity:1}
+@media (any-pointer:coarse){ #klGuides .klh{height:24px;margin-top:-12px} #klGuides .klh::before{top:11px} }
+#klReadout{color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:center;
+  max-width:940px;font-variant-numeric:tabular-nums}
+#klReadout b{font-weight:600;color:var(--ink)}
+#klReadout .bad{color:#c0362c}
+.onlyklu{display:none}
+body.v-klu .onlyklu{display:inline-block}
+body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
+#klutools .btn{padding:7px 11px}
+#klZoomVal{font-size:12.5px;color:var(--muted);width:42px;text-align:center}
+#klBands .bhead{display:flex;justify-content:flex-end;gap:10px;padding:8px 14px 5px;
+  font-size:11.5px;color:#8a8a8e;border-bottom:.5px solid #e4e4ea}
+#klBands .bhead span{width:72px;text-align:center}
+#klBands .row .pair,#klQuick .pair{display:flex;gap:10px;flex:0 0 auto}
+#klBands .numbox>input[data-num],#klQuick .numbox>input[data-num]{width:72px}
+#klClipNote{font-size:12.5px;color:#8a8a8e;line-height:1.45;margin:8px 4px 0}
+#klClipNote:empty{display:none}
+#klClipNote.bad{color:#c0362c}
+#klkeys dt{flex:0 0 132px}
+@media (max-width:1300px){ #klZoomVal{display:none!important} body.v-klu #klutools{gap:5px;margin-left:0} }
+@media print{
+  body.v-klu #regview,body.v-klu #mapview,body.v-klu #stage{display:none!important}
+  html body.pmode #kluview{display:none!important}
+  body.v-klu #kluview{display:block!important;padding:0!important;overflow:visible!important;height:auto!important}
+  #klWrap{display:block!important}
+  #klSheetBox{position:static!important;width:auto!important;max-width:none!important;aspect-ratio:auto!important}
+  #klSheet{box-shadow:none!important}
+  #klSheet svg{width:var(--klw)!important;height:var(--klh)!important}
+  #klSheet svg .caret,#klSheet svg .sel,#klSheet svg .ghost,#klSheet svg .sqmark,#klSheet svg .hit{display:none!important}
+  #klIme,#klGuides,#klReadout{display:none!important}
+  body.v-klu #app,body.v-klu #main{display:block!important;overflow:visible!important;height:auto!important;min-height:0!important}
+  body.v-klu #klWrap{width:auto!important;min-width:0!important;margin:0!important}
+}
 </style>
 </head>
 <body class="guides v-reg">
@@ -643,12 +726,14 @@ body.mlmin #mapsplit{display:none}
     <button data-view="reg" class="on">Ghi danh</button>
     <button data-view="map">Sơ đồ</button>
     <button data-view="print">Danh sách</button>
+    <button data-view="klu">Nguyện văn</button>
   </div>
   <span class="spacer"></span>
+  <button id="bSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.22.38.3.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.62l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg></button>
   <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
     <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
   </button>
-  <select id="lang" autocomplete="off"><option value="vi">Tiếng Việt</option><option value="zh">繁體中文</option></select>
+  <select id="lang" autocomplete="off" title="Ngôn ngữ · 語言"><option value="vi">🇻🇳</option><option value="zh">🇹🇼</option></select>
 </div>
 
 <div id="acctMenu" role="menu" hidden>
@@ -669,10 +754,11 @@ body.mlmin #mapsplit{display:none}
   <div id="tabs">
     <button data-p="p-reg" data-view="reg" class="on">Danh sách</button>
     <button data-p="p-room" data-view="map">Xếp chỗ</button>
-    <button data-p="p-roomset" data-view="map">Phòng</button>
     <button data-p="p-page" data-view="print">Bố cục</button>
     <button data-p="p-head" data-view="print">Tiêu đề</button>
-    <button data-p="p-font" data-view="print">Chữ</button>
+    <button data-p="p-klpaper" data-view="klu">Bố cục</button>
+    <button data-p="p-klgrid" data-view="klu">Lưới</button>
+    <button data-p="p-kltext" data-view="klu">Chữ</button>
   </div>
   <div id="panels">
 
@@ -698,6 +784,20 @@ body.mlmin #mapsplit{display:none}
 
     <!-- ============ ② SƠ ĐỒ · tab Xếp chỗ (dùng thường) ============ -->
     <section class="pane" id="p-room">
+      <div class="grp" id="grpSeats">
+        <h2>Số ghế</h2>
+        <div class="row"><label>Ghế nam</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Ghế nữ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatF" min="0" max="400" step="1"><span class="unit">ghế</span></div>
+        <div class="row"><label>Lấy theo danh sách ghi danh</label><button class="btn" id="bSeatAuto" style="flex:0 0 auto">Áp dụng</button></div>
+      </div>
+      <div class="grp" id="grpGrid">
+        <h2>Hàng và cột</h2>
+        <p class="note">Để 0 thì tự tính theo số ghế.</p>
+        <div class="row"><label>Nam · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nam · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+        <div class="row"><label>Nữ · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
+        <div class="row"><label>Nữ · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
+      </div>
       <div class="grp">
         <h2>Xếp chỗ</h2>
         <div class="card">
@@ -720,77 +820,20 @@ body.mlmin #mapsplit{display:none}
       </div>
     </section>
 
-    <!-- ============ ② SƠ ĐỒ · tab Phòng (thiết lập một lần) ============ -->
-    <section class="pane" id="p-roomset">
-      <div class="grp">
-        <h2>Số ghế</h2>
-        <div class="row"><label>Ghế nam</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
-        <div class="row"><label>Ghế nữ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatF" min="0" max="400" step="1"><span class="unit">ghế</span></div>
-        <div class="row"><label>Lấy theo danh sách ghi danh</label><button class="btn" id="bSeatAuto" style="flex:0 0 auto">Áp dụng</button></div>
-      </div>
-      <div class="grp">
-        <h2>Hàng và cột</h2>
-        <p class="note">Để 0 thì tự tính theo số ghế.</p>
-        <div class="row"><label>Nam · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
-        <div class="row"><label>Nam · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="mRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
-        <div class="row"><label>Nữ · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
-        <div class="row"><label>Nữ · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
-      </div>
-      <div class="grp">
-        <h2>Kích thước phòng</h2>
-        <div class="row"><label>Chiều ngang phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>Chiều dài phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>Lề tường trái</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lề tường phải</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lề tường sau</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
-      </div>
-      <div class="grp">
-        <h2>Sân khấu</h2>
-        <div class="row"><label>Chiều dài sân khấu</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>佛座 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>佛座 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
-        <div class="row"><label>講台 · vị trí</label><button class="btn" id="bPodiumReset" style="flex:0 0 auto">Về mặc định</button></div>
-      </div>
-      <div class="grp">
-        <h2>Ghế và lối đi</h2>
-        <div class="row"><label>Ngang ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairWidth" min="20" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Sâu ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairLength" min="20" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Cách ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapHorizontal" min="0" max="60" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Cách dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapVertical" min="0" max="120" step="1"><span class="unit">cm</span></div>
-        <div class="row"><label>Lối đi giữa</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="centralAisle" min="0" max="300" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Lối đi phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="subAisle" min="0" max="200" step="5"><span class="unit">cm</span></div>
-        <div class="row"><label>Số ghế rồi mới chia lối phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="maxSeatsBeforeSubAisle" min="2" max="30" step="1"><span class="unit">ghế</span></div>
-      </div>
-    </section>
 
     <!-- ============ ③ BẢNG TÊN · tab Bố cục ============ -->
     <section class="pane" id="p-page">
       <div id="warnbox" hidden></div>
       <div class="grp">
-        <h2>Khổ giấy</h2>
-        <div class="row"><label>Kích thước</label>
-          <select id="paper">
-            <option value="353x250">B4 ngang</option>
-            <option value="250x176">B5 ngang</option>
-            <option value="297x210">A4 ngang</option>
-            <option value="420x297">A3 ngang</option>
-            <option value="custom">Tự nhập</option>
-          </select></div>
-        <div class="row" id="customsize" style="display:none">
-          <label>Rộng × cao (mm)</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="pw" min="80" max="900" step="1">
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="ph" min="80" max="900" step="1"><span class="unit">mm</span>
-        </div>
-        <div class="row"><label>Chia đôi trang khi in</label><button class="btn tg" id="tgSplit" style="flex:0 0 auto">Chia đôi trang</button></div>
-        <div class="row" id="rowSheet"><label>Khổ mỗi tờ</label>
-          <select id="sheetSize">
-            <option value="210x297">A4 dọc</option>
-            <option value="297x210">A4 ngang</option>
-            <option value="176x250">B5 dọc</option>
-            <option value="250x176">B5 ngang</option>
-          </select></div>
+        <h2>In trên khổ nhỏ</h2>
+      <div class="row"><label>Chia đôi trang khi in</label><button class="btn tg" id="tgSplit" style="flex:0 0 auto">Chia đôi trang</button></div>
+      <div class="row" id="rowSheet"><label>Khổ mỗi tờ</label>
+        <select id="sheetSize">
+          <option value="210x297">A4 dọc</option>
+          <option value="297x210">A4 ngang</option>
+          <option value="176x250">B5 dọc</option>
+          <option value="250x176">B5 ngang</option>
+        </select></div>
       </div>
       <div class="grp">
         <h2>Số cột từng khoảng</h2>
@@ -846,23 +889,179 @@ body.mlmin #mapsplit{display:none}
       </div>
     </section>
 
-    <!-- ============ ③ BẢNG TÊN · tab Chữ ============ -->
-    <section class="pane" id="p-font">
+
+    <!-- ============ ④ NGUYỆN VĂN · tab Bố cục ============ -->
+    <section class="pane" id="p-klpaper">
       <div class="grp">
-        <h2>Font</h2>
-        <div class="row"><label>Chữ Hán</label><select id="fontZh"></select></div>
-        <div class="row"><label>Nét đậm chữ Hán</label><select id="fontZhBold"></select></div>
-        <div class="row"><label>Chữ Việt</label><select id="fontVi"></select></div>
-        <div class="row"><label>Chiều cao chữ Việt</label>
-          <input type="text" inputmode="numeric" data-num autocomplete="off" id="viPct" min="20" max="100" step="1"><span class="unit">%</span></div>
+        <h2>Bố cục nguyện văn</h2>
+        <div class="card">
+          <div class="row"><label>Lề dưới tối thiểu</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klMarginB" min="0" max="80" step="1"><span class="unit">mm</span></div>
+          <div class="row"><label>Lề trên hơn lề dưới</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTopPct" min="0" max="300" step="5"><span class="unit">%</span></div>
+          <div class="row"><label>Giãn cách hàng</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klGap" min="0" max="45" step="1"><span class="unit">%</span></div>
+          <div class="row"><label>Giãn cách chữ</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klCharGap" min="0" max="60" step="1"><span class="unit">%</span></div>
+          <div class="row"><label>Đồng bộ cỡ ô</label><input type="checkbox" id="klUniform"></div>
+        </div>
+        <p class="note">Kéo đường xanh nằm ngang trên trang giấy để đặt lề dưới tối thiểu. Hai đường xám là lề thật sau khi bố cục đã dàn đều, thường rộng hơn mức tối thiểu.</p>
       </div>
       <div class="grp">
-        <h2>Nạp font riêng</h2>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn primary" id="bFont">Chọn tệp font</button>
-          <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" multiple hidden>
+        <h2>Năm khoảng</h2>
+        <div class="card" id="klBands">
+          <div class="bhead"><span id="klThCols">Hàng</span><span id="klThChars">Chữ</span></div>
+          <div class="row"><label id="klLb1">Khoảng 1</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB1c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB1h" min="1" max="60" step="1"></span></div>
+          <div class="row"><label>Khoảng 2</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB2c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB2h" min="1" max="60" step="1"></span></div>
+          <div class="row"><label>Khoảng 3</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB3c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB3h" min="1" max="60" step="1"></span></div>
+          <div class="row"><label>Khoảng 4</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB4c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB4h" min="1" max="60" step="1"></span></div>
+          <div class="row"><label>Khoảng 5</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB5c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB5h" min="1" max="60" step="1"></span></div>
         </div>
-        <div id="fontlist"></div>
+        <div class="card" id="klQuick" style="margin-top:10px">
+          <div class="row"><label>Đặt nhanh</label><span class="pair">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klDefC" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klDefH" min="1" max="60" step="1"></span></div>
+          <div class="act-actions"><button class="btn" id="klApplyAll">Áp cho cả năm khoảng</button></div>
+        </div>
+        <p class="note">Khoảng 1 nằm ngoài cùng bên phải, nơi bắt đầu viết. Số hàng luôn lấy số lẻ.</p>
+      </div>
+      <div class="grp">
+        <h2>Tiêu đề</h2>
+        <div class="card">
+          <div class="row"><label>Khoảng 1 là tiêu đề</label><input type="checkbox" id="klTitleOn"></div>
+        </div>
+        <div class="card" id="klTitleBox" style="margin-top:10px">
+          <div class="row"><label>Số chữ tiêu đề</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleChars" min="1" max="12" step="1"><span class="unit">chữ</span></div>
+          <div class="row"><label>Canh dọc</label>
+            <select id="klTitleAlign">
+              <option value="center">Giữa tuyệt đối</option>
+              <option value="ratio">Theo tỉ lệ lề</option>
+              <option value="top">Sát lề trên</option>
+            </select></div>
+          <div class="row"><label>Cỡ chữ tiêu đề</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleSize" min="8" max="60" step="1"><span class="unit">%</span></div>
+          <div class="row"><label>Giãn cách chữ tiêu đề</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleSp" min="0" max="200" step="5"><span class="unit">%</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ④ NGUYỆN VĂN · tab Lưới ============ -->
+    <section class="pane" id="p-klgrid">
+      <div class="grp">
+        <h2>Nét lưới</h2>
+        <div class="card">
+          <div class="row"><label>Ẩn lưới, chỉ in chữ</label><input type="checkbox" id="klHideGrid"></div>
+        </div>
+        <div class="card" id="klInkBox" style="margin-top:10px">
+          <div class="row"><label>Kiểu ô</label>
+            <select id="klCellStyle">
+              <option value="plain">Ô vuông trơn</option>
+              <option value="tian">Điền tự cách 田</option>
+              <option value="mi">Mễ tự cách 米</option>
+              <option value="dot">Dấu tâm ô</option>
+            </select></div>
+          <div class="row"><label>Màu nét</label>
+            <select id="klInk">
+              <option value="#111111">Đen</option>
+              <option value="#5B6560">Xám</option>
+              <option value="#9E3B2E">Đỏ son</option>
+              <option value="#2F5D8A">Xanh lam</option>
+            </select></div>
+          <div class="row"><label>Độ dày nét</label>
+            <input type="text" inputmode="decimal" data-num autocomplete="off" id="klStroke" min="0.1" max="1.2" step="0.05"><span class="unit">mm</span></div>
+          <div class="row"><label>Đường phân khoảng</label><input type="checkbox" id="klDivider"></div>
+          <div class="row"><label>Khung viền ngoài</label><input type="checkbox" id="klOutline"></div>
+        </div>
+        <p class="note">Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn.</p>
+      </div>
+    </section>
+
+    <!-- ============ ④ NGUYỆN VĂN · tab Chữ ============ -->
+    <section class="pane" id="p-kltext">
+      <div class="grp">
+        <h2>Chữ trong ô</h2>
+        <div class="card">
+          <div class="row"><label>Hiện chữ</label><input type="checkbox" id="klShowText"></div>
+        </div>
+        <div class="card" id="klTextBox" style="margin-top:10px">
+          <div class="row"><label>Chữ Hán</label><select id="klFont"></select></div>
+          <div class="row"><label>Cỡ chữ theo ô</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextSize" min="40" max="100" step="1"><span class="unit">%</span></div>
+          <div class="row"><label>Màu chữ</label>
+            <select id="klTextColor">
+              <option value="#9AA0A6">Xám nhạt</option>
+              <option value="#D39A94">Hồng nhạt</option>
+              <option value="#111111">Đen</option>
+            </select></div>
+          <div class="row"><label>Độ đậm</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextOpacity" min="10" max="100" step="5"><span class="unit">%</span></div>
+        </div>
+        <p class="note">Font lấy từ danh sách chung của trang. Muốn nạp thêm tệp font thì vào thẻ Danh sách, tab Chữ.</p>
+      </div>
+      <div class="grp">
+        <h2>Ép chữ</h2>
+        <div class="card">
+          <div class="row"><label>Bề ngang theo ô</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqW" min="20" max="100" step="5"><span class="unit">%</span></div>
+          <div class="row"><label>Chiều cao theo cỡ chữ</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqH" min="20" max="150" step="5"><span class="unit">%</span></div>
+          <div class="row"><label>Canh ngang</label>
+            <select id="klAlignH"><option value="right">Phải</option><option value="center">Giữa</option><option value="left">Trái</option></select></div>
+          <div class="row"><label>Canh dọc</label>
+            <select id="klAlignV"><option value="center">Giữa</option><option value="top">Trên</option><option value="bottom">Dưới cùng</option></select></div>
+          <div class="act-actions">
+            <button class="btn" id="klSqOn">Ép ô đang chọn</button>
+            <button class="btn" id="klSqOff">Bỏ ép</button>
+          </div>
+        </div>
+        <p class="note">Chỉ những ô đang chọn mới bị ép. Ô đã ép có chấm nhỏ ở góc, chấm này không in ra.</p>
+      </div>
+      <div class="grp">
+        <h2>Sửa chữ</h2>
+        <div class="card">
+          <div class="row"><label>Hoàn tác</label>
+            <span class="btnrow" style="flex:0 0 auto">
+              <button class="btn" id="klUndo">Lùi</button>
+              <button class="btn" id="klRedo">Tiến</button>
+            </span></div>
+          <div class="act-actions">
+            <button class="btn" id="klCopy">Chép</button>
+            <button class="btn" id="klCut">Cắt</button>
+            <button class="btn" id="klPaste">Dán</button>
+            <button class="btn" id="klDel">Xoá</button>
+          </div>
+          <div class="act-actions">
+            <button class="btn danger" id="klClear">Xoá toàn bộ chữ</button>
+          </div>
+        </div>
+        <p id="klClipNote"></p>
+      </div>
+      <div class="grp">
+        <h2>Phím tắt</h2>
+        <dl class="keys" id="klkeys">
+          <div><dt>Bấm một ô</dt><dd>Đặt con trỏ rồi gõ thẳng</dd></div>
+          <div><dt>Kéo chuột</dt><dd>Chọn một dải ô</dd></div>
+          <div><dt>Shift bấm</dt><dd>Chọn đến ô này</dd></div>
+          <div><dt>Cmd bấm</dt><dd>Thêm hoặc bỏ một ô</dd></div>
+          <div><dt>Enter</dt><dd>Sang hàng kế</dd></div>
+          <div><dt>Mũi tên</dt><dd>Di chuyển ô hiện hành</dd></div>
+          <div><dt>Backspace</dt><dd>Xoá lùi</dd></div>
+          <div><dt>Cmd C, X, V</dt><dd>Chép, cắt, dán</dd></div>
+          <div><dt>Delete</dt><dd>Xoá chữ trong vùng chọn</dd></div>
+          <div><dt>Cmd Z</dt><dd>Hoàn tác</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -878,6 +1077,12 @@ body.mlmin #mapsplit{display:none}
       <button class="btn" id="bRegZoomOut">−</button><span id="regzoomval">100%</span><button class="btn" id="bRegZoomIn">+</button>
     </div>
     <div id="maptools" class="onlymap"></div>
+    <div id="klutools" class="onlyklu">
+      <button class="btn" id="klZoomOut">−</button><span id="klZoomVal">100%</span><button class="btn" id="klZoomIn">+</button>
+      <button class="btn" id="klFit">Vừa khung</button>
+      <span class="sep"></span>
+      <button class="btn tg" id="klTgGrid">Ẩn lưới</button>
+    </div>
     <div id="printtools" class="onlyprint">
       <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
       <button class="btn onlyprint" id="bFit">Vừa khung</button>
@@ -899,8 +1104,7 @@ body.mlmin #mapsplit{display:none}
       </div>
     </div>
     <span class="sep"></span>
-    <button class="btn" id="bPrint">In</button>
-    <button class="btn primary" id="bPdf">Lưu PDF</button>
+    <button class="btn primary" id="bPrint" title="In hoặc lưu PDF" aria-label="In hoặc lưu PDF"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M7 3h10a1 1 0 0 1 1 1v3h1.5A2.5 2.5 0 0 1 22 9.5v5a2.5 2.5 0 0 1-2.5 2.5H18v3a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3H4.5A2.5 2.5 0 0 1 2 14.5v-5A2.5 2.5 0 0 1 4.5 7H6V4a1 1 0 0 1 1-1Zm1 4h8V5H8v2Zm8 8H8v4h8v-4Zm2 0v1h1.5a.5.5 0 0 0 .5-.5v-5a.5.5 0 0 0-.5-.5h-15a.5.5 0 0 0-.5.5v5c0 .28.22.5.5.5H6v-1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1Zm.25-4.75a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg></button>
     <input type="file" id="fileIn" accept=".json" hidden>
   </div>
 
@@ -909,6 +1113,17 @@ body.mlmin #mapsplit{display:none}
   <div id="printarea"></div>
   <div id="regview" class="view"></div>
   <div id="mapview" class="view"></div>
+
+  <div id="kluview" class="view">
+    <div id="klWrap">
+      <div id="klSheetBox">
+        <div id="klSheet"></div>
+        <div id="klGuides"></div>
+        <input id="klIme" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="-1" aria-hidden="true">
+      </div>
+    </div>
+    <div id="klReadout"></div>
+  </div>
 
   <div id="stage" class="view">
     <div id="pagewrap"><div id="page" tabindex="0"></div></div>
@@ -947,6 +1162,106 @@ body.mlmin #mapsplit{display:none}
   </div>
 </div></div>
 
+
+<div id="setmask"><div id="setbox">
+  <div id="sethead"><h3>Cài đặt</h3><button class="btn" id="setClose">Đóng</button></div>
+  <div class="seg" id="settabs">
+    <button data-sp="s-font" class="on">Chữ</button>
+    <button data-sp="s-paper">Khổ giấy</button>
+    <button data-sp="s-room">Phòng</button>
+  </div>
+  <div id="setpanes">
+    <section class="spane on" id="s-font">
+      <div class="grp">
+        <h2>Font</h2>
+        <div class="row"><label>Chữ Hán</label><select id="fontZh"></select></div>
+        <div class="row"><label>Nét đậm chữ Hán</label><select id="fontZhBold"></select></div>
+        <div class="row"><label>Chữ Việt</label><select id="fontVi"></select></div>
+        <div class="row"><label>Chiều cao chữ Việt</label>
+          <input type="text" inputmode="numeric" data-num autocomplete="off" id="viPct" min="20" max="100" step="1"><span class="unit">%</span></div>
+      </div>
+      <div class="grp">
+        <h2>Nạp font riêng</h2>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" id="bFont">Chọn tệp font</button>
+          <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" multiple hidden>
+        </div>
+        <div id="fontlist"></div>
+      </div>
+    
+    </section>
+    <section class="spane" id="s-paper">
+      <div class="grp">
+        <h2>Khổ giấy bảng tên</h2>
+        <div class="card">
+        <div class="row"><label>Kích thước</label>
+          <select id="paper">
+            <option value="353x250">B4 ngang</option>
+            <option value="250x176">B5 ngang</option>
+            <option value="297x210">A4 ngang</option>
+            <option value="420x297">A3 ngang</option>
+            <option value="custom">Tự nhập</option>
+          </select></div>
+        <div class="row" id="customsize" style="display:none">
+          <label>Rộng × cao (mm)</label>
+          <input type="text" inputmode="numeric" data-num autocomplete="off" id="pw" min="80" max="900" step="1">
+          <input type="text" inputmode="numeric" data-num autocomplete="off" id="ph" min="80" max="900" step="1"><span class="unit">mm</span>
+        </div>
+        </div>
+      </div>
+      <div class="grp">
+        <h2>Khổ giấy nguyện văn</h2>
+        <div class="card">
+          <div class="row"><label>Kích thước</label>
+            <select id="klPreset">
+              <option value="353x250">B4 ngang</option>
+              <option value="364x257">B4 JIS ngang</option>
+              <option value="250x176">B5 ngang</option>
+              <option value="297x210">A4 ngang</option>
+              <option value="420x297">A3 ngang</option>
+              <option value="210x297">A4 dọc</option>
+              <option value="custom">Tự nhập</option>
+            </select></div>
+          <div class="row" id="klCustom" style="display:none"><label>Rộng × cao (mm)</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klPw" min="60" max="1200" step="1">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klPh" min="60" max="1200" step="1"><span class="unit">mm</span>
+          </div>
+        </div>
+        <p class="note">Giấy đặt ngang thì chiều ngang là cạnh dài. Chữ viết dọc từ trên xuống, hàng chạy từ phải sang trái.</p>
+      </div>
+    </section>
+    <section class="spane" id="s-room">
+      <div class="grp">
+        <h2>Kích thước phòng</h2>
+        <div class="row"><label>Chiều ngang phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomWidth" min="100" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Chiều dài phòng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="roomLength" min="100" max="4000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường trái</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginLeft" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường phải</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginRight" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lề tường sau</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="wallMarginBottom" min="0" max="600" step="5"><span class="unit">cm</span></div>
+      </div>
+      <div class="grp">
+        <h2>Sân khấu</h2>
+        <div class="row"><label>Chiều dài sân khấu</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="stageLength" min="0" max="1500" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>佛座 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="altarH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumW" min="10" max="3000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · chiều dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="podiumH" min="10" max="1000" step="10"><span class="unit">cm</span></div>
+        <div class="row"><label>講台 · vị trí</label><button class="btn" id="bPodiumReset" style="flex:0 0 auto">Về mặc định</button></div>
+      </div>
+      <div class="grp">
+        <h2>Ghế và lối đi</h2>
+        <div class="row"><label>Ngang ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairWidth" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Sâu ghế</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="chairLength" min="20" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách ngang</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapHorizontal" min="0" max="60" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Cách dọc</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="gapVertical" min="0" max="120" step="1"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi giữa</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="centralAisle" min="0" max="300" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Lối đi phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="subAisle" min="0" max="200" step="5"><span class="unit">cm</span></div>
+        <div class="row"><label>Số ghế rồi mới chia lối phụ</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="maxSeatsBeforeSubAisle" min="2" max="30" step="1"><span class="unit">ghế</span></div>
+      </div>
+    
+    </section>
+  </div>
+</div></div>
 
 <div id="fmask"><div id="fbox">
   <h3 id="ftitle">Mở phiên đã lưu</h3>
@@ -1007,6 +1322,16 @@ S.room={roomWidth:600,roomLength:1200,stageLength:300,wallMarginLeft:50,
         wallMarginRight:0,wallMarginBottom:100,centralAisle:80,subAisle:20,maxSeatsBeforeSubAisle:5,
         altarW:300,altarH:50,podiumW:200,podiumH:150};
 S.grid={mRows:0,mCols:0,fRows:0,fCols:0};
+S.kl={                                            // nguyện văn 愿文: mỗi khoá giữ đúng con số hiện trên ô điều khiển
+  pw:353, ph:250, marginB:6, topPct:130, gap:14, charGap:15, uniform:true,
+  bands:[{cols:5,chars:27},{cols:7,chars:27},{cols:5,chars:27},{cols:5,chars:27},{cols:5,chars:27}],
+  defCols:5, defChars:27,
+  titleOn:true, titleChars:4, titleAlign:'center', titleSize:20, titleSp:100,
+  showText:true, font:'', textSize:86, textColor:'#111111', textOpacity:100,
+  sqW:50, sqH:100, sqAlignH:'right', sqAlignV:'center',
+  hideGrid:false, cellStyle:'plain', ink:'#111111', stroke:0.4, divider:true, outline:false,
+  cells:{}, squeezed:{}
+};
 S.mapGuides=true;
 S.mapSub='gvcn';
 S.seatLang={m:{},f:{}}; S.langList=[];            // ngôn ngữ cố định theo số ghế
@@ -1205,11 +1530,49 @@ const I18N={
  'Dưới tên hiển thị':'名下顯示','Khi in sơ đồ':'列印座位圖時','In kèm 佛座 và 講台':'列印時含佛座與講台',
  'Hàng và cột':'排與欄','Để 0 thì tự tính theo số ghế.':'設為 0 則依座位數自動計算。','Sân khấu':'舞台',
  '+ Thêm dòng':'+ 新增一列','Thống kê lớp':'班員統計','Tô màu':'著色','Ô trống':'空格',
- 'Tệp ▾':'檔案 ▾','In danh sách':'列印名冊','In sơ đồ':'列印座位圖','In bảng tên':'列印清書表格'
+ 'Tệp ▾':'檔案 ▾','In danh sách':'列印名冊','In sơ đồ':'列印座位圖','In bảng tên':'列印清書表格',
+ 'Nguyện văn':'愿文','Giấy':'紙張','Lưới':'格線','In nguyện văn':'列印愿文',
+ 'Cài đặt':'設定','Đóng':'關閉','Khổ giấy bảng tên':'清書表格紙張','Khổ giấy nguyện văn':'愿文紙張',
+ 'Ẩn lưới':'隱藏格線','Xuất SVG':'匯出 SVG','B4 JIS ngang':'B4 JIS 橫式',
+ 'Bố cục nguyện văn':'愿文版面','Lề dưới tối thiểu':'下邊距下限','Lề trên hơn lề dưới':'上邊距多於下邊距',
+ 'Giãn cách hàng':'行距','Giãn cách chữ':'字距','Đồng bộ cỡ ô':'各區格子大小一致',
+ 'Năm khoảng':'五區','Khoảng 1':'第一區','Khoảng 2':'第二區','Khoảng 3':'第三區','Khoảng 4':'第四區','Khoảng 5':'第五區',
+ 'Đặt nhanh':'快速設定','Áp cho cả năm khoảng':'套用至五區',
+ 'Khoảng 1 là tiêu đề':'第一區作為標題','Số chữ tiêu đề':'標題字數','Canh dọc':'垂直位置',
+ 'Cỡ chữ tiêu đề':'標題字徑','Giãn cách chữ tiêu đề':'標題字距',
+ 'Giữa tuyệt đối':'正中','Theo tỉ lệ lề':'依邊距比例','Sát lề trên':'齊上邊距',
+ 'Nét lưới':'格線樣式','Ẩn lưới, chỉ in chữ':'隱藏格線，只印文字','Kiểu ô':'格式',
+ 'Ô vuông trơn':'方格','Điền tự cách 田':'田字格','Mễ tự cách 米':'米字格','Dấu tâm ô':'中心點',
+ 'Màu nét':'線條顏色','Đen':'黑','Xám':'灰','Đỏ son':'硃砂','Xanh lam':'藍',
+ 'Độ dày nét':'線條粗細','Đường phân khoảng':'分區線','Khung viền ngoài':'外框',
+ 'Ép chữ':'壓扁文字','Bề ngang theo ô':'寬度占格子','Chiều cao theo cỡ chữ':'高度占字徑',
+ 'Canh ngang':'水平對齊','Phải':'靠右','Giữa':'置中','Trái':'靠左','Trên':'靠上','Dưới cùng':'靠下',
+ 'Ép ô đang chọn':'壓扁所選格','Bỏ ép':'還原',
+ 'Chữ trong ô':'格內文字','Hiện chữ':'顯示文字','Cỡ chữ theo ô':'字徑占格子','Màu chữ':'文字顏色',
+ 'Xám nhạt':'淺灰','Hồng nhạt':'淺紅','Độ đậm':'濃淡',
+ 'Sửa chữ':'編輯文字','Lùi':'復原','Tiến':'重做','Xoá':'刪除','Xoá toàn bộ chữ':'清除全部文字',
+ 'Phím tắt':'快捷鍵','Bấm một ô':'點選一格','Đặt con trỏ rồi gõ thẳng':'游標移入，直接輸入',
+ 'Chọn một dải ô':'選取一段','Shift bấm':'Shift 點選','Cmd bấm':'Cmd 點選',
+ 'Sang hàng kế':'跳到下一行','Xoá lùi':'往回刪除','Cmd C, X, V':'Cmd C、X、V',
+ 'Xoá chữ trong vùng chọn':'清除選取範圍的文字',
+ 'Giấy đặt ngang thì chiều ngang là cạnh dài. Chữ viết dọc từ trên xuống, hàng chạy từ phải sang trái.':
+   '紙張橫放時，寬度為長邊。字由上而下，行由右至左。',
+ 'Kéo đường xanh nằm ngang trên trang giấy để đặt lề dưới tối thiểu. Hai đường xám là lề thật sau khi bố cục đã dàn đều, thường rộng hơn mức tối thiểu.':
+   '拖曳紙面上的藍色橫線設定下邊距下限。兩條灰線是版面勻分後的實際邊距，通常大於所設下限。',
+ 'Khoảng 1 nằm ngoài cùng bên phải, nơi bắt đầu viết. Số hàng luôn lấy số lẻ.':
+   '第一區在最右側，由此起筆。行數一律取奇數。',
+ 'Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn.':
+   '隱藏格線後，列印與 PDF 只保留文字；螢幕上格子仍以淡線顯示，方便點選。',
+ 'Chỉ những ô đang chọn mới bị ép. Ô đã ép có chấm nhỏ ở góc, chấm này không in ra.':
+   '僅所選格子會被壓扁。已壓扁的格子角上有小圓點，該點不會列印。',
+ 'Font lấy từ danh sách chung của trang. Muốn nạp thêm tệp font thì vào thẻ Danh sách, tab Chữ.':
+   '字體取自本頁共用清單。要另外載入字體檔，請到「清書表格」的「字體」分頁。'
 };
 function L(t){ return (S.lang==='zh' && I18N[t]) ? I18N[t] : t; }
 const TRANS_SEL='#tabs button,.grp>h2,.row>label,.row>label>span,.pane .btn,.unit,.seg button,#toolbar .btn,'+
-  '#pdfbox h3,#pdfbox li,#pdfbox .btn,#pdfguides span,#paper option,#sheetSize option,dl.keys dt,dl.keys dd,.note';
+  '#pdfbox h3,#pdfbox li,#pdfbox .btn,#pdfguides span,#paper option,#sheetSize option,dl.keys dt,dl.keys dd,.note,'+
+  '#klPreset option,#klTitleAlign option,#klCellStyle option,#klInk option,#klTextColor option,#klAlignH option,#klAlignV option,'+
+  '#setbox .btn,#sethead h3';
 function applyLang(){
   document.querySelectorAll(TRANS_SEL).forEach(el=>{
     if(el.children.length) return;
@@ -1643,11 +2006,16 @@ function render(){
       $('#pagewarn').textContent=msg; $('#pagewarn').classList.add('on');
     }
   }
-  let pgW=S.splitPrint?S.sheetW:S.pw, pgH=S.splitPrint?S.sheetH:S.ph;
-  if(S.view==='map'){ pgW=210; pgH=297; }
-  else if(S.view==='reg'){ pgW=210; pgH=297; }
-  pstyle.textContent=`@page{size:${pgW}mm ${pgH}mm;margin:${S.view==='print'?0:'6mm'}}`;
+  setPageStyle();
   setZoom(zoom);
+}
+
+function setPageStyle(){                          // khổ giấy cho hộp thoại in, tuỳ màn hình đang mở
+  let pgW=S.splitPrint?S.sheetW:S.pw, pgH=S.splitPrint?S.sheetH:S.ph;
+  if(S.view==='map'||S.view==='reg'){ pgW=210; pgH=297; }
+  else if(S.view==='klu'&&S.kl){ pgW=S.kl.pw; pgH=S.kl.ph; }
+  const full = (S.view==='print'||S.view==='klu');
+  try{ pstyle.textContent=`@page{size:${pgW}mm ${pgH}mm;margin:${full?0:'6mm'}}`; }catch(e){}
 }
 
 /* ------------------------------------- chia đôi trang để in trên khổ nhỏ */
@@ -1864,6 +2232,7 @@ function doInsertPerson(){
   syncBulk(); render();
 }
 function pageActive(){
+  if(document.body.classList.contains('v-klu')) return false;
   const a=document.activeElement;
   if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) return false;
   return sel.size>0;
@@ -1873,6 +2242,7 @@ document.addEventListener('cut',e=>{ if(!pageActive())return; e.preventDefault()
 document.addEventListener('paste',e=>{ if(!pageActive())return; e.preventDefault(); doPaste(e.clipboardData.getData('text/plain')); });
 
 document.addEventListener('keydown',e=>{
+  if(document.body.classList.contains('v-klu')) return;   // nguyện văn có bộ phím riêng
   const a=document.activeElement;
   if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')) return;
   const mod=e.ctrlKey||e.metaKey;
@@ -2075,6 +2445,7 @@ function refreshFonts(){
     fl.appendChild(sp);
   });
   applyUiZh();
+  if(window.KL) KL.fonts();
 }
 $('#bFont').onclick=()=>$('#fontFile').click();
 $('#fontFile').onchange=async e=>{
@@ -2232,7 +2603,15 @@ $('#tgFills').onclick=()=>{ S.fills=!S.fills; syncTg(); render(); };
 $('#tgEmpty').onclick=()=>{ S.showEmpty=!S.showEmpty; syncTg(); render(); };
 $('#tgGuides').onclick=()=>{ S.guides=!S.guides; syncTg(); render(); };
 $('#tgFold').onclick=()=>{ S.foldLines=!S.foldLines; syncTg(); render(); };
-$('#tgSplit').onclick=()=>{ S.splitPrint=!S.splitPrint; syncTg(); render(); };
+$('#tgSplit').onclick=()=>{
+  S.splitPrint=!S.splitPrint;
+  if(S.splitPrint){                               // bật lên mà khổ hiện tại không chứa nổi nửa trang thì về A4 dọc
+    const cut=cutX(), half=Math.max(cut,S.pw-cut);
+    if(!S.sheetW||!S.sheetH||half>S.sheetW+0.01||S.ph>S.sheetH+0.01){ S.sheetW=210; S.sheetH=297; }
+    const ss=$('#sheetSize'); if(ss) ss.value=`${S.sheetW}x${S.sheetH}`;
+  }
+  syncTg(); render();
+};
 $('#sheetSize').addEventListener('change',()=>{
   const [a,b]=$('#sheetSize').value.split('x').map(Number);
   S.sheetW=a; S.sheetH=b; render();
@@ -2599,20 +2978,21 @@ window.addEventListener('afterprint',()=>{
   document.body.classList.remove('pmode'); printStats=false;
   const pa=$('#printarea'); if(pa) pa.innerHTML='';
 });
-$('#bPrint').onclick=()=>{ fitForPrint(); window.print(); };
+
 const pdfmask=$('#pdfmask');
 function openPdf(){
   $('#printGuides').checked=S.printGuides;
   $('#pdfguides').style.display = S.view==='print' ? 'flex' : 'none';
   $('#pdfsizeline').innerHTML =
     (S.lang==='zh'?'紙張尺寸請選 ':'Khổ giấy để ')+'<b id="pdfsize"></b>';
-  if(S.view!=='print'){ $('#pdfsize').textContent = S.lang==='zh'?'A4 直式':'A4 dọc'; }
+  if(S.view==='klu'&&S.kl){ $('#pdfsize').textContent = `${S.kl.pw} × ${S.kl.ph} mm`; }
+  else if(S.view!=='print'){ $('#pdfsize').textContent = S.lang==='zh'?'A4 直式':'A4 dọc'; }
   else $('#pdfsize').textContent =
     ({'353x250':'B4 ngang','250x176':'B5 ngang','297x210':'A4 ngang','420x297':'A3 ngang'})[`${S.pw}x${S.ph}`]
     || `${S.pw} × ${S.ph} mm`;
   pdfmask.classList.add('on');
 }
-$('#bPdf').onclick=openPdf;
+$('#bPrint').onclick=openPdf;
 $('#pdfCancel').onclick=()=>pdfmask.classList.remove('on');
 pdfmask.onclick=e=>{ if(e.target===pdfmask) pdfmask.classList.remove('on'); };
 $('#printGuides').onchange=()=>{ S.printGuides=$('#printGuides').checked; render(); };
@@ -2784,6 +3164,17 @@ $('#bOpen').onclick=async()=>{
 $('#fPickDir').onclick=async()=>{ if(await pickDir()) showFileList(); };
 $('#fLocal').onclick=()=>{ fmask.classList.remove('on'); $('#fileIn').click(); };
 $('#fCancel').onclick=()=>fmask.classList.remove('on');
+const setmask=$('#setmask');
+function showSetPane(id){
+  document.querySelectorAll('#settabs button').forEach(b=>b.classList.toggle('on',b.dataset.sp===id));
+  document.querySelectorAll('.spane').forEach(x=>x.classList.toggle('on',x.id===id));
+}
+function openSet(tab){ if(tab) showSetPane(tab); setmask.classList.add('on'); }
+document.querySelectorAll('#settabs button').forEach(b=>b.onclick=()=>showSetPane(b.dataset.sp));
+$('#bSet').onclick=()=>openSet();
+$('#setClose').onclick=()=>setmask.classList.remove('on');
+setmask.onclick=e=>{ if(e.target===setmask) setmask.classList.remove('on'); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&setmask.classList.contains('on')) setmask.classList.remove('on'); });
 fmask.onclick=e=>{ if(e.target===fmask) fmask.classList.remove('on'); };
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&fmask.classList.contains('on')) fmask.classList.remove('on'); });
 paintFileMenu();
@@ -2799,7 +3190,9 @@ function applySession(d){                        // nạp nội dung một phiê
   setTop(S.marginTop);
   if(d.marginCols!==undefined && d.marginRight===undefined){ S.marginRight=d.marginCols; S.marginLeft=d.marginCols; }
   S.marginRight=clamp(Math.round(S.marginRight/2)*2,0,12); S.marginLeft=clamp(Math.round(S.marginLeft/2)*2,0,12);
-  refreshControls(); refreshRoom(); buildHeadList(); renderReg(); setView(S.view||'reg'); render(); renderMap(); fit();
+  refreshControls(); refreshRoom(); buildHeadList(); renderReg();
+  if(window.KL) KL.adopt();
+  setView(S.view||'reg'); render(); renderMap(); fit();
 }
 $('#fileIn').onchange=e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -4179,7 +4572,7 @@ function renderMap(){
 /* ---------- chuyển màn hình ---------- */
 function setView(v){
   S.view=v;
-  document.body.classList.remove('v-reg','v-map','v-print');
+  document.body.classList.remove('v-reg','v-map','v-print','v-klu');
   document.body.classList.add('v-'+v);
   document.querySelectorAll('#viewseg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
   const tabs=[...document.querySelectorAll('#tabs button')];
@@ -4188,12 +4581,14 @@ function setView(v){
   $('#tabs').style.display=mine.length>1?'flex':'none';
   if(mine.length && !mine.some(b=>b.classList.contains('on'))) showPane(mine[0].dataset.p);
   else if(mine.length) showPane(mine.find(b=>b.classList.contains('on')).dataset.p);
-  const pl={reg:'In danh sách',map:'In sơ đồ',print:'In bảng tên'}[v];
-  const bp=$('#bPrint'); if(bp){ bp.dataset.vi=pl; bp.textContent=L(pl); }
+  const pl={reg:'In danh sách',map:'In sơ đồ',print:'In bảng tên',klu:'In nguyện văn'}[v];
+  const bp=$('#bPrint');
+  if(bp){ bp.dataset.vi=pl; bp.title=L(pl); bp.setAttribute('aria-label',L(pl)); }
   if(v==='reg') renderReg();
   if(v==='map') renderMap();
   render();
   if(v==='print') fit();
+  if(v==='klu'&&window.KL) KL.show();
 }
 document.querySelectorAll('#viewseg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 function doImport(replace){
@@ -4447,7 +4842,7 @@ function regArrowNav(e,body){
     if(e.key!=='ArrowUp'&&e.key!=='ArrowDown') return;
     e.preventDefault(); stepNum(el,e.key==='ArrowUp'?1:-1); toEnd(el);
   });
-  document.querySelectorAll('#side input[data-num]').forEach(el=>{   // nút ▲▼ ở cuối ô số, nhấn giữ để chạy nhanh
+  document.querySelectorAll('#side input[data-num],#setbox input[data-num]').forEach(el=>{   // nút ▲▼ ở cuối ô số, nhấn giữ để chạy nhanh
     const box=document.createElement('span'); box.className='stepper';
     const TRI={1:'<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M4 0 8 5H0z"/></svg>',
                '-1':'<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M0 0h8L4 5z"/></svg>'};
@@ -4764,7 +5159,9 @@ function applyRole(r){
   put('#bMapAuto',seat);
   put('#bMapClear',seat);
   put('#tabs button[data-p="p-room"]',seat);
-  ['p-roomset','p-page','p-head','p-font'].forEach(id=>put(`#tabs button[data-p="${id}"]`,admin));
+  ['p-page','p-head','p-klpaper','p-klgrid','p-kltext'].forEach(id=>put(`#tabs button[data-p="${id}"]`,admin));
+  put('#grpSeats',admin); put('#grpGrid',admin);
+  put('#bSet',admin);                                                // thiết lập ban đầu chỉ dành cho quản trị
   const cur=document.querySelector('#tabs button.on');
   if(cur&&cur.style.display==='none'){ const b=document.querySelector('#tabs button[data-p="p-reg"]'); if(b) b.click(); }
 }
@@ -4994,6 +5391,813 @@ paintLabels();
 if(!GS_URL) show('err',()=>T('Chưa cài link Apps Script','尚未設定 Apps Script 連結'),()=>T('Sửa GS_URL trong mã nguồn','請在原始碼中設定 GS_URL'));
 else show('',()=>T('Chưa đăng nhập','尚未登入'),()=>T('Bấm "Đăng nhập" để nhập mã','請按「登入」輸入代碼'));
 setInterval(tick,TICK_MS);
+})();
+</script>
+
+<script>
+/* ==========================================================================
+   NGUYỆN VĂN 愿文 — một màn hình riêng, ngang hàng với 清書表格.
+   Dùng chung trạng thái S.kl (theo phiên .json), danh sách font và bộ dịch
+   của trang. Mọi thứ trong tệp này nằm gọn trong một hàm, không đụng tên
+   biến của phần còn lại.
+   ========================================================================== */
+(()=>{
+const q  = id => document.getElementById(id);
+const K  = () => S.kl;
+const zh = () => S.lang==='zh';
+const isKlu = () => document.body.classList.contains('v-klu');
+const BANDS = 5;
+const GUIDE = '#c0362c';        // đường chia khoảng và khung viền: đỏ, để khỏi lẫn với đường điều chỉnh
+
+const T = {
+  copied:n=>zh()?`已複製 ${n} 格。`:`Đã chép ${n} ô.`,
+  cutN:  n=>zh()?`已剪下 ${n} 格。`:`Đã cắt ${n} ô.`,
+  pasted:n=>zh()?`已貼上 ${n} 格。`:`Đã dán ${n} ô.`,
+  cleared:n=>zh()?`已清除 ${n} 格的文字。`:`Đã xoá chữ trong ${n} ô.`,
+  noSel: ()=>zh()?'尚未選取格子。':'Chưa chọn ô nào.',
+  noCaret:()=>zh()?'請先點選一格再貼上。':'Bấm vào một ô trước khi dán.',
+  empty: ()=>zh()?'剪貼簿是空的。':'Bộ nhớ tạm đang trống.',
+  blank: ()=>zh()?'所選格子本來就是空的。':'Các ô đã chọn vốn đã trống.',
+  rW:    ()=>zh()?'分區寬':'Khoảng rộng',
+  rCell: ()=>zh()?'格子':'Ô chữ',
+  rTop:  ()=>zh()?'上邊距':'Lề trên',
+  rBot:  ()=>zh()?'下邊距':'Lề dưới',
+  rTitle:()=>zh()?'標題字':'Chữ tiêu đề',
+  rUsed: ()=>zh()?'已填':'Đã điền',
+  rSel:  ()=>zh()?'已選':'Đang chọn',
+  wTitle:()=>zh()?'標題字徑已縮小以容納於紙面。':'Cỡ tiêu đề đã thu lại cho vừa giấy.',
+  tag:   ()=>zh()?'標題':'tiêu đề',
+  thCols:()=>zh()?'行':'Hàng',
+  thChars:()=>zh()?'字':'Chữ'
+};
+
+let sel = [], caret = null, anchor = null, last = null;
+let hist = [], hAt = -1, clip = null, noteTimer = null;
+let zoom = 1, fitW = 0, ready = false;
+
+/* ---------------------------------------------------------- đọc bảng điều khiển */
+const nval = (id,def)=>{ const el=q(id); if(!el) return def; const v=parseFloat(el.value); return isFinite(v)?v:def; };
+const lim  = (v,a,b)=>Math.min(b,Math.max(a,v));
+
+function readConfig(){
+  const S1=K();
+  S1.pw = lim(Math.round(nval('klPw',S1.pw)),60,1200);
+  S1.ph = lim(Math.round(nval('klPh',S1.ph)),60,1200);
+  S1.marginB  = lim(Math.round(nval('klMarginB',S1.marginB)),0,80);
+  S1.topPct   = lim(nval('klTopPct',S1.topPct),0,300);
+  S1.gap      = lim(nval('klGap',S1.gap),0,45);
+  S1.charGap  = lim(nval('klCharGap',S1.charGap),0,60);
+  S1.uniform  = q('klUniform').checked;
+  for(let i=0;i<BANDS;i++){
+    const b=S1.bands[i]||(S1.bands[i]={cols:5,chars:27});
+    b.cols  = lim(Math.round(nval('klB'+(i+1)+'c',b.cols)),1,15);
+    b.chars = lim(Math.round(nval('klB'+(i+1)+'h',b.chars)),1,60);
+  }
+  S1.defCols  = lim(Math.round(nval('klDefC',S1.defCols)),1,15);
+  S1.defChars = lim(Math.round(nval('klDefH',S1.defChars)),1,60);
+  S1.titleOn    = q('klTitleOn').checked;
+  S1.titleChars = lim(Math.round(nval('klTitleChars',S1.titleChars)),1,12);
+  S1.titleAlign = q('klTitleAlign').value;
+  S1.titleSize  = lim(nval('klTitleSize',S1.titleSize),8,60);
+  S1.titleSp    = lim(nval('klTitleSp',S1.titleSp),0,200);
+  S1.showText   = q('klShowText').checked;
+  S1.font       = q('klFont').value || S1.font || BUILTIN_ZH[1][1];
+  S1.textSize   = lim(nval('klTextSize',S1.textSize),40,100);
+  S1.textColor  = q('klTextColor').value;
+  S1.textOpacity= lim(nval('klTextOpacity',S1.textOpacity),10,100);
+  S1.sqW        = lim(nval('klSqW',S1.sqW),20,100);
+  S1.sqH        = lim(nval('klSqH',S1.sqH),20,150);
+  S1.sqAlignH   = q('klAlignH').value;
+  S1.sqAlignV   = q('klAlignV').value;
+  S1.hideGrid   = q('klHideGrid').checked;
+  S1.cellStyle  = q('klCellStyle').value;
+  S1.ink        = q('klInk').value;
+  S1.stroke     = lim(nval('klStroke',S1.stroke),0.05,2);
+  S1.divider    = q('klDivider').checked;
+  S1.outline    = q('klOutline').checked;
+
+  const cfg={
+    pw:S1.pw, ph:S1.ph, n:BANDS,
+    marginB:S1.marginB, topPct:S1.topPct/100, gap:S1.gap/100, vgap:S1.charGap/100,
+    uniform:S1.uniform, titleOn:S1.titleOn, titleChars:S1.titleChars,
+    titleAlign:S1.titleAlign, titleSize:S1.titleSize/100, titleSp:S1.titleSp/100,
+    showText:S1.showText, font:S1.font||BUILTIN_ZH[1][1],
+    textSize:S1.textSize/100, textColor:S1.textColor, textOpacity:S1.textOpacity/100,
+    sqW:S1.sqW/100, sqH:S1.sqH/100, sqAlignH:S1.sqAlignH, sqAlignV:S1.sqAlignV,
+    hideGrid:S1.hideGrid, cellStyle:S1.cellStyle, ink:S1.ink, stroke:S1.stroke,
+    divider:S1.divider, outline:S1.outline, bands:[]
+  };
+  for(let i=0;i<BANDS;i++){
+    const b=S1.bands[i];
+    let c=Math.max(1,b.cols); if(c%2===0) c+=1;
+    cfg.bands.push({cols:c, chars:Math.max(1,b.chars)});
+  }
+  return cfg;
+}
+
+function adopt(){                                 // trạng thái → bảng điều khiển
+  const S1=K();
+  if(!S1) return;
+  if(!S1.cells) S1.cells={};
+  if(!S1.squeezed) S1.squeezed={};
+  if(!Array.isArray(S1.bands)||S1.bands.length!==BANDS)
+    S1.bands=[{cols:5,chars:27},{cols:7,chars:27},{cols:5,chars:27},{cols:5,chars:27},{cols:5,chars:27}];
+  const set=(id,v)=>{ const el=q(id); if(el) el.value=String(v); };
+  const chk=(id,v)=>{ const el=q(id); if(el) el.checked=!!v; };
+  set('klPw',S1.pw); set('klPh',S1.ph);
+  set('klMarginB',S1.marginB); set('klTopPct',S1.topPct);
+  set('klGap',S1.gap); set('klCharGap',S1.charGap); chk('klUniform',S1.uniform);
+  for(let i=0;i<BANDS;i++){ set('klB'+(i+1)+'c',S1.bands[i].cols); set('klB'+(i+1)+'h',S1.bands[i].chars); }
+  set('klDefC',S1.defCols); set('klDefH',S1.defChars);
+  chk('klTitleOn',S1.titleOn); set('klTitleChars',S1.titleChars);
+  set('klTitleAlign',S1.titleAlign); set('klTitleSize',S1.titleSize); set('klTitleSp',S1.titleSp);
+  chk('klShowText',S1.showText); set('klTextSize',S1.textSize);
+  set('klTextColor',S1.textColor); set('klTextOpacity',S1.textOpacity);
+  set('klSqW',S1.sqW); set('klSqH',S1.sqH); set('klAlignH',S1.sqAlignH); set('klAlignV',S1.sqAlignV);
+  chk('klHideGrid',S1.hideGrid); set('klCellStyle',S1.cellStyle); set('klInk',S1.ink);
+  set('klStroke',S1.stroke); chk('klDivider',S1.divider); chk('klOutline',S1.outline);
+  syncPaper(); syncBoxes(); fonts();
+  sel=[]; caret=null; anchor=null; hist=[]; hAt=-1; pushHist();
+  draw();
+}
+
+function syncPaper(){
+  const key=K().pw+'x'+K().ph, pr=q('klPreset');
+  pr.value=[...pr.options].some(o=>o.value===key)?key:'custom';
+  q('klCustom').style.display = pr.value==='custom' ? 'flex' : 'none';
+}
+function syncBoxes(){
+  q('klTitleBox').style.display = q('klTitleOn').checked ? '' : 'none';
+  q('klTextBox').style.display  = q('klShowText').checked ? '' : 'none';
+  q('klInkBox').style.display   = q('klHideGrid').checked ? 'none' : '';
+  q('klTgGrid').classList.toggle('on', q('klHideGrid').checked);
+}
+
+/* ---------------------------------------------------------------- bố cục */
+function layout(cfg){
+  const W=cfg.pw/cfg.n, topR=1+cfg.topPct;
+  const minB=cfg.marginB, minT=minB*topR;
+  const availV=Math.max(1, cfg.ph-minT-minB);
+  const gapR=Math.max(0.03,cfg.gap);
+  const units=k=>k+(k-1)*cfg.vgap;
+
+  const body=[];
+  for(let i=0;i<cfg.n;i++){ if(!(i===0&&cfg.titleOn)) body.push(i); }
+
+  const cand=body.map(i=>{
+    const b=cfg.bands[i];
+    return Math.min((W/b.cols)*(1-gapR), availV/units(b.chars));
+  });
+  const uni=cand.length?Math.min.apply(null,cand):0;
+
+  let maxBlock=0;
+  body.forEach((i,k)=>{
+    const cell=cfg.uniform?uni:cand[k];
+    maxBlock=Math.max(maxBlock, cell*units(cfg.bands[i].chars));
+  });
+  const slack=Math.max(0, cfg.ph-maxBlock);
+  const topY=slack*topR/(1+topR), botY=slack/(1+topR);
+
+  const out={W:W, topY:topY, botY:botY, slack:slack, cell:uni, cols:[], orderCols:[], titleCol:[], keys:[], title:null, warn:null};
+
+  body.forEach((i,k)=>{
+    const b=cfg.bands[i], cell=cfg.uniform?uni:cand[k];
+    const left=cfg.pw-(i+1)*W, pitch=W/b.cols, made=[];
+    for(let c=0;c<b.cols;c++){
+      const cx=left+(c+0.5)*pitch;
+      const col={x:cx-cell/2, y:topY, cell:cell, pitch:cell*(1+cfg.vgap), count:b.chars};
+      out.cols.push(col); made.push(col);
+    }
+    made.reverse();                                        // viết từ phải sang trái
+    made.forEach(col=>{
+      const seat=[];
+      for(let row=0;row<col.count;row++)
+        seat.push({x:col.x+col.cell/2, y:col.y+row*col.pitch+col.cell/2, s:col.cell});
+      out.orderCols.push(seat);
+    });
+  });
+
+  if(cfg.titleOn){
+    let tc=W*cfg.titleSize;
+    const u=cfg.titleChars+(cfg.titleChars-1)*cfg.titleSp;
+    const maxH=cfg.ph-minT-minB;
+    if(tc*u>maxH){ tc=maxH/u; out.warn=T.wTitle(); }
+    const h=tc*u;
+    let y;
+    if(cfg.titleAlign==='center') y=(cfg.ph-h)/2;
+    else if(cfg.titleAlign==='top') y=topY;
+    else y=(cfg.ph-h)*topR/(1+topR);
+    const left=cfg.pw-W;
+    out.title={x:left+(W-tc)/2, y:y, cell:tc, count:cfg.titleChars, pitch:tc*(1+cfg.titleSp)};
+    for(let i=0;i<cfg.titleChars;i++)
+      out.titleCol.push({x:out.title.x+tc/2, y:y+i*out.title.pitch+tc/2, s:tc});
+  }
+
+  out.orderCols.forEach((seat,ci)=>seat.forEach((p,ri)=>out.keys.push('c'+ci+'r'+ri)));
+  out.titleCol.forEach((p,ri)=>out.keys.push('t'+ri));
+  return out;
+}
+
+/* ------------------------------------------------------------- đo chữ */
+const rr  = v => Math.round(v*1000)/1000;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const mCanvas = document.createElement('canvas').getContext('2d');
+let mCache = {};
+
+function glyphBox(ch,fam){
+  const k=fam+'|'+ch;
+  if(mCache[k]) return mCache[k];
+  mCanvas.font='100px '+fam;
+  mCanvas.textAlign='left'; mCanvas.textBaseline='alphabetic';
+  const m=mCanvas.measureText(ch);
+  const a=m.actualBoundingBoxAscent, d=m.actualBoundingBoxDescent;
+  const lf=m.actualBoundingBoxLeft, rt=m.actualBoundingBoxRight;
+  const ok=[a,d,lf,rt].every(v=>typeof v==='number'&&isFinite(v));
+  const box=ok?{l:-lf/100, rr:rt/100, t:-a/100, b:d/100}:{l:0, rr:m.width/100, t:-0.88, b:0.12};
+  mCache[k]=box;
+  return box;
+}
+
+function placeGlyph(ch,fam,cell,size,cfg,sq){
+  const box=glyphBox(ch,fam);
+  let sx=1, sy=1, ah='center', av='center';
+  if(sq){ sx=(cell*cfg.sqW)/size; sy=cfg.sqH; ah=cfg.sqAlignH; av=cfg.sqAlignV; }
+  const L0=box.l*size, R0=box.rr*size, T0=box.t*size, B0=box.b*size;
+  const w=sx*(R0-L0), h=sy*(B0-T0), half=cell/2;
+  let left;
+  if(ah==='right') left=half-w; else if(ah==='left') left=-half; else left=-w/2;
+  let top;
+  if(av==='top') top=-half; else if(av==='bottom') top=half-h; else top=-h/2;
+  return {tx:left-sx*L0, ty:top-sy*T0, sx:sx, sy:sy};
+}
+
+/* ------------------------------------------------------------- hình vẽ */
+function cellOps(ops,x,y,s,cfg){
+  const k=cfg.ink, w=cfg.stroke;
+  ops.push({k:'rect', x:x, y:y, w:s, h:s, c:k, lw:w, op:1});
+  const mk=(x1,y1,x2,y2)=>({k:'line', x1:x1, y1:y1, x2:x2, y2:y2, c:k, lw:w/2, op:.55, dash:[s/22,s/22]});
+  if(cfg.cellStyle==='tian'||cfg.cellStyle==='mi'){
+    ops.push(mk(x, y+s/2, x+s, y+s/2));
+    ops.push(mk(x+s/2, y, x+s/2, y+s));
+  }
+  if(cfg.cellStyle==='mi'){
+    ops.push(mk(x, y, x+s, y+s));
+    ops.push(mk(x+s, y, x, y+s));
+  }
+  if(cfg.cellStyle==='dot'){
+    const d=s/12;
+    ops.push({k:'line', x1:x+s/2-d, y1:y+s/2, x2:x+s/2+d, y2:y+s/2, c:k, lw:w/2, op:.6});
+    ops.push({k:'line', x1:x+s/2, y1:y+s/2-d, x2:x+s/2, y2:y+s/2+d, c:k, lw:w/2, op:.6});
+  }
+}
+
+function buildOps(cfg,L){
+  const ops=[];
+  if(!cfg.hideGrid){
+    if(cfg.divider){
+      for(let i=1;i<cfg.n;i++){
+        const x=i*L.W;
+        ops.push({k:'line', x1:x, y1:0, x2:x, y2:cfg.ph, c:GUIDE, lw:cfg.stroke/2, op:.7, dash:[2,2.6]});
+      }
+    }
+    if(cfg.outline){
+      const m=Math.max(2, L.botY/2);
+      ops.push({k:'rect', x:m, y:m, w:cfg.pw-2*m, h:cfg.ph-2*m, c:GUIDE, lw:cfg.stroke, op:.7});
+    }
+    L.cols.forEach(col=>{
+      for(let i=0;i<col.count;i++) cellOps(ops, col.x, col.y+i*col.pitch, col.cell, cfg);
+    });
+    if(L.title){
+      for(let i=0;i<L.title.count;i++) cellOps(ops, L.title.x, L.title.y+i*L.title.pitch, L.title.cell, cfg);
+    }
+  }
+  if(cfg.showText){
+    const fam=cfg.font;
+    let used=0, total=0;
+    const put=(seat,pre)=>{
+      total+=seat.length;
+      seat.forEach((p,ri)=>{
+        const key=pre+ri, ch=K().cells[key];
+        if(!ch) return;
+        const size=p.s*cfg.textSize;
+        const g=placeGlyph(ch, fam, p.s, size, cfg, !!K().squeezed[key]);
+        ops.push({k:'text', x:p.x+g.tx, y:p.y+g.ty, sx:g.sx, sy:g.sy,
+                  size:size, ch:ch, c:cfg.textColor, op:cfg.textOpacity, font:fam});
+        used++;
+      });
+    };
+    L.orderCols.forEach((seat,ci)=>put(seat,'c'+ci+'r'));
+    put(L.titleCol,'t');
+    ops.stats={used:used, total:total};
+  }
+  return ops;
+}
+
+function toSVG(cfg,ops,extra){
+  const p=['<rect x="0" y="0" width="'+cfg.pw+'" height="'+cfg.ph+'" fill="#ffffff"/>'];
+  ops.forEach(o=>{
+    const dash=o.dash?' stroke-dasharray="'+rr(o.dash[0])+' '+rr(o.dash[1])+'"':'';
+    const op=(o.op!==undefined&&o.op<1)?' opacity="'+o.op+'"':'';
+    if(o.k==='text')
+      p.push('<text transform="translate('+rr(o.x)+' '+rr(o.y)+') scale('+rr(o.sx)+' '+rr(o.sy)+')"'+
+             ' font-family="'+esc(o.font).replace(/"/g,'&quot;')+'" font-size="'+rr(o.size)+'"'+
+             ' fill="'+o.c+'" fill-opacity="'+o.op+'" text-anchor="start">'+esc(o.ch)+'</text>');
+    else if(o.k==='rect')
+      p.push('<rect x="'+rr(o.x)+'" y="'+rr(o.y)+'" width="'+rr(o.w)+'" height="'+rr(o.h)+
+             '" fill="none" stroke="'+o.c+'" stroke-width="'+rr(o.lw)+'"'+dash+op+'/>');
+    else
+      p.push('<line x1="'+rr(o.x1)+'" y1="'+rr(o.y1)+'" x2="'+rr(o.x2)+'" y2="'+rr(o.y2)+
+             '" stroke="'+o.c+'" stroke-width="'+rr(o.lw)+'"'+dash+op+'/>');
+  });
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+cfg.pw+' '+cfg.ph+
+         '" width="'+cfg.pw+'mm" height="'+cfg.ph+'mm" shape-rendering="crispEdges">'+
+         p.join('')+(extra||'')+'</svg>';
+}
+
+/* -------------------------------------------------------- lớp tương tác */
+function seatAt(L,c){
+  if(!c) return null;
+  const seat = c.k==='t' ? L.titleCol : (L.orderCols[c.c]||[]);
+  return seat[c.r]||null;
+}
+const keyOf = c => c.k==='t' ? 't'+c.r : 'c'+c.c+'r'+c.r;
+const colLen = (L,c) => (c.k==='t'?L.titleCol:(L.orderCols[c.c]||[])).length;
+
+function overlay(cfg,L){
+  const p=[], selSet=new Set(sel);
+  const draw1=(pt,k,c,ri)=>{
+    const h=pt.s/2, kk=(k==='t')?'t'+ri:'c'+c+'r'+ri;
+    if(cfg.hideGrid)
+      p.push('<rect class="ghost" x="'+rr(pt.x-h)+'" y="'+rr(pt.y-h)+'" width="'+rr(pt.s)+'" height="'+rr(pt.s)+'"/>');
+    if(selSet.has(kk))
+      p.push('<rect class="sel" x="'+rr(pt.x-h)+'" y="'+rr(pt.y-h)+'" width="'+rr(pt.s)+'" height="'+rr(pt.s)+'"/>');
+    if(K().squeezed[kk])
+      p.push('<circle class="sqmark" cx="'+rr(pt.x+h-pt.s*0.12)+'" cy="'+rr(pt.y+h-pt.s*0.12)+'" r="'+rr(pt.s*0.055)+'"/>');
+    p.push('<rect class="hit" x="'+rr(pt.x-h)+'" y="'+rr(pt.y-h)+'" width="'+rr(pt.s)+'" height="'+rr(pt.s)+
+           '" data-k="'+k+'" data-c="'+c+'" data-r="'+ri+'"/>');
+  };
+  L.orderCols.forEach((seat,ci)=>seat.forEach((pt,ri)=>draw1(pt,'c',ci,ri)));
+  L.titleCol.forEach((pt,ri)=>draw1(pt,'t',0,ri));
+  const cs=seatAt(L,caret);
+  if(cs){
+    const h=cs.s/2;
+    p.push('<rect class="caret" x="'+rr(cs.x-h)+'" y="'+rr(cs.y-h)+'" width="'+rr(cs.s)+'" height="'+rr(cs.s)+'"/>');
+  }
+  return p.join('');
+}
+
+function step(L,dir){
+  if(!caret) return;
+  const c={k:caret.k, c:caret.c, r:caret.r+dir};
+  if(c.k==='t'){ c.r=Math.max(0,Math.min(L.titleCol.length-1,c.r)); caret=c; return; }
+  while(c.r>=colLen(L,c)){
+    if(c.c+1>=L.orderCols.length){ c.r=colLen(L,c)-1; break; }
+    c.c++; c.r=0;
+  }
+  while(c.r<0){
+    if(c.c===0){ c.r=0; break; }
+    c.c--; c.r=colLen(L,c)-1;
+  }
+  caret=c;
+}
+function nextColumn(L){
+  if(!caret||caret.k==='t') return;
+  if(caret.c+1<L.orderCols.length) caret={k:'c', c:caret.c+1, r:0};
+}
+
+function placeIme(cfg,L){
+  const ime=q('klIme'), sheet=q('klSheet');
+  const cs=seatAt(L,caret);
+  if(!cs){ ime.style.display='none'; return; }
+  ime.style.display='';
+  const scale=sheet.clientWidth/cfg.pw;
+  const box=sheet.getBoundingClientRect(), host=sheet.parentElement.getBoundingClientRect();
+  ime.style.left=((box.left-host.left)+(cs.x-cs.s/2)*scale)+'px';
+  ime.style.top =((box.top -host.top )+(cs.y-cs.s/2)*scale)+'px';
+  ime.style.width =Math.max(18,cs.s*scale)+'px';
+  ime.style.height=Math.max(18,cs.s*scale)+'px';
+  ime.style.fontSize=Math.max(12,cs.s*scale*0.8)+'px';
+}
+
+function typeText(txt){
+  if(!last) return;
+  const L=last.L;
+  for(const ch of Array.from(txt)){
+    if(!caret) break;
+    if(ch==='\n'||ch==='\r'){ nextColumn(L); continue; }
+    if(ch===' '||ch==='\u3000'||ch==='\t'){ step(L,1); continue; }
+    K().cells[keyOf(caret)]=ch;
+    step(L,1);
+  }
+  sel = caret?[keyOf(caret)]:[];
+  pushHist(); draw();
+}
+
+/* ------------------------------------------------------- chép, cắt, dán */
+function note(msg,bad){
+  const n=q('klClipNote');
+  n.textContent=msg||'';
+  n.className=bad?'bad':'';
+  clearTimeout(noteTimer);
+  if(msg) noteTimer=setTimeout(()=>{ n.textContent=''; },2600);
+}
+function selOrdered(){
+  if(!last) return sel.slice();
+  const at=new Map(last.L.keys.map((k,i)=>[k,i]));
+  return sel.filter(k=>at.has(k)).sort((a,b)=>at.get(a)-at.get(b));
+}
+const colOf = k => k[0]==='t' ? 't' : k.slice(0,k.indexOf('r'));
+
+function buildClip(){
+  const keys=selOrdered();
+  if(!keys.length) return null;
+  const items=keys.map(k=>({ch:K().cells[k]||'', sq:!!K().squeezed[k]}));
+  const parts=[]; let cur=null, buf=[];
+  keys.forEach((k,i)=>{
+    const col=colOf(k);
+    if(col!==cur){ if(buf.length) parts.push(buf.join('')); buf=[]; cur=col; }
+    buf.push(items[i].ch||' ');
+  });
+  if(buf.length) parts.push(buf.join(''));
+  return {items:items, text:parts.join('\n')};
+}
+function legacyCopy(text){
+  const prev=document.activeElement;
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.setAttribute('readonly','');
+  ta.style.cssText='position:fixed;top:-1000px;left:0;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); }catch(err){}
+  document.body.removeChild(ta);
+  if(prev&&prev.focus) prev.focus({preventScroll:true});
+}
+function writeClip(text){
+  let done=false;
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).catch(()=>legacyCopy(text)); done=true;
+    }
+  }catch(err){}
+  if(!done) legacyCopy(text);
+}
+function copySel(dt){
+  const c=buildClip();
+  if(!c){ note(T.noSel(),true); return false; }
+  clip=c;
+  if(dt) dt.setData('text/plain',c.text); else writeClip(c.text);
+  note(T.copied(c.items.length));
+  return true;
+}
+function cutSel(dt){
+  const keys=selOrdered();
+  if(!copySel(dt)) return;
+  keys.forEach(k=>{ delete K().cells[k]; delete K().squeezed[k]; });
+  pushHist(); draw();
+  note(T.cutN(keys.length));
+}
+function pasteItems(items){
+  if(!last||!caret||!items||!items.length) return;
+  const L=last.L, done=[];
+  for(const it of items){
+    if(!caret) break;
+    const k=keyOf(caret);
+    if(done.length&&done[done.length-1]===k) break;      // hết ô trống
+    if(it.ch) K().cells[k]=it.ch; else delete K().cells[k];
+    if(it.sq) K().squeezed[k]=true; else delete K().squeezed[k];
+    done.push(k); step(L,1);
+  }
+  sel=done; anchor=done[0]||null;
+  pushHist(); draw();
+  note(T.pasted(done.length));
+}
+function delSel(){
+  const keys=selOrdered();
+  if(!keys.length){ note(T.noSel(),true); return; }
+  let n=0;
+  keys.forEach(k=>{ if(K().cells[k]!==undefined){ delete K().cells[k]; n++; } });
+  if(!n){ note(T.blank(),true); return; }
+  pushHist(); draw();
+  note(T.cleared(n));
+}
+function pasteText(txt){
+  if(clip&&txt===clip.text) pasteItems(clip.items);
+  else if(txt) typeText(txt);
+}
+function doPaste(){
+  if(!caret){ note(T.noCaret(),true); return; }
+  let asked=false;
+  try{
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      asked=true;
+      navigator.clipboard.readText().then(pasteText)
+        .catch(()=>{ if(clip) pasteItems(clip.items); else note(T.empty(),true); });
+    }
+  }catch(err){ asked=false; }
+  if(!asked){ if(clip) pasteItems(clip.items); else note(T.empty(),true); }
+}
+
+/* ------------------------------------------------------------ lịch sử */
+const snapKl = () => JSON.stringify({c:K().cells, s:K().squeezed});
+function pushHist(){
+  const now=snapKl();
+  if(hAt>=0&&hist[hAt]===now) return;
+  hist=hist.slice(0,hAt+1);
+  hist.push(now);
+  if(hist.length>300) hist.shift();
+  hAt=hist.length-1;
+}
+function restore(json){
+  const o=JSON.parse(json);
+  K().cells=o.c; K().squeezed=o.s;
+  draw();
+}
+function undo(){ if(hAt>0){ hAt--; restore(hist[hAt]); } }
+function redo(){ if(hAt<hist.length-1){ hAt++; restore(hist[hAt]); } }
+
+/* -------------------------------------------------- đường điều chỉnh lề */
+const mm = v => (Math.round(v*10)/10).toString().replace('.', zh()?'.':',')+' mm';
+
+function drawGuides(cfg,L){
+  const pct=v=>(v/cfg.ph)*100;
+  q('klGuides').innerHTML=
+    '<div class="klh" data-m="top" title="'+esc(L1('Lề trên'))+'" style="top:'+pct(L.topY)+'%">'+
+      '<i>'+mm(L.topY)+'</i></div>'+
+    '<div class="klline" style="top:'+pct(cfg.ph-L.botY)+'%"></div>'+
+    '<div class="klh" data-m="bot" title="'+esc(L1('Lề dưới tối thiểu'))+'" style="top:'+pct(cfg.ph-cfg.marginB)+'%">'+
+      '<i>'+mm(cfg.marginB)+'</i></div>';
+}
+
+/* ----------------------------------------------------------- vẽ lại */
+function sizeBox(cfg){
+  if(!fitW) fitW=measureFit();
+  const box=q('klSheetBox');
+  box.style.width=Math.max(160,Math.round(fitW*zoom))+'px';
+  box.style.maxWidth='none';
+  box.style.aspectRatio=cfg.pw+' / '+cfg.ph;
+  q('klZoomVal').textContent=Math.round(zoom*100)+'%';
+}
+function measureFit(){
+  const v=q('kluview'), w=v.clientWidth;
+  if(!w) return 700;
+  return Math.max(240, Math.min(1180, w-118));
+}
+
+function draw(){
+  if(!ready) return;
+  const cfg=readConfig();
+  const L=layout(cfg);
+  const ops=buildOps(cfg,L);
+  last={cfg:cfg, ops:ops, L:L};
+
+  if(caret){
+    const seat=caret.k==='t'?L.titleCol:(L.orderCols[caret.c]||[]);
+    if(!seat.length) caret=null;
+    else if(caret.r>=seat.length) caret.r=seat.length-1;
+  }
+  const live=new Set(L.keys);
+  sel=sel.filter(k=>live.has(k));
+
+  const sheet=q('klSheet');
+  sheet.innerHTML=toSVG(cfg,ops,overlay(cfg,L));
+  sheet.style.setProperty('--klw',cfg.pw+'mm');
+  sheet.style.setProperty('--klh',cfg.ph+'mm');
+  sizeBox(cfg);
+  if(typeof setPageStyle==='function' && S.view==='klu') setPageStyle();
+
+  const bits=[
+    T.rW()+' <b>'+mm(L.W)+'</b>',
+    T.rCell()+' <b>'+mm(L.cell)+'</b>',
+    T.rTop()+' <b>'+mm(L.topY)+'</b>',
+    T.rBot()+' <b>'+mm(L.botY)+'</b>'
+  ];
+  if(L.title) bits.push(T.rTitle()+' <b>'+mm(L.title.cell)+'</b>');
+  if(ops.stats) bits.push(T.rUsed()+' <b>'+ops.stats.used+' / '+ops.stats.total+'</b>');
+  if(sel.length) bits.push(T.rSel()+' <b>'+sel.length+'</b>');
+  if(L.warn) bits.push('<span class="bad">'+esc(L.warn)+'</span>');
+  q('klReadout').innerHTML=bits.map(b=>'<span>'+b+'</span>').join('');
+
+  const lb1=q('klLb1');
+  if(lb1) lb1.textContent = L1('Khoảng 1') + (cfg.titleOn?' · '+T.tag():'');
+  q('klB1c').disabled=cfg.titleOn; q('klB1h').disabled=cfg.titleOn;
+  q('klThCols').textContent=T.thCols(); q('klThChars').textContent=T.thChars();
+
+  q('klUndo').disabled = hAt<=0;
+  q('klRedo').disabled = hAt>=hist.length-1;
+  q('klCopy').disabled = !sel.length;
+  q('klCut').disabled  = !sel.length;
+  q('klPaste').disabled= !caret;
+  q('klDel').disabled  = !sel.length;
+
+  drawGuides(cfg,L);
+  placeIme(cfg,L);
+}
+const L1 = t => (typeof L==='function') ? L(t) : t;
+
+/* ------------------------------------------------------------ sự kiện */
+['p-klpaper','p-klgrid','p-kltext'].forEach(id=>{
+  const pane=q(id); if(!pane) return;
+  pane.addEventListener('input', e=>{
+    if(e.target.id==='klPw'||e.target.id==='klPh') q('klPreset').value='custom';
+    syncBoxes(); draw();
+  });
+  pane.addEventListener('change', ()=>{ syncBoxes(); draw(); });
+});
+
+['klPw','klPh'].forEach(id=>{            // hai ô này đã dời sang hộp Cài đặt, không còn nằm trong thẻ nào ở trên
+  const el=q(id); if(!el) return;
+  el.addEventListener('input',()=>{ q('klPreset').value='custom'; draw(); });
+});
+q('klPreset').addEventListener('change',()=>{
+  const v=q('klPreset').value;
+  if(v==='custom'){ q('klCustom').style.display='flex'; return; }
+  q('klCustom').style.display='none';
+  const p=v.split('x').map(Number);
+  q('klPw').value=p[0]; q('klPh').value=p[1];
+  draw();
+});
+q('klApplyAll').onclick=()=>{
+  const c=Math.max(1,Math.round(nval('klDefC',5))), h=Math.max(1,Math.round(nval('klDefH',27)));
+  for(let i=1;i<=BANDS;i++){ q('klB'+i+'c').value=c; q('klB'+i+'h').value=h; }
+  draw();
+};
+q('klSqOn').onclick =()=>{ sel.forEach(k=>{ K().squeezed[k]=true; }); pushHist(); draw(); };
+q('klSqOff').onclick=()=>{ sel.forEach(k=>{ delete K().squeezed[k]; }); pushHist(); draw(); };
+q('klClear').onclick=()=>{
+  if(!Object.keys(K().cells).length) return;
+  if(!confirm(zh()?'清除愿文上的全部文字？':'Xoá toàn bộ chữ đã gõ trong nguyện văn?')) return;
+  K().cells={}; K().squeezed={}; pushHist(); draw();
+};
+q('klCopy').onclick =()=>{ copySel();  q('klIme').focus({preventScroll:true}); };
+q('klCut').onclick  =()=>{ cutSel();   q('klIme').focus({preventScroll:true}); };
+q('klPaste').onclick=()=>{ doPaste();  q('klIme').focus({preventScroll:true}); };
+q('klDel').onclick  =()=>{ delSel();   q('klIme').focus({preventScroll:true}); };
+q('klUndo').onclick =undo;
+q('klRedo').onclick =redo;
+
+q('klZoomIn').onclick =()=>{ zoom=lim(zoom*1.15,.3,3); if(last) sizeBox(last.cfg); if(last) placeIme(last.cfg,last.L); };
+q('klZoomOut').onclick=()=>{ zoom=lim(zoom/1.15,.3,3); if(last) sizeBox(last.cfg); if(last) placeIme(last.cfg,last.L); };
+q('klFit').onclick    =()=>{ fitW=measureFit(); zoom=1; if(last){ sizeBox(last.cfg); placeIme(last.cfg,last.L); } };
+q('klTgGrid').onclick =()=>{ const c=q('klHideGrid'); c.checked=!c.checked; syncBoxes(); draw(); };
+
+/* kéo đường lề dưới ngay trên trang giấy */
+q('klGuides').addEventListener('pointerdown',e=>{
+  const h=e.target.closest('.klh');
+  if(!h||!last) return;
+  e.preventDefault(); e.stopPropagation();
+  document.body.style.cursor='row-resize';
+  const which=h.dataset.m;
+  const move=ev=>{
+    const r=q('klSheet').getBoundingClientRect();
+    if(!r.height) return;
+    const y=(ev.clientY-r.top)/r.height*last.cfg.ph;
+    if(which==='top'){                            // kéo lề trên: đổi tỉ lệ lề trên so với lề dưới
+      const slack=last.L.slack||0;
+      if(slack<=1) return;
+      const ty=Math.max(slack/2, Math.min(slack-0.5, y));
+      const v=lim(Math.round((ty/(slack-ty)-1)*20)*5, 0, 300);
+      if(+q('klTopPct').value===v) return;
+      q('klTopPct').value=v;
+    } else {
+      const v=Math.max(0,Math.min(80,Math.round(last.cfg.ph-y)));
+      if(+q('klMarginB').value===v) return;
+      q('klMarginB').value=v;
+    }
+    draw();
+  };
+  const up=()=>{
+    document.body.style.cursor='';
+    document.removeEventListener('pointermove',move);
+    document.removeEventListener('pointerup',up);
+    document.removeEventListener('pointercancel',up);
+  };
+  document.addEventListener('pointermove',move);
+  document.addEventListener('pointerup',up);
+  document.addEventListener('pointercancel',up);
+});
+
+/* chọn ô trên trang giấy */
+const sheet=q('klSheet'), ime=q('klIme');
+let dragging=false, dragLast=null;
+
+sheet.addEventListener('pointerdown',e=>{
+  const t=e.target;
+  if(!t.dataset||t.dataset.k===undefined||!last) return;
+  e.preventDefault();
+  const c={k:t.dataset.k, c:+t.dataset.c, r:+t.dataset.r};
+  const k=keyOf(c), L=last.L;
+  if(e.shiftKey&&anchor){
+    const a=L.keys.indexOf(anchor), b=L.keys.indexOf(k);
+    if(a>=0&&b>=0) sel=L.keys.slice(Math.min(a,b),Math.max(a,b)+1);
+  } else if(e.metaKey||e.ctrlKey){
+    const i=sel.indexOf(k);
+    if(i>=0) sel.splice(i,1); else sel.push(k);
+    anchor=k;
+  } else { sel=[k]; anchor=k; }
+  caret=c;
+  if(!e.shiftKey&&!e.metaKey&&!e.ctrlKey){
+    dragging=true; dragLast=k;
+    if(sheet.setPointerCapture) try{ sheet.setPointerCapture(e.pointerId); }catch(err){}
+  }
+  draw();
+  ime.focus({preventScroll:true});
+});
+sheet.addEventListener('pointermove',e=>{
+  if(!dragging||!last) return;
+  const t=document.elementFromPoint(e.clientX,e.clientY);
+  if(!t||!t.dataset||t.dataset.k===undefined) return;
+  const k=(t.dataset.k==='t')?'t'+t.dataset.r:'c'+t.dataset.c+'r'+t.dataset.r;
+  if(k===dragLast) return;
+  dragLast=k;
+  const L=last.L, a=L.keys.indexOf(anchor), b=L.keys.indexOf(k);
+  if(a>=0&&b>=0) sel=L.keys.slice(Math.min(a,b),Math.max(a,b)+1);
+  draw();
+});
+const endDrag=e=>{
+  if(!dragging) return;
+  dragging=false;
+  if(sheet.releasePointerCapture){ try{ sheet.releasePointerCapture(e.pointerId); }catch(err){} }
+  ime.focus({preventScroll:true});
+};
+sheet.addEventListener('pointerup',endDrag);
+sheet.addEventListener('pointercancel',endDrag);
+
+/* gõ chữ */
+let composing=false;
+ime.addEventListener('compositionstart',()=>{ composing=true; });
+ime.addEventListener('compositionend',e=>{ composing=false; ime.value=''; if(e.data) typeText(e.data); });
+ime.addEventListener('input',()=>{ if(composing) return; const v=ime.value; ime.value=''; if(v) typeText(v); });
+ime.addEventListener('paste',e=>{
+  const v=(e.clipboardData||window.clipboardData).getData('text');
+  if(v){ e.preventDefault(); e.stopPropagation(); pasteText(v); }
+});
+ime.addEventListener('copy',e=>{ if(!sel.length) return; e.preventDefault(); e.stopPropagation(); copySel(e.clipboardData); });
+ime.addEventListener('cut', e=>{ if(!sel.length) return; e.preventDefault(); e.stopPropagation(); cutSel(e.clipboardData); });
+ime.addEventListener('keydown',e=>{
+  if(composing||!caret||!last) return;
+  const L=last.L;
+  const after=mut=>{ sel=caret?[keyOf(caret)]:[]; anchor=sel[0]||null; if(mut) pushHist(); draw(); };
+  const mod=e.metaKey||e.ctrlKey;
+  if((e.key==='Backspace'||e.key==='Delete')&&sel.length>1){ e.preventDefault(); delSel(); }
+  else if(e.key==='Backspace'){
+    e.preventDefault();
+    if(K().cells[keyOf(caret)]) delete K().cells[keyOf(caret)];
+    else { step(L,-1); delete K().cells[keyOf(caret)]; }
+    after(true);
+  }
+  else if(e.key==='Delete'){ e.preventDefault(); delete K().cells[keyOf(caret)]; after(true); }
+  else if(e.key==='Enter'){ e.preventDefault(); nextColumn(L); after(); }
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); step(L, e.key==='ArrowDown'?1:-1); after(); }
+  else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    e.preventDefault();
+    if(caret.k==='c'){
+      const c2=caret.c+(e.key==='ArrowLeft'?1:-1);
+      if(c2>=0&&c2<L.orderCols.length) caret={k:'c', c:c2, r:Math.min(caret.r, L.orderCols[c2].length-1)};
+      after();
+    }
+  }
+  else if(mod&&e.key.toLowerCase()==='a'){ e.preventDefault(); sel=L.keys.slice(); anchor=sel[0]||null; draw(); }
+  else if(mod&&e.key.toLowerCase()==='c'){ e.preventDefault(); copySel(); }
+  else if(mod&&e.key.toLowerCase()==='x'){ e.preventDefault(); cutSel(); }
+  else if(e.key==='Escape'){ caret=null; sel=[]; draw(); ime.blur(); }
+});
+
+document.addEventListener('keydown',e=>{               // hoàn tác riêng của nguyện văn
+  if(!isKlu()||!(e.metaKey||e.ctrlKey)) return;
+  const k=e.key.toLowerCase();
+  if(k==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); }
+  else if(k==='y'){ e.preventDefault(); redo(); }
+});
+
+window.addEventListener('resize',()=>{
+  if(!isKlu()||!last) return;
+  fitW=measureFit(); sizeBox(last.cfg); placeIme(last.cfg,last.L);
+});
+const side=q('side');
+if(side) side.addEventListener('transitionend',e=>{
+  if(e.target!==side||e.propertyName!=='margin-left'||!isKlu()||!last) return;
+  fitW=measureFit(); sizeBox(last.cfg); placeIme(last.cfg,last.L);
+});
+
+/* ------------------------------------------------------ cửa ra vào */
+function fonts(){                                    // danh sách font dùng chung với phần còn lại của trang
+  const selEl=q('klFont'); if(!selEl||typeof fontOptions!=='function') return;
+  const want=K().font||BUILTIN_ZH[1][1];
+  fontOptions(selEl,BUILTIN_ZH,want);
+  K().font=selEl.value;
+  mCache={};
+  if(ready) draw();
+}
+
+window.KL={
+  show(){ fitW=measureFit(); draw(); },
+  adopt,
+  fonts,
+  draw
+};
+
+ready=true;
+adopt();
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ mCache={}; if(isKlu()) draw(); });
 })();
 </script>
 </body>

@@ -892,13 +892,13 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
         <h2>Bố cục nguyện văn</h2>
         <div class="card">
           <div class="row"><label>Lề dưới tối thiểu</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klMarginB" min="0" max="80" step="1"><span class="unit">mm</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klMarginB" min="0" max="80" step="1"><span class="unit">mm</span></div>
           <div class="row"><label>Lề trên hơn lề dưới</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTopPct" min="0" max="300" step="5"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klTopPct" min="0" max="300" step="5"><span class="unit">%</span></div>
           <div class="row"><label>Giãn cách hàng</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klGap" min="0" max="45" step="1"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klGap" min="0" max="45" step="1"><span class="unit">%</span></div>
           <div class="row"><label>Giãn cách chữ</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klCharGap" min="0" max="60" step="1"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klCharGap" min="0" max="60" step="1"><span class="unit">%</span></div>
           <div class="row"><label>Đồng bộ cỡ ô</label><input type="checkbox" id="klUniform"></div>
         </div>
         <p class="note">Kéo đường xanh nằm ngang trên trang giấy để đặt lề dưới tối thiểu. Hai đường xám là lề thật sau khi bố cục đã dàn đều, thường rộng hơn mức tối thiểu.</p>
@@ -908,25 +908,25 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
         <div class="card" id="klBands">
           <div class="bhead"><span id="klThCols">Hàng</span><span id="klThChars">Chữ</span></div>
           <div class="row"><label id="klLb1">Khoảng 1</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB1c" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB1h" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB1c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB1h" min="1" max="60" step="1"></span></div>
           <div class="row"><label>Khoảng 2</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB2c" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB2h" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB2c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB2h" min="1" max="60" step="1"></span></div>
           <div class="row"><label>Khoảng 3</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB3c" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB3h" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB3c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB3h" min="1" max="60" step="1"></span></div>
           <div class="row"><label>Khoảng 4</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB4c" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB4h" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB4c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB4h" min="1" max="60" step="1"></span></div>
           <div class="row"><label>Khoảng 5</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB5c" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klB5h" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB5c" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klB5h" min="1" max="60" step="1"></span></div>
         </div>
         <div class="card" id="klQuick" style="margin-top:10px">
           <div class="row"><label>Đặt nhanh</label><span class="pair">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klDefC" min="1" max="15" step="2">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klDefH" min="1" max="60" step="1"></span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klDefC" min="1" max="15" step="2">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klDefH" min="1" max="60" step="1"></span></div>
           <div class="act-actions"><button class="btn" id="klApplyAll">Áp cho cả năm khoảng</button></div>
         </div>
         <p class="note">Khoảng 1 nằm ngoài cùng bên phải, nơi bắt đầu viết. Số hàng luôn lấy số lẻ.</p>
@@ -938,7 +938,7 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
         </div>
         <div class="card" id="klTitleBox" style="margin-top:10px">
           <div class="row"><label>Số chữ tiêu đề</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleChars" min="1" max="12" step="1"><span class="unit">chữ</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klTitleChars" min="1" max="12" step="1"><span class="unit">chữ</span></div>
           <div class="row"><label>Canh dọc</label>
             <select id="klTitleAlign">
               <option value="center">Giữa tuyệt đối</option>
@@ -946,9 +946,9 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
               <option value="top">Sát lề trên</option>
             </select></div>
           <div class="row"><label>Cỡ chữ tiêu đề</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleSize" min="8" max="60" step="1"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klTitleSize" min="8" max="60" step="1"><span class="unit">%</span></div>
           <div class="row"><label>Giãn cách chữ tiêu đề</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTitleSp" min="0" max="200" step="5"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klTitleSp" min="0" max="200" step="5"><span class="unit">%</span></div>
         </div>
       </div>
     </section>
@@ -970,16 +970,16 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
               <option value="#111111">Đen</option>
             </select></div>
           <div class="row"><label>Độ đậm</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextOpacity" min="10" max="100" step="5"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klTextOpacity" min="10" max="100" step="5"><span class="unit">%</span></div>
         </div>
       </div>
       <div class="grp">
         <h2>Ép chữ</h2>
         <div class="card">
           <div class="row"><label>Bề ngang theo ô</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqW" min="20" max="100" step="5"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klSqW" min="20" max="100" step="5"><span class="unit">%</span></div>
           <div class="row"><label>Chiều cao theo cỡ chữ</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqH" min="20" max="150" step="5"><span class="unit">%</span></div>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klSqH" min="20" max="150" step="5"><span class="unit">%</span></div>
           <div class="row"><label>Canh ngang</label>
             <select id="klAlignH"><option value="right">Phải</option><option value="center">Giữa</option><option value="left">Trái</option></select></div>
           <div class="row"><label>Canh dọc</label>
@@ -1012,7 +1012,7 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
               <option value="#2F5D8A">Xanh lam</option>
             </select></div>
           <div class="row"><label>Độ dày nét</label>
-            <input type="text" inputmode="decimal" data-num autocomplete="off" id="klStroke" min="0.1" max="1.2" step="0.05"><span class="unit">mm</span></div>
+            <input type="text" inputmode="decimal" data-num autocomplete="off" data-sel id="klStroke" min="0.1" max="1.2" step="0.05"><span class="unit">mm</span></div>
         </div>
         <p class="note">Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn. Lề viền và khung vạch bật tắt ở thanh công cụ phía trên.</p>
       </div>
@@ -1179,8 +1179,8 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
               <option value="custom">Tự nhập</option>
             </select></div>
           <div class="row" id="klCustom" style="display:none"><label>Rộng × cao (mm)</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klPw" min="60" max="1200" step="1">
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klPh" min="60" max="1200" step="1"><span class="unit">mm</span>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klPw" min="60" max="1200" step="1">
+            <input type="text" inputmode="numeric" data-num autocomplete="off" data-sel id="klPh" min="60" max="1200" step="1"><span class="unit">mm</span>
           </div>
         </div>
         <p class="note">Giấy đặt ngang thì chiều ngang là cạnh dài. Chữ viết dọc từ trên xuống, hàng chạy từ phải sang trái.</p>
@@ -4762,6 +4762,12 @@ function regArrowNav(e,body){
   let fresh=null;
   document.addEventListener('focusin',e=>{
     const el=e.target; if(!isNum(el)) return;
+    if(el.hasAttribute('data-sel')){                // ô bôi sẵn: bấm vào là gõ đè được ngay
+      fresh=null;
+      const pick=()=>{ if(document.activeElement===el){ try{ el.select(); }catch(err){} } };
+      pick(); setTimeout(pick,0); setTimeout(pick,70);
+      return;
+    }
     if(navCaret) return;                            // tới bằng mũi tên thì giữ vị trí đã đặt
     fresh=el; toEnd(el);
     setTimeout(()=>toEnd(el),0); setTimeout(()=>{ if(fresh===el) toEnd(el); },60);
@@ -4784,7 +4790,9 @@ function regArrowNav(e,body){
     const mn=el.hasAttribute('min')?+el.getAttribute('min'):-Infinity, mx=el.hasAttribute('max')?+el.getAttribute('max'):Infinity;
     const dp=(String(st).split('.')[1]||'').length;
     const cur=parseFloat(el.value)||0;
-    let v = dir>0 ? Math.floor(+(cur/st).toFixed(6))*st+st : Math.ceil(+(cur/st).toFixed(6))*st-st;   // bám theo bước
+    const base = isFinite(mn) ? mn : 0;                    // đếm bước từ mốc nhỏ nhất, nhờ vậy min lẻ thì bước cũng lẻ
+    const k = +((cur-base)/st).toFixed(6);
+    let v = base + (dir>0 ? Math.floor(k)*st+st : Math.ceil(k)*st-st);
     v=Math.min(mx,Math.max(mn,+v.toFixed(dp)));
     if(String(v)===el.value) return;
     el.value=String(v);
@@ -5395,13 +5403,20 @@ function readConfig(){
   S1.gap      = lim(nval('klGap',S1.gap),0,45);
   S1.charGap  = lim(nval('klCharGap',S1.charGap),0,60);
   S1.uniform  = q('klUniform').checked;
+  const odd = v => { v=Math.round(v)||1; if(v%2===0) v++; return lim(v,1,15); };
+  const back = (id,v) => {                          // ô số hiện đúng con số đang vẽ, trừ lúc đang gõ dở
+    const el=q(id);
+    if(el && document.activeElement!==el && el.value!==String(v)) el.value=String(v);
+  };
   for(let i=0;i<BANDS;i++){
     const b=S1.bands[i]||(S1.bands[i]={cols:5,chars:27});
-    b.cols  = lim(Math.round(nval('klB'+(i+1)+'c',b.cols)),1,15);
+    b.cols  = odd(nval('klB'+(i+1)+'c',b.cols));
     b.chars = lim(Math.round(nval('klB'+(i+1)+'h',b.chars)),1,60);
+    back('klB'+(i+1)+'c',b.cols); back('klB'+(i+1)+'h',b.chars);
   }
-  S1.defCols  = lim(Math.round(nval('klDefC',S1.defCols)),1,15);
+  S1.defCols  = odd(nval('klDefC',S1.defCols));
   S1.defChars = lim(Math.round(nval('klDefH',S1.defChars)),1,60);
+  back('klDefC',S1.defCols); back('klDefH',S1.defChars);
   S1.titleOn    = q('klTitleOn').checked;
   S1.titleChars = lim(Math.round(nval('klTitleChars',S1.titleChars)),1,12);
   S1.titleAlign = q('klTitleAlign').value;
@@ -5434,8 +5449,7 @@ function readConfig(){
   };
   for(let i=0;i<BANDS;i++){
     const b=S1.bands[i];
-    let c=Math.max(1,b.cols); if(c%2===0) c+=1;
-    cfg.bands.push({cols:c, chars:Math.max(1,b.chars)});
+    cfg.bands.push({cols:Math.max(1,b.cols), chars:Math.max(1,b.chars)});
   }
   return cfg;
 }
@@ -5952,7 +5966,8 @@ q('klPreset').addEventListener('change',()=>{
   draw();
 });
 q('klApplyAll').onclick=()=>{
-  const c=Math.max(1,Math.round(nval('klDefC',5))), h=Math.max(1,Math.round(nval('klDefH',27)));
+  let c=Math.round(nval('klDefC',5))||1; if(c%2===0) c++; c=lim(c,1,15);
+  const h=lim(Math.round(nval('klDefH',27)),1,60);
   for(let i=1;i<=BANDS;i++){ q('klB'+i+'c').value=c; q('klB'+i+'h').value=h; }
   draw();
 };

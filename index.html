@@ -49,7 +49,7 @@ body.nopanel #bPanel .chev{transform:scaleX(-1)}
 #brand{display:none}
 #brand h1{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .brandrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#lang{width:auto;font-size:16px;line-height:1;padding:5px 2px 5px 7px;background:#e8e8ee}
+#lang{width:auto;font-size:13px;font-weight:650;letter-spacing:.02em;padding:5px 2px 5px 8px;background:#e8e8ee}
 #brand p{margin:2px 0 0;font-size:13px;color:#8a8a8e}
 #tabs{display:flex;gap:2px;margin:14px 16px 0;padding:2px;background:#e4e4ea;border-radius:9px}
 #tabs button{flex:1;padding:8px 1px;border:0;background:none;font:inherit;font-size:14px;color:#5c6470;cursor:pointer;border-radius:8px;letter-spacing:-.01em;white-space:nowrap}
@@ -659,9 +659,6 @@ body.v-klu #kluview{display:flex}
 #kluview{flex:1;overflow:auto;flex-direction:column;align-items:stretch;gap:14px;padding:26px 30px 30px}
 #klWrap{position:relative;display:flex;justify-content:center;min-width:100%;width:max-content;margin:0 auto}
 #klSheetBox{position:relative;width:100%;max-width:980px;flex:0 0 auto}
-#klReadout{align-self:center}
-#p-kltext .btn:disabled{opacity:.38;cursor:default;box-shadow:none}
-#p-kltext .btn:disabled:hover{background:#fff}
 #klSheet{background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.09),0 14px 34px rgba(0,0,0,.12)}
 #klSheet svg{display:block;width:100%;height:auto}
 #klSheet svg .hit{fill:#000;fill-opacity:0;cursor:text}
@@ -684,15 +681,15 @@ body.v-klu #kluview{display:flex}
   font-variant-numeric:tabular-nums;white-space:nowrap}
 #klGuides .klh:hover i,#klGuides .klh:active i{opacity:1}
 @media (any-pointer:coarse){ #klGuides .klh{height:24px;margin-top:-12px} #klGuides .klh::before{top:11px} }
-#klReadout{color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:center;
-  max-width:940px;font-variant-numeric:tabular-nums}
-#klReadout b{font-weight:600;color:var(--ink)}
-#klReadout .bad{color:#c0362c}
 .onlyklu{display:none}
 body.v-klu .onlyklu{display:inline-block}
 body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
 #klutools .btn{padding:7px 11px}
-#klZoomVal{font-size:12.5px;color:var(--muted);width:42px;text-align:center}
+#klZoomVal{font-size:12.5px;color:var(--muted);width:42px;text-align:center;cursor:ns-resize;
+  user-select:none;-webkit-user-select:none;font-variant-numeric:tabular-nums}
+#klZoomVal:hover{color:var(--ink)}
+#klWarn{font-size:12.5px;color:#c0362c;margin-left:4px}
+#klWarn:empty{display:none}
 #klBands .bhead{display:flex;justify-content:flex-end;gap:10px;padding:8px 14px 5px;
   font-size:11.5px;color:#8a8a8e;border-bottom:.5px solid #e4e4ea}
 #klBands .bhead span{width:72px;text-align:center}
@@ -712,7 +709,7 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
   #klSheet{box-shadow:none!important}
   #klSheet svg{width:var(--klw)!important;height:var(--klh)!important}
   #klSheet svg .caret,#klSheet svg .sel,#klSheet svg .ghost,#klSheet svg .sqmark,#klSheet svg .hit{display:none!important}
-  #klIme,#klGuides,#klReadout{display:none!important}
+  #klIme,#klGuides{display:none!important}
   body.v-klu #app,body.v-klu #main{display:block!important;overflow:visible!important;height:auto!important;min-height:0!important}
   body.v-klu #klWrap{width:auto!important;min-width:0!important;margin:0!important}
 }
@@ -733,7 +730,7 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
   <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
     <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
   </button>
-  <select id="lang" autocomplete="off" title="Ngôn ngữ · 語言"><option value="vi">🇻🇳</option><option value="zh">🇹🇼</option></select>
+  <select id="lang" autocomplete="off" title="Ngôn ngữ · 語言"><option value="vi">VN</option><option value="zh">CH</option></select>
 </div>
 
 <div id="acctMenu" role="menu" hidden>
@@ -757,7 +754,6 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
     <button data-p="p-page" data-view="print">Bố cục</button>
     <button data-p="p-head" data-view="print">Tiêu đề</button>
     <button data-p="p-klpaper" data-view="klu">Bố cục</button>
-    <button data-p="p-klgrid" data-view="klu">Lưới</button>
     <button data-p="p-kltext" data-view="klu">Chữ</button>
   </div>
   <div id="panels">
@@ -957,8 +953,44 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
       </div>
     </section>
 
-    <!-- ============ ④ NGUYỆN VĂN · tab Lưới ============ -->
-    <section class="pane" id="p-klgrid">
+
+    <!-- ============ ④ NGUYỆN VĂN · tab Chữ ============ -->
+    <section class="pane" id="p-kltext">
+      <div class="grp">
+        <h2>Chữ trong ô</h2>
+        <div class="card">
+          <div class="row"><label>Hiện chữ</label><input type="checkbox" id="klShowText"></div>
+        </div>
+        <div class="card" id="klTextBox" style="margin-top:10px">
+          <div class="row"><label>Font chữ</label><select id="klFont"></select></div>
+          <div class="row"><label>Màu chữ</label>
+            <select id="klTextColor">
+              <option value="#9AA0A6">Xám nhạt</option>
+              <option value="#D39A94">Hồng nhạt</option>
+              <option value="#111111">Đen</option>
+            </select></div>
+          <div class="row"><label>Độ đậm</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextOpacity" min="10" max="100" step="5"><span class="unit">%</span></div>
+        </div>
+      </div>
+      <div class="grp">
+        <h2>Ép chữ</h2>
+        <div class="card">
+          <div class="row"><label>Bề ngang theo ô</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqW" min="20" max="100" step="5"><span class="unit">%</span></div>
+          <div class="row"><label>Chiều cao theo cỡ chữ</label>
+            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqH" min="20" max="150" step="5"><span class="unit">%</span></div>
+          <div class="row"><label>Canh ngang</label>
+            <select id="klAlignH"><option value="right">Phải</option><option value="center">Giữa</option><option value="left">Trái</option></select></div>
+          <div class="row"><label>Canh dọc</label>
+            <select id="klAlignV"><option value="center">Giữa</option><option value="top">Trên</option><option value="bottom">Dưới cùng</option></select></div>
+          <div class="act-actions">
+            <button class="btn" id="klSqOn">Ép ô đang chọn</button>
+            <button class="btn" id="klSqOff">Bỏ ép</button>
+          </div>
+        </div>
+        <p class="note">Chỉ những ô đang chọn mới bị ép. Ô đã ép có chấm nhỏ ở góc, chấm này không in ra.</p>
+      </div>
       <div class="grp">
         <h2>Nét lưới</h2>
         <div class="card">
@@ -981,88 +1013,10 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
             </select></div>
           <div class="row"><label>Độ dày nét</label>
             <input type="text" inputmode="decimal" data-num autocomplete="off" id="klStroke" min="0.1" max="1.2" step="0.05"><span class="unit">mm</span></div>
-          <div class="row"><label>Đường phân khoảng</label><input type="checkbox" id="klDivider"></div>
-          <div class="row"><label>Khung viền ngoài</label><input type="checkbox" id="klOutline"></div>
         </div>
-        <p class="note">Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn.</p>
+        <p class="note">Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn. Lề viền và khung vạch bật tắt ở thanh công cụ phía trên.</p>
       </div>
-    </section>
-
-    <!-- ============ ④ NGUYỆN VĂN · tab Chữ ============ -->
-    <section class="pane" id="p-kltext">
-      <div class="grp">
-        <h2>Chữ trong ô</h2>
-        <div class="card">
-          <div class="row"><label>Hiện chữ</label><input type="checkbox" id="klShowText"></div>
-        </div>
-        <div class="card" id="klTextBox" style="margin-top:10px">
-          <div class="row"><label>Chữ Hán</label><select id="klFont"></select></div>
-          <div class="row"><label>Cỡ chữ theo ô</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextSize" min="40" max="100" step="1"><span class="unit">%</span></div>
-          <div class="row"><label>Màu chữ</label>
-            <select id="klTextColor">
-              <option value="#9AA0A6">Xám nhạt</option>
-              <option value="#D39A94">Hồng nhạt</option>
-              <option value="#111111">Đen</option>
-            </select></div>
-          <div class="row"><label>Độ đậm</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klTextOpacity" min="10" max="100" step="5"><span class="unit">%</span></div>
-        </div>
-        <p class="note">Font lấy từ danh sách chung của trang. Muốn nạp thêm tệp font thì vào thẻ Danh sách, tab Chữ.</p>
-      </div>
-      <div class="grp">
-        <h2>Ép chữ</h2>
-        <div class="card">
-          <div class="row"><label>Bề ngang theo ô</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqW" min="20" max="100" step="5"><span class="unit">%</span></div>
-          <div class="row"><label>Chiều cao theo cỡ chữ</label>
-            <input type="text" inputmode="numeric" data-num autocomplete="off" id="klSqH" min="20" max="150" step="5"><span class="unit">%</span></div>
-          <div class="row"><label>Canh ngang</label>
-            <select id="klAlignH"><option value="right">Phải</option><option value="center">Giữa</option><option value="left">Trái</option></select></div>
-          <div class="row"><label>Canh dọc</label>
-            <select id="klAlignV"><option value="center">Giữa</option><option value="top">Trên</option><option value="bottom">Dưới cùng</option></select></div>
-          <div class="act-actions">
-            <button class="btn" id="klSqOn">Ép ô đang chọn</button>
-            <button class="btn" id="klSqOff">Bỏ ép</button>
-          </div>
-        </div>
-        <p class="note">Chỉ những ô đang chọn mới bị ép. Ô đã ép có chấm nhỏ ở góc, chấm này không in ra.</p>
-      </div>
-      <div class="grp">
-        <h2>Sửa chữ</h2>
-        <div class="card">
-          <div class="row"><label>Hoàn tác</label>
-            <span class="btnrow" style="flex:0 0 auto">
-              <button class="btn" id="klUndo">Lùi</button>
-              <button class="btn" id="klRedo">Tiến</button>
-            </span></div>
-          <div class="act-actions">
-            <button class="btn" id="klCopy">Chép</button>
-            <button class="btn" id="klCut">Cắt</button>
-            <button class="btn" id="klPaste">Dán</button>
-            <button class="btn" id="klDel">Xoá</button>
-          </div>
-          <div class="act-actions">
-            <button class="btn danger" id="klClear">Xoá toàn bộ chữ</button>
-          </div>
-        </div>
-        <p id="klClipNote"></p>
-      </div>
-      <div class="grp">
-        <h2>Phím tắt</h2>
-        <dl class="keys" id="klkeys">
-          <div><dt>Bấm một ô</dt><dd>Đặt con trỏ rồi gõ thẳng</dd></div>
-          <div><dt>Kéo chuột</dt><dd>Chọn một dải ô</dd></div>
-          <div><dt>Shift bấm</dt><dd>Chọn đến ô này</dd></div>
-          <div><dt>Cmd bấm</dt><dd>Thêm hoặc bỏ một ô</dd></div>
-          <div><dt>Enter</dt><dd>Sang hàng kế</dd></div>
-          <div><dt>Mũi tên</dt><dd>Di chuyển ô hiện hành</dd></div>
-          <div><dt>Backspace</dt><dd>Xoá lùi</dd></div>
-          <div><dt>Cmd C, X, V</dt><dd>Chép, cắt, dán</dd></div>
-          <div><dt>Delete</dt><dd>Xoá chữ trong vùng chọn</dd></div>
-          <div><dt>Cmd Z</dt><dd>Hoàn tác</dd></div>
-        </dl>
-      </div>
+    
     </section>
 
   </div>
@@ -1082,6 +1036,9 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
       <button class="btn" id="klFit">Vừa khung</button>
       <span class="sep"></span>
       <button class="btn tg" id="klTgGrid">Ẩn lưới</button>
+      <button class="btn tg" id="klTgGuides">Lề viền</button>
+      <button class="btn tg" id="klTgFold">Khung vạch</button>
+      <span id="klWarn"></span>
     </div>
     <div id="printtools" class="onlyprint">
       <button class="btn onlyprint" id="bZoomOut">−</button><span id="zoomval" class="onlyprint">100%</span><button class="btn onlyprint" id="bZoomIn">+</button>
@@ -1122,7 +1079,6 @@ body.v-klu #klutools{display:flex;align-items:center;gap:7px;margin-left:10px}
         <input id="klIme" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="-1" aria-hidden="true">
       </div>
     </div>
-    <div id="klReadout"></div>
   </div>
 
   <div id="stage" class="view">
@@ -1327,9 +1283,9 @@ S.kl={                                            // nguyện văn 愿文: mỗi
   bands:[{cols:5,chars:27},{cols:7,chars:27},{cols:5,chars:27},{cols:5,chars:27},{cols:5,chars:27}],
   defCols:5, defChars:27,
   titleOn:true, titleChars:4, titleAlign:'center', titleSize:20, titleSp:100,
-  showText:true, font:'', textSize:86, textColor:'#111111', textOpacity:100,
+  showText:true, font:'', textSize:100, textColor:'#111111', textOpacity:100,
   sqW:50, sqH:100, sqAlignH:'right', sqAlignV:'center',
-  hideGrid:false, cellStyle:'plain', ink:'#111111', stroke:0.4, divider:true, outline:false,
+  hideGrid:false, cellStyle:'plain', ink:'#111111', stroke:0.4, divider:true, outline:true,
   cells:{}, squeezed:{}
 };
 S.mapGuides=true;
@@ -1548,7 +1504,7 @@ const I18N={
  'Ép chữ':'壓扁文字','Bề ngang theo ô':'寬度占格子','Chiều cao theo cỡ chữ':'高度占字徑',
  'Canh ngang':'水平對齊','Phải':'靠右','Giữa':'置中','Trái':'靠左','Trên':'靠上','Dưới cùng':'靠下',
  'Ép ô đang chọn':'壓扁所選格','Bỏ ép':'還原',
- 'Chữ trong ô':'格內文字','Hiện chữ':'顯示文字','Cỡ chữ theo ô':'字徑占格子','Màu chữ':'文字顏色',
+ 'Chữ trong ô':'格內文字','Hiện chữ':'顯示文字','Font chữ':'字體','Màu chữ':'文字顏色',
  'Xám nhạt':'淺灰','Hồng nhạt':'淺紅','Độ đậm':'濃淡',
  'Sửa chữ':'編輯文字','Lùi':'復原','Tiến':'重做','Xoá':'刪除','Xoá toàn bộ chữ':'清除全部文字',
  'Phím tắt':'快捷鍵','Bấm một ô':'點選一格','Đặt con trỏ rồi gõ thẳng':'游標移入，直接輸入',
@@ -1561,12 +1517,10 @@ const I18N={
    '拖曳紙面上的藍色橫線設定下邊距下限。兩條灰線是版面勻分後的實際邊距，通常大於所設下限。',
  'Khoảng 1 nằm ngoài cùng bên phải, nơi bắt đầu viết. Số hàng luôn lấy số lẻ.':
    '第一區在最右側，由此起筆。行數一律取奇數。',
- 'Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn.':
-   '隱藏格線後，列印與 PDF 只保留文字；螢幕上格子仍以淡線顯示，方便點選。',
+ 'Ẩn lưới thì bản in và PDF chỉ còn chữ. Trên màn hình ô vẫn hiện mờ để bấm chọn. Lề viền và khung vạch bật tắt ở thanh công cụ phía trên.':
+   '隱藏格線後，列印與 PDF 只保留文字；螢幕上格子仍以淡線顯示，方便點選。邊界格線與紙框摺線請在上方工具列開關。',
  'Chỉ những ô đang chọn mới bị ép. Ô đã ép có chấm nhỏ ở góc, chấm này không in ra.':
-   '僅所選格子會被壓扁。已壓扁的格子角上有小圓點，該點不會列印。',
- 'Font lấy từ danh sách chung của trang. Muốn nạp thêm tệp font thì vào thẻ Danh sách, tab Chữ.':
-   '字體取自本頁共用清單。要另外載入字體檔，請到「清書表格」的「字體」分頁。'
+   '僅所選格子會被壓扁。已壓扁的格子角上有小圓點，該點不會列印。'
 };
 function L(t){ return (S.lang==='zh' && I18N[t]) ? I18N[t] : t; }
 const TRANS_SEL='#tabs button,.grp>h2,.row>label,.row>label>span,.pane .btn,.unit,.seg button,#toolbar .btn,'+
@@ -5418,13 +5372,6 @@ const T = {
   noCaret:()=>zh()?'請先點選一格再貼上。':'Bấm vào một ô trước khi dán.',
   empty: ()=>zh()?'剪貼簿是空的。':'Bộ nhớ tạm đang trống.',
   blank: ()=>zh()?'所選格子本來就是空的。':'Các ô đã chọn vốn đã trống.',
-  rW:    ()=>zh()?'分區寬':'Khoảng rộng',
-  rCell: ()=>zh()?'格子':'Ô chữ',
-  rTop:  ()=>zh()?'上邊距':'Lề trên',
-  rBot:  ()=>zh()?'下邊距':'Lề dưới',
-  rTitle:()=>zh()?'標題字':'Chữ tiêu đề',
-  rUsed: ()=>zh()?'已填':'Đã điền',
-  rSel:  ()=>zh()?'已選':'Đang chọn',
   wTitle:()=>zh()?'標題字徑已縮小以容納於紙面。':'Cỡ tiêu đề đã thu lại cho vừa giấy.',
   tag:   ()=>zh()?'標題':'tiêu đề',
   thCols:()=>zh()?'行':'Hàng',
@@ -5462,7 +5409,7 @@ function readConfig(){
   S1.titleSp    = lim(nval('klTitleSp',S1.titleSp),0,200);
   S1.showText   = q('klShowText').checked;
   S1.font       = q('klFont').value || S1.font || BUILTIN_ZH[1][1];
-  S1.textSize   = lim(nval('klTextSize',S1.textSize),40,100);
+  S1.textSize   = 100;                    // chữ luôn vừa trọn ô
   S1.textColor  = q('klTextColor').value;
   S1.textOpacity= lim(nval('klTextOpacity',S1.textOpacity),10,100);
   S1.sqW        = lim(nval('klSqW',S1.sqW),20,100);
@@ -5473,8 +5420,6 @@ function readConfig(){
   S1.cellStyle  = q('klCellStyle').value;
   S1.ink        = q('klInk').value;
   S1.stroke     = lim(nval('klStroke',S1.stroke),0.05,2);
-  S1.divider    = q('klDivider').checked;
-  S1.outline    = q('klOutline').checked;
 
   const cfg={
     pw:S1.pw, ph:S1.ph, n:BANDS,
@@ -5498,6 +5443,7 @@ function readConfig(){
 function adopt(){                                 // trạng thái → bảng điều khiển
   const S1=K();
   if(!S1) return;
+  if(S1.outline===undefined) S1.outline=true;
   if(!S1.cells) S1.cells={};
   if(!S1.squeezed) S1.squeezed={};
   if(!Array.isArray(S1.bands)||S1.bands.length!==BANDS)
@@ -5511,11 +5457,11 @@ function adopt(){                                 // trạng thái → bảng đ
   set('klDefC',S1.defCols); set('klDefH',S1.defChars);
   chk('klTitleOn',S1.titleOn); set('klTitleChars',S1.titleChars);
   set('klTitleAlign',S1.titleAlign); set('klTitleSize',S1.titleSize); set('klTitleSp',S1.titleSp);
-  chk('klShowText',S1.showText); set('klTextSize',S1.textSize);
+  chk('klShowText',S1.showText);
   set('klTextColor',S1.textColor); set('klTextOpacity',S1.textOpacity);
   set('klSqW',S1.sqW); set('klSqH',S1.sqH); set('klAlignH',S1.sqAlignH); set('klAlignV',S1.sqAlignV);
   chk('klHideGrid',S1.hideGrid); set('klCellStyle',S1.cellStyle); set('klInk',S1.ink);
-  set('klStroke',S1.stroke); chk('klDivider',S1.divider); chk('klOutline',S1.outline);
+  set('klStroke',S1.stroke);
   syncPaper(); syncBoxes(); fonts();
   sel=[]; caret=null; anchor=null; hist=[]; hAt=-1; pushHist();
   draw();
@@ -5531,6 +5477,8 @@ function syncBoxes(){
   q('klTextBox').style.display  = q('klShowText').checked ? '' : 'none';
   q('klInkBox').style.display   = q('klHideGrid').checked ? 'none' : '';
   q('klTgGrid').classList.toggle('on', q('klHideGrid').checked);
+  q('klTgGuides').classList.toggle('on', !!K().outline);
+  q('klTgFold').classList.toggle('on', !!K().divider);
 }
 
 /* ---------------------------------------------------------------- bố cục */
@@ -5654,15 +5602,13 @@ function cellOps(ops,x,y,s,cfg){
 function buildOps(cfg,L){
   const ops=[];
   if(!cfg.hideGrid){
-    if(cfg.divider){
+    if(cfg.divider){                                   // khung vạch: viền khổ giấy và vạch chia khoảng, nét liền
+      const w=cfg.stroke;
+      ops.push({k:'rect', x:w/2, y:w/2, w:cfg.pw-w, h:cfg.ph-w, c:GUIDE, lw:w, op:.85});
       for(let i=1;i<cfg.n;i++){
         const x=i*L.W;
-        ops.push({k:'line', x1:x, y1:0, x2:x, y2:cfg.ph, c:GUIDE, lw:cfg.stroke/2, op:.7, dash:[2,2.6]});
+        ops.push({k:'line', x1:x, y1:0, x2:x, y2:cfg.ph, c:GUIDE, lw:w, op:.85});
       }
-    }
-    if(cfg.outline){
-      const m=Math.max(2, L.botY/2);
-      ops.push({k:'rect', x:m, y:m, w:cfg.pw-2*m, h:cfg.ph-2*m, c:GUIDE, lw:cfg.stroke, op:.7});
     }
     L.cols.forEach(col=>{
       for(let i=0;i<col.count;i++) cellOps(ops, col.x, col.y+i*col.pitch, col.cell, cfg);
@@ -5796,6 +5742,7 @@ function typeText(txt){
 /* ------------------------------------------------------- chép, cắt, dán */
 function note(msg,bad){
   const n=q('klClipNote');
+  if(!n) return;                         // ô nhắn đã rút khỏi bảng điều khiển
   n.textContent=msg||'';
   n.className=bad?'bad':'';
   clearTimeout(noteTimer);
@@ -5918,6 +5865,7 @@ function redo(){ if(hAt<hist.length-1){ hAt++; restore(hist[hAt]); } }
 const mm = v => (Math.round(v*10)/10).toString().replace('.', zh()?'.':',')+' mm';
 
 function drawGuides(cfg,L){
+  if(!cfg.outline){ q('klGuides').innerHTML=''; return; }   // tắt Lề viền thì giấu luôn đường điều chỉnh
   const pct=v=>(v/cfg.ph)*100;
   q('klGuides').innerHTML=
     '<div class="klh" data-m="top" title="'+esc(L1('Lề trên'))+'" style="top:'+pct(L.topY)+'%">'+
@@ -5964,29 +5912,17 @@ function draw(){
   sizeBox(cfg);
   if(typeof setPageStyle==='function' && S.view==='klu') setPageStyle();
 
-  const bits=[
-    T.rW()+' <b>'+mm(L.W)+'</b>',
-    T.rCell()+' <b>'+mm(L.cell)+'</b>',
-    T.rTop()+' <b>'+mm(L.topY)+'</b>',
-    T.rBot()+' <b>'+mm(L.botY)+'</b>'
-  ];
-  if(L.title) bits.push(T.rTitle()+' <b>'+mm(L.title.cell)+'</b>');
-  if(ops.stats) bits.push(T.rUsed()+' <b>'+ops.stats.used+' / '+ops.stats.total+'</b>');
-  if(sel.length) bits.push(T.rSel()+' <b>'+sel.length+'</b>');
-  if(L.warn) bits.push('<span class="bad">'+esc(L.warn)+'</span>');
-  q('klReadout').innerHTML=bits.map(b=>'<span>'+b+'</span>').join('');
+  q('klWarn').textContent = L.warn || '';
 
   const lb1=q('klLb1');
   if(lb1) lb1.textContent = L1('Khoảng 1') + (cfg.titleOn?' · '+T.tag():'');
   q('klB1c').disabled=cfg.titleOn; q('klB1h').disabled=cfg.titleOn;
   q('klThCols').textContent=T.thCols(); q('klThChars').textContent=T.thChars();
 
-  q('klUndo').disabled = hAt<=0;
-  q('klRedo').disabled = hAt>=hist.length-1;
-  q('klCopy').disabled = !sel.length;
-  q('klCut').disabled  = !sel.length;
-  q('klPaste').disabled= !caret;
-  q('klDel').disabled  = !sel.length;
+  const dis=(id,v)=>{ const el=q(id); if(el) el.disabled=v; };
+  dis('klUndo', hAt<=0);       dis('klRedo', hAt>=hist.length-1);
+  dis('klCopy', !sel.length);  dis('klCut',  !sel.length);
+  dis('klPaste',!caret);       dis('klDel',  !sel.length);
 
   drawGuides(cfg,L);
   placeIme(cfg,L);
@@ -6022,22 +5958,25 @@ q('klApplyAll').onclick=()=>{
 };
 q('klSqOn').onclick =()=>{ sel.forEach(k=>{ K().squeezed[k]=true; }); pushHist(); draw(); };
 q('klSqOff').onclick=()=>{ sel.forEach(k=>{ delete K().squeezed[k]; }); pushHist(); draw(); };
-q('klClear').onclick=()=>{
+const bind=(id,fn)=>{ const el=q(id); if(el) el.onclick=fn; };   // mấy nút này đã rút khỏi bảng điều khiển
+bind('klClear',()=>{
   if(!Object.keys(K().cells).length) return;
   if(!confirm(zh()?'清除愿文上的全部文字？':'Xoá toàn bộ chữ đã gõ trong nguyện văn?')) return;
   K().cells={}; K().squeezed={}; pushHist(); draw();
-};
-q('klCopy').onclick =()=>{ copySel();  q('klIme').focus({preventScroll:true}); };
-q('klCut').onclick  =()=>{ cutSel();   q('klIme').focus({preventScroll:true}); };
-q('klPaste').onclick=()=>{ doPaste();  q('klIme').focus({preventScroll:true}); };
-q('klDel').onclick  =()=>{ delSel();   q('klIme').focus({preventScroll:true}); };
-q('klUndo').onclick =undo;
-q('klRedo').onclick =redo;
+});
+bind('klCopy', ()=>{ copySel(); q('klIme').focus({preventScroll:true}); });
+bind('klCut',  ()=>{ cutSel();  q('klIme').focus({preventScroll:true}); });
+bind('klPaste',()=>{ doPaste(); q('klIme').focus({preventScroll:true}); });
+bind('klDel',  ()=>{ delSel();  q('klIme').focus({preventScroll:true}); });
+bind('klUndo', undo);
+bind('klRedo', redo);
 
-q('klZoomIn').onclick =()=>{ zoom=lim(zoom*1.15,.3,3); if(last) sizeBox(last.cfg); if(last) placeIme(last.cfg,last.L); };
-q('klZoomOut').onclick=()=>{ zoom=lim(zoom/1.15,.3,3); if(last) sizeBox(last.cfg); if(last) placeIme(last.cfg,last.L); };
+q('klZoomIn').onclick =()=>setZoomKl(zoom*1.15);
+q('klZoomOut').onclick=()=>setZoomKl(zoom/1.15);
 q('klFit').onclick    =()=>{ fitW=measureFit(); zoom=1; if(last){ sizeBox(last.cfg); placeIme(last.cfg,last.L); } };
-q('klTgGrid').onclick =()=>{ const c=q('klHideGrid'); c.checked=!c.checked; syncBoxes(); draw(); };
+q('klTgGrid').onclick  =()=>{ const c=q('klHideGrid'); c.checked=!c.checked; syncBoxes(); draw(); };
+q('klTgGuides').onclick=()=>{ K().outline=!K().outline; syncBoxes(); draw(); };
+q('klTgFold').onclick  =()=>{ K().divider=!K().divider; syncBoxes(); draw(); };
 
 /* kéo đường lề dưới ngay trên trang giấy */
 q('klGuides').addEventListener('pointerdown',e=>{
@@ -6166,6 +6105,24 @@ document.addEventListener('keydown',e=>{               // hoàn tác riêng củ
   const k=e.key.toLowerCase();
   if(k==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); }
   else if(k==='y'){ e.preventDefault(); redo(); }
+});
+
+function setZoomKl(z){
+  zoom=lim(+z.toFixed(3),.3,3);
+  if(last){ sizeBox(last.cfg); placeIme(last.cfg,last.L); }
+}
+q('kluview').addEventListener('wheel',e=>{        // chụm hai ngón hoặc Ctrl và con lăn
+  if(!(e.ctrlKey||e.metaKey)) return;
+  e.preventDefault();
+  setZoomKl(zoom*Math.exp(-Math.max(-30,Math.min(30,e.deltaY))*0.006));
+},{passive:false});
+q('klZoomVal').addEventListener('pointerdown',e=>{ // kéo số phần trăm lên xuống
+  e.preventDefault();
+  const y0=e.clientY, z0=zoom;
+  const mv=ev=>setZoomKl(z0*Math.exp((y0-ev.clientY)*0.006));
+  const up=()=>{ document.removeEventListener('pointermove',mv); document.removeEventListener('pointerup',up); };
+  document.addEventListener('pointermove',mv);
+  document.addEventListener('pointerup',up);
 });
 
 window.addEventListener('resize',()=>{

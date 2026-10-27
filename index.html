@@ -883,6 +883,12 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
 /* iPhone phóng to trang khi chạm vào ô chữ nhỏ hơn 16px */
 @media (max-width:760px) and (any-pointer:coarse){
   :is(input[type=text],input[data-num],select,textarea):not(#regtable *,#klIme){font-size:16px}
+  /* vùng chạm: ô nhập, nút phân đoạn, nút tài khoản cao tối thiểu 38px; nút tăng giảm số to hơn */
+  :is(input[type=text],input[data-num],select):not(#regtable *,#klIme,.phcell input){min-height:38px}
+  .seg button{min-height:38px}
+  #bAcct,#lang{min-height:36px}
+  .numbox>input[data-num]{width:100px;padding-right:34px}
+  .stepper{width:28px}
 }
 
 /* ---------- tiêu điểm bàn phím & giảm chuyển động ---------- */

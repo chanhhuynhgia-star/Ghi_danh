@@ -893,6 +893,33 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
   .stepper{width:28px}
 }
 
+/* ---------- bảng bên trái: tab cố định trên, phần giữa cuộn, tài khoản và cài đặt ghim dưới ---------- */
+#tabs{flex:0 0 auto}
+#panels{min-height:0}
+#tabs button.on{background:var(--ink);color:var(--on-dark);box-shadow:none}
+/* nhóm cách nhau rõ hơn hàng; vạch chỉ ngăn các khối lớn */
+#side .grp{margin-bottom:28px}
+#side .pane>.grp:last-child,#side .blk>.grp:last-child{margin-bottom:0}
+#side :is(.card,#headlist) .row,#side #langpanel :is(.lrow,.ladd,.ltoggle){border-bottom-color:transparent}
+.blk>h3{margin:0 0 14px 4px;font-size:var(--fs-xs);font-weight:var(--fw-heavy);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.blk.off{display:none}
+.blk:not(.off)~.blk:not(.off){margin-top:26px;padding-top:24px;border-top:.5px solid var(--hair-strong)}
+#sidefoot{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;
+  background:var(--fill);border-top:.5px solid var(--hair-strong)}
+#sidefoot:empty{display:none}
+#sidefoot #bAcct{flex:1 1 100%;max-width:none;min-height:40px;padding:8px 12px;border-radius:10px;background:var(--panel);font-size:var(--fs-base)}
+#sidefoot #bAcct:hover{background:var(--fill-hover)}
+#sidefoot #bAcct .nm{flex:1;text-align:left}
+#sidefoot #bAcct.anon{justify-content:center;background:var(--accent);color:var(--on-dark)}
+#sidefoot #bAcct.anon:hover{background:var(--accent-press)}
+#sidefoot #bAcct.anon .nm{flex:0 1 auto}
+#bSet .lb{display:none}
+#sidefoot #bSet{flex:1 1 auto;width:auto;height:36px;justify-content:flex-start;gap:9px;padding:0 10px;border-radius:9px;
+  color:var(--text-2);font:inherit;font-size:var(--fs-base);letter-spacing:-.012em}
+#sidefoot #bSet:hover{color:var(--ink)}
+#sidefoot #bSet .lb{display:inline}
+#sidefoot #lang{flex:0 0 auto;margin-left:auto;min-height:36px;background:var(--hair)}
+
 /* ---------- tiêu điểm bàn phím & giảm chuyển động ---------- */
 :where(button,a,summary,select,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--sys);outline-offset:2px;transition:none}
 .chip:focus-visible,.fchip:focus-visible,.seg button:focus-visible,#tabs button:focus-visible,#viewseg button:focus-visible{outline-offset:-2px}
@@ -917,7 +944,7 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
     <button data-view="klu" id="vKlu" role="tab" aria-selected="false" hidden>Nguyện văn</button>
   </div>
   <span class="spacer"></span>
-  <button id="bSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.22.38.3.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.62l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg></button>
+  <button id="bSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.22.38.3.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.62l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg><span class="lb">Cài đặt</span></button>
   <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
     <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
   </button>
@@ -965,12 +992,13 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
           </div>
         </div>
         <p class="note" id="regpastenote"></p>
-        <p class="note" id="gsNote">Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản, góc trên bên phải.</p>
+        <p class="note" id="gsNote">Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản.</p>
       </div>
     </section>
 
     <!-- ============ ② SƠ ĐỒ · tab Xếp chỗ (dùng thường) ============ -->
     <section class="pane" id="p-room">
+      <div class="blk"><h3>Chuẩn bị phòng</h3>
       <div class="grp" id="grpSeats">
         <h2>Số ghế</h2>
         <div class="row"><label>Ghế nam</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="seatM" min="0" max="400" step="1"><span class="unit">ghế</span></div>
@@ -985,6 +1013,8 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
         <div class="row"><label>Nữ · số cột</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fCols" min="0" max="30" step="1"><span class="unit">cột</span></div>
         <div class="row"><label>Nữ · số hàng</label><input type="text" inputmode="numeric" data-num autocomplete="off" id="fRows" min="0" max="40" step="1"><span class="unit">hàng</span></div>
       </div>
+      </div>
+      <div class="blk"><h3>Xếp người vào ghế</h3>
       <div class="grp">
         <h2>Xếp chỗ</h2>
         <div class="card">
@@ -999,11 +1029,14 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
         <h2>Ghế theo ngôn ngữ</h2>
         <div class="card" id="langpanel"></div>
       </div>
+      </div>
+      <div class="blk"><h3>In ấn</h3>
       <div class="grp">
         <h2>Khi in sơ đồ</h2>
         <div class="row"><label>In 佛座 và 講台</label><input type="checkbox" id="printStage" checked></div>
         <div class="row" id="rowStageCompact"><label><span>Thu gọn sân khấu</span><br><span class="sub">Tắt: in đúng vị trí đã chỉnh</span></label><input type="checkbox" id="printStageCompact"></div>
         <div class="row"><label>In khung viền phòng</label><input type="checkbox" id="printRoom" checked></div>
+      </div>
       </div>
     </section>
 
@@ -1011,6 +1044,7 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
     <!-- ============ ③ BẢNG TÊN · tab Bố cục ============ -->
     <section class="pane" id="p-page">
       <div id="warnbox" hidden></div>
+      <div class="blk"><h3>Giấy in</h3>
       <div class="grp">
         <h2>In trên khổ nhỏ</h2>
       <div class="row"><label>Chia đôi trang khi in</label><button class="btn tg" id="tgSplit" style="flex:0 0 auto">Chia đôi trang</button></div>
@@ -1022,6 +1056,8 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
           <option value="250x176">B5 ngang</option>
         </select></div>
       </div>
+      </div>
+      <div class="blk"><h3>Khung trang</h3>
       <div class="grp">
         <h2>Số cột từng khoảng</h2>
         <div class="row"><label>Số cột khoảng 1</label>
@@ -1043,6 +1079,8 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
         <div class="row"><label>Giữa các cột</label> <input type="text" inputmode="numeric" data-num autocomplete="off" id="colGapPct" min="0" max="40" step="1"><span class="unit">%</span></div>
         <div class="row"><label>Thêm ở nếp gấp</label> <input type="text" inputmode="decimal" data-num autocomplete="off" id="foldPad" min="0" max="10" step=".1"><span class="unit">mm</span></div>
       </div>
+      </div>
+      <div class="blk"><h3>Hàng tên</h3>
       <div class="grp">
         <h2>Khoảng cách hàng</h2>
         <div class="row"><label>Giữa các hàng cùng nhóm</label><input type="text" inputmode="decimal" data-num autocomplete="off" id="gapIn" min="0" max="6" step=".1"><span class="unit">chữ</span></div>
@@ -1058,6 +1096,7 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
             <button data-va="top" class="on">Dưới</button><button data-va="spread">Giữa hàng</button>
           </div></div>
         <div class="row"><label>Cân đối số người mỗi hàng</label><input type="checkbox" id="balance" checked></div>
+      </div>
       </div>
     </section>
 
@@ -1211,6 +1250,7 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
     </section>
 
   </div>
+  <div id="sidefoot"></div>
 </aside>
 
 <main id="main">
@@ -1654,7 +1694,8 @@ const I18N={
  'Lưu .json':'儲存 .json','Mở .json':'開啟 .json','In':'列印','Lưu PDF':'存成 PDF',
  'Lưu phiên (.json)':'儲存工作檔 (.json)','Mở phiên (.json)':'開啟工作檔 (.json)','Lưu thành…':'另存新檔…',
  'Dữ liệu danh sách':'名單資料','Xoá hết…':'清空…',
- 'Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản, góc trên bên phải.':'名單存放於 Google 試算表。請用右上角的帳號按鈕登入與同步。',
+ 'Danh sách nằm trên Google Sheet. Đăng nhập và đồng bộ ở nút tài khoản.':'名單存放於 Google 試算表。請用帳號按鈕登入與同步。',
+ 'Chuẩn bị phòng':'場地準備','Xếp người vào ghế':'安排座位','In ấn':'列印','Giấy in':'紙張','Khung trang':'版面框架','Hàng tên':'姓名列',
  'Chọn tệp font':'選擇字型檔','Bỏ':'取消','Mở hộp thoại in':'開啟列印視窗',
  'Lưu thành PDF':'存成 PDF',
  'Ở mục Máy in, chọn Save as PDF hoặc Microsoft Print to PDF.':'印表機請選 Save as PDF 或 Microsoft Print to PDF。',
@@ -1716,7 +1757,7 @@ const I18N={
    '僅所選格子會被壓扁。已壓扁的格子角上有小圓點，該點不會列印。'
 };
 function L(t){ return (S.lang==='zh' && I18N[t]) ? I18N[t] : t; }
-const TRANS_SEL='#tabs button,.grp>h2,.row>label,.row>label>span,.pane .btn,.unit,.seg button,#toolbar .btn,'+
+const TRANS_SEL='#tabs button,.grp>h2,.blk>h3,#bSet .lb,.row>label,.row>label>span,.pane .btn,.unit,.seg button,#toolbar .btn,'+
   '#pdfbox h3,#pdfbox li,#pdfbox .btn,#pdfguides span,#paper option,#sheetSize option,dl.keys dt,dl.keys dd,.note,'+
   '#klPreset option,#klTitleAlign option,#klCellStyle option,#klInk option,#klTextColor option,#klAlignH option,#klAlignV option,'+
   '#setbox .btn,#sethead h3';
@@ -4794,8 +4835,15 @@ function doImport(replace){
   note.textContent = zh?`已匯入 ${v.length} 筆。`:`Đã nạp ${v.length} người.`;
   autoSeatCount(); renderReg(); upd();
 }
+function dockAcct(inSide){                       // bảng mở: tài khoản, cài đặt, ngôn ngữ ghim ở chân bảng; bảng ẩn: về thanh trên cùng
+  const foot=$('#sidefoot'), top=$('#topbar'), dst=inSide?foot:top;
+  if(!foot||$('#bAcct').parentNode===dst) return;
+  const m=$('#acctMenu'); if(m&&!m.hidden){ m.hidden=true; $('#bAcct').setAttribute('aria-expanded','false'); }
+  (inSide?['#bAcct','#bSet','#lang']:['#bSet','#bAcct','#lang']).forEach(q=>dst.appendChild($(q)));
+}
 function setPanel(hide,save){                    // ẩn/hiện bảng điều khiển bên trái, nhớ lựa chọn trên máy
   document.body.classList.toggle('nopanel',hide);
+  dockAcct(!hide);
   const zh=S.lang==='zh', b=$('#bPanel');
   const tip = hide ? (zh?'顯示控制面板':'Hiện bảng điều khiển') : (zh?'隱藏控制面板':'Ẩn bảng điều khiển');
   b.dataset.tip=tip; b.setAttribute('aria-label',tip);
@@ -4809,6 +4857,7 @@ $('#side').addEventListener('transitionend',e=>{     // xong hiệu ứng thì �
 });
 try{ if(localStorage.getItem('ui.nopanel')==='1') setPanel(true,false); }catch(e){}
 if(PHONE.matches) setPanel(true,false);              // điện thoại: ngăn kéo đóng khi mở trang
+dockAcct(!document.body.classList.contains('nopanel'));
 PHONE.addEventListener('change',e=>{ if(e.matches) setPanel(true,false); });
 document.addEventListener('click',e=>{               // chạm vào lớp tối bên ngoài ngăn kéo thì đóng
   if(PHONE.matches&&e.target===document.body&&!document.body.classList.contains('nopanel')) setPanel(true,false);
@@ -5374,6 +5423,7 @@ function applyRole(r){
   ['p-page','p-head','p-klpaper','p-klgrid','p-kltext'].forEach(id=>put(`#tabs button[data-p="${id}"]`,admin));
   put('#grpSeats',admin); put('#grpGrid',admin);
   put('#bSet',admin);                                                // thiết lập ban đầu chỉ dành cho quản trị
+  document.querySelectorAll('.blk').forEach(b=>b.classList.toggle('off',![...b.querySelectorAll(':scope>.grp')].some(g=>g.style.display!=='none')));
   document.querySelectorAll('#tabs button').forEach(b=>{ if(b.dataset.view!==S.view) b.style.display='none'; });   // quyền không được hiện lại tab của màn hình khác
   const cur=document.querySelector('#tabs button.on');
   if(cur&&cur.style.display==='none'){ const b=document.querySelector('#tabs button[data-p="p-reg"]'); if(b) b.click(); }
@@ -5575,9 +5625,10 @@ const acct=$('#bAcct'), menu=$('#acctMenu');
 function menuOpen(){
   const r=acct.getBoundingClientRect();
   menu.hidden=false;
-  const w=menu.offsetWidth;
-  menu.style.top=(r.bottom+8)+'px';
-  menu.style.left=Math.max(8,Math.min(r.right-w,innerWidth-w-8))+'px';
+  const w=menu.offsetWidth, h=menu.offsetHeight, up=r.bottom+8+h>innerHeight-8;
+  menu.style.top=(up?Math.max(8,r.top-8-h):r.bottom+8)+'px';
+  menu.style.left=Math.max(8,Math.min(up?r.left:r.right-w,innerWidth-w-8))+'px';
+  menu.style.transformOrigin=up?'bottom left':'top right';
   acct.setAttribute('aria-expanded','true');
 }
 function menuClose(){ menu.hidden=true; acct.setAttribute('aria-expanded','false'); }

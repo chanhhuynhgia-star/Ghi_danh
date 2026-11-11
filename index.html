@@ -906,7 +906,6 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
 .blk:not(.off)~.blk:not(.off){margin-top:26px;padding-top:24px;border-top:.5px solid var(--hair-strong)}
 #sidefoot{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;
   background:var(--fill);border-top:.5px solid var(--hair-strong)}
-#sidefoot:empty{display:none}
 #sidefoot #bAcct{flex:1 1 100%;max-width:none;min-height:40px;padding:8px 12px;border-radius:10px;background:var(--panel);font-size:var(--fs-base)}
 #sidefoot #bAcct:hover{background:var(--fill-hover)}
 #sidefoot #bAcct .nm{flex:1;text-align:left}
@@ -944,11 +943,6 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
     <button data-view="klu" id="vKlu" role="tab" aria-selected="false" hidden>Nguyện văn</button>
   </div>
   <span class="spacer"></span>
-  <button id="bSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.22.38.3.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.62l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg><span class="lb">Cài đặt</span></button>
-  <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
-    <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
-  </button>
-  <select id="lang" autocomplete="off" title="Ngôn ngữ · 語言"><option value="vi">VN</option><option value="zh">CH</option></select>
 </div>
 
 <div id="acctMenu" role="menu" hidden>
@@ -1250,7 +1244,13 @@ html:lang(zh) :is(body,.note,.warn,#pagewarn,#klClipNote,#amNote,#fdir){line-hei
     </section>
 
   </div>
-  <div id="sidefoot"></div>
+  <div id="sidefoot">
+  <button id="bAcct" aria-haspopup="menu" aria-expanded="false" title="Đăng nhập">
+    <span id="acctDot"></span><span class="nm" id="acctName">Đăng nhập</span><span id="acctRole" style="display:none"></span>
+  </button>
+  <button id="bSet" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.62l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.86a.5.5 0 0 0 .12.62l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.62l1.92 3.32c.12.22.38.3.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.62l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg><span class="lb">Cài đặt</span></button>
+  <select id="lang" autocomplete="off" title="Ngôn ngữ · 語言"><option value="vi">VN</option><option value="zh">CH</option></select>
+  </div>
 </aside>
 
 <main id="main">
@@ -4835,15 +4835,8 @@ function doImport(replace){
   note.textContent = zh?`已匯入 ${v.length} 筆。`:`Đã nạp ${v.length} người.`;
   autoSeatCount(); renderReg(); upd();
 }
-function dockAcct(inSide){                       // bảng mở: tài khoản, cài đặt, ngôn ngữ ghim ở chân bảng; bảng ẩn: về thanh trên cùng
-  const foot=$('#sidefoot'), top=$('#topbar'), dst=inSide?foot:top;
-  if(!foot||$('#bAcct').parentNode===dst) return;
-  const m=$('#acctMenu'); if(m&&!m.hidden){ m.hidden=true; $('#bAcct').setAttribute('aria-expanded','false'); }
-  (inSide?['#bAcct','#bSet','#lang']:['#bSet','#bAcct','#lang']).forEach(q=>dst.appendChild($(q)));
-}
 function setPanel(hide,save){                    // ẩn/hiện bảng điều khiển bên trái, nhớ lựa chọn trên máy
   document.body.classList.toggle('nopanel',hide);
-  dockAcct(!hide);
   const zh=S.lang==='zh', b=$('#bPanel');
   const tip = hide ? (zh?'顯示控制面板':'Hiện bảng điều khiển') : (zh?'隱藏控制面板':'Ẩn bảng điều khiển');
   b.dataset.tip=tip; b.setAttribute('aria-label',tip);
@@ -4857,7 +4850,6 @@ $('#side').addEventListener('transitionend',e=>{     // xong hiệu ứng thì �
 });
 try{ if(localStorage.getItem('ui.nopanel')==='1') setPanel(true,false); }catch(e){}
 if(PHONE.matches) setPanel(true,false);              // điện thoại: ngăn kéo đóng khi mở trang
-dockAcct(!document.body.classList.contains('nopanel'));
 PHONE.addEventListener('change',e=>{ if(e.matches) setPanel(true,false); });
 document.addEventListener('click',e=>{               // chạm vào lớp tối bên ngoài ngăn kéo thì đóng
   if(PHONE.matches&&e.target===document.body&&!document.body.classList.contains('nopanel')) setPanel(true,false);
